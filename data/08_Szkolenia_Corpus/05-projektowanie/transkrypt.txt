@@ -1,0 +1,211 @@
+
+00:00
+(Beginning of video)
+00:05
+Chapter marker
+Witamy i dodawanie mebli
+00:05
+Witam Państwa w przewinku online.
+00:08
+Dziś kolejne funkcje głównego menu projektowego.
+00:12
+Na początku dodam kilka mebli do projektu.
+00:52
+Zaznaczę poprzez wybierz, zaznacz wszystko, przeniosę te meble tutaj na środek.
+01:01
+Oczywiście mogę też skręcać z funkcji dosunięcia do boku i kolejnych mebli również.
+01:10
+Chapter marker
+Omówienie ukrywania urządzeń AGD i frontów
+01:10
+Teraz szerzej powiem na temat ukrywania.
+01:12
+We wcześniejszym filmie wspomniałem, że są funkcje tutaj na dole.
+01:17
+Teraz na tym przykładzie je szerzej pokażę.
+01:20
+Pierwszy z nich służy do ukrywania urządzeń AGD.
+01:27
+Kolejne ukrywa fronty.
+01:31
+Jeżeli nic nie zaznaczymy, ukryje wszystko i tak samo gdybyśmy zaznaczyli wszystko.
+01:39
+Cała ta działania jest identyczna.
+01:42
+Zdecydowanie wygodniej jest, jeżeli chcemy konkretnie wskazać te szafki, z których mają być ukryte fronty i te będą ukryte.
+01:55
+ukryj szafki dolne, a także ukryj szafki górne i w tym momencie te szafki, które mają konkretny typ górnych i dolnych będą ukrywane.
+02:05
+Tu zwracam uwagę też na to, że mimo tego, że mamy ukryte szafki górne nie zauważymy tutaj takiego wykreślenia przy oczku danej szafki, więc musimy zwrócić szczególną uwagę właśnie na to miejsce, że czy mamy przypadkiem nie mamy aktywnej tej ikony z uwagi na to że w momencie jeżeli ukryłbym szafki górne a w tym momencie przez bibliotekę dodawał je na przykład tą tą proszę zobaczyć ja wczytałem w tym momencie trzy szafki tu mam je na liście natomiast wciąż ich nie widzimy dopiero aktywacja tej ikony spowoduje że wszystkie nam się pojawią usuwam Idziemy dalej.
+02:54
+Ostatni przycisk, jak pamiętam, już nie służy do ukrywania, tylko do podziału ekranu na 4.
+03:01
+Chapter marker
+Przesuwanie, ukrywanie i odwracanie pokazywania
+03:01
+Następnie możemy ukryć meble poprzez kliknięcie przy danej nazwie na oczko.
+03:09
+Wtedy konkretnie ukrywamy wybrany meble.
+03:15
+Trzeci rodzaj ukrycia mamy zawarte w tym miejscu.
+03:19
+Widzimy pierwsze trzy ikony są nieaktywne z uwagi na to, że działają tylko w momencie jeżeli zaznaczymy konkretny mebel.
+03:26
+Ja teraz wciskając przycisk SHIFT zaznaczam trzy i widzimy mamy je aktywne.
+03:31
+Pokaż wyłącznie zaznaczone elementy.
+03:34
+Czyli wszystkie inne się ukrywają.
+03:37
+Następnie wrócę do pokaż wszystkie.
+03:42
+Dalej mamy pokaż zaznaczone, natomiast żeby to zadziałało najpierw musimy je ukryć.
+03:48
+Mamy ukryć zaznaczone i następnie pokaż zaznaczone.
+03:54
+Dalej mamy odwrócenie pokazywania, więc przy ukryciu po prostu mamy odwrócone pokazywanie.
+04:04
+Ukrywanie, pokazywanie, a także ostatnie pokaż wszystkie.
+04:09
+Nawet jeżeli coś ukryłem i tych elementów jest naprawdę dużo, ściany, te szafki, które zasłaniają konkretne widoki, które chcemy wydrukować po zastosowaniu podziału ekranu, później możemy przywołać wszystko i wszystkie będą aktywne.
+04:27
+Także polecam szczególnie używanie przy ukrywaniu tych właśnie ikon.
+04:34
+Chapter marker
+Ustawianie kolizji
+04:34
+Następnie przejdziemy do ustawienia kolizji.
+04:39
+Po aktywacji widzimy tutaj taką ikonę i mamy zaznaczoną w tej chwili blokuj kolizję.
+04:46
+Co to oznacza?
+04:47
+Jeżeli wybiorę element i zbliżę jeden do drugiego widzimy, że nie możemy jednym elementem wejść w kolizję z drugim.
+04:56
+Jeżeli bym w tej chwili odblokował i ponownie zaznaczył jeden element i widzimy, że W tym momencie jeden może wejść w kolizję z drugim.
+05:06
+Oczywiście jeżeli wejdę w tą kolizję odpowiednio, płytko, a następnie wypuszczę mebel, on wróci do swojego poprzedniego ustawienia z uwagi na to, że działa przyciąganie.
+05:20
+Natomiast jeżeli to będzie już zbyt głębokie, pozostanie właśnie w kolizji.
+05:25
+Następnie mamy pokaż kolizję, oznacza, że będzie aktywny ten konkretny kolor w momencie, jeżeli ta kolizja będzie tutaj widoczna.
+05:37
+Oczywiście w momencie kliknięcia możemy ten kolor zmienić i wtedy będziemy chcieli inny przy tej kolizji.
+05:47
+Następnie składowe.
+05:49
+Pokaż składowe.
+05:50
+Żeby to było widoczne musimy tu aktywować całą tą listę.
+05:53
+I teraz jeżeli jednym elementem wejdę w drugi, widzimy pojawiły się cały szereg składowych, które biorą udział właśnie w tej kolizji.
+06:04
+W zależności widzimy, że od zmiany, a także wyjścia, te kolizje praktycznie całe zanikają.
+06:16
+Możemy też ustawić przezroczystość w momencie, jeżeli wejdziemy w te kolizje.
+06:21
+Proszę zwrócić uwagę, tak się przybliżę.
+06:24
+Jeżeli ustawimy przezroczystość na niższy, wyższy poziom, wtedy odpowiednie te kolory będą bledsze lub bardziej ostre.
+06:36
+Ja z reguły nie używam blokowania kolizji z uwagi na to, że często potrzebuję przejść meblem przez inne meble, co kołem czy ścianą.
+06:47
+Natomiast mam aktywne cały czas przyciąganie.
+06:51
+Skopiuję sobie teraz te dwa meble i jeszcze ten trzeci i odwrócę każdy z nich.
+07:06
+Chapter marker
+Wysunięte plecy i modyfikacja elementów
+07:07
+Używam do tego spacji.
+07:09
+Mamy już obrócone elementy o 90 stopni.
+07:12
+Teraz pokażę Państwu, zaznaczając pierwszą szafkę, wstaw, wysłona pleców.
+07:23
+Po wyborze tej funkcji dostajemy formatkę, która jest niezależna od tej szafki.
+07:31
+Oczywiście też działa przyciąganie, natomiast to jest formatka, którą możemy użyć jako wysłona pleców, boku czy czegokolwiek innego, odpowiednio też się obracając.
+07:43
+Też za pomocą spacji możemy tą szafkę właśnie obracać, przesuwać, przyciągać.
+07:48
+Jest to bardzo wygodna funkcja do dodawania takich szybkich formatek.
+07:54
+Usunę ją teraz, pokażę jeszcze jedno działanie.
+07:58
+Zaznaczam pierwszą i ostatnią szafkę, następnie wstaw, wysłona pleców i widzimy, że teraz dostaliśmy na całą długość elementów.
+08:11
+Ważne jest, żeby zaznaczyć pierwszą i ostatnią, nie wszystkie na raz.
+08:16
+Oczywiście w takiej sytuacji mogę również odpowiednio, jeżeli to jest taka luźna moja formatka, odpowiednio nadać jej wymiary.
+08:23
+Tutaj na przykład szerokość konkretnie potrzebuję 560, wysokość potrzebuję na 820, a także położenie będzie na 0.
+08:37
+I w momencie użycia spacji mamy już taką wysłonę boczną.
+08:47
+Jeżeli nie używamy wysłony bocznej, tylko chciałbym na przykład, żeby ten mój bok był w konkretnym kolorze, a dokładnie zależałoby, żeby to był kolor taki jak front, musimy już użyć innego przycisku, prawym przyciskiem myszy.
+09:08
+Klikamy na daną szafkę i mamy tutaj kilka innych funkcji, m.in.
+09:15
+boki.
+09:16
+lewy i prawy, w tym momencie interesuje mnie zmiana dekoru prawego boku i dostaje informację dekor jak korpus, dekor jak front następnie w momencie kiedy kliknę rolką myszy w jedną lub w drugą stronę, tak żeby odświecić widok widzimy, że ten dekor został zachowany, identyczny jak front Jeżeli potrzebuję oczywiście wydłużyć go do podłogi, wykonuję to już, ale za pomocą editora elementów, co mówię przy okazji innego filmu.
+09:49
+Teraz usunę tą przegrodę, a także ponownie odwrócę te szafki, żeby pokazać też kilka innych funkcji właśnie spod prawego przycisku mysz.
+10:11
+Najpierw dodam jeszcze jedną szafkę.
+10:18
+Niech to będzie szafka z pojedynczym frontem.
+10:24
+W momencie, kiedy klikam na nią prawą myszy, mamy funkcję otwieranie.
+10:31
+Może przyjąć otwieranie lewe lub prawe.
+10:35
+I wtedy następuje nie tylko zmiana uchwytu, ale również całego Zwróćmy uwagę, że jeżeli wybieram szafkę z podwójnym frontem, nie mam tej funkcji.
+10:48
+To samo jest przy szafce szufladowej.
+10:51
+Tylko występuje to przy szafce, gdzie mamy fronty prawe lub lewe.
+10:58
+Następnie tu wybieram szafkę na nasz słupek.
+11:06
+Użyję funkcji Modyfikuj.
+11:08
+Mogę tu modyfikować dwa elementy, piekarnik lub mikrofalę.
+11:13
+Jeżeli wybieram piekarnik, od razu otwiera mi się wstawienie elementów.
+11:19
+Wejdę w wyposażenie kuchenne.
+11:21
+Następnie w piekarniki i powiedzmy, że wybieram tego typu piekarnik.
+11:26
+Klikam wczytaj i następuje podmiana.
+11:29
+Identyczna sytuacja w momencie, jeżeli bym modyfikował na przykład mikrofalę.
+11:34
+Tak samo.
+11:35
+wyposażenie kuchenne, mikrofalówki, np.
+11:39
+tego typu.
+11:40
+Klikam wczytaj i już zostało wczytane właśnie z tymi wymiarami.
+11:46
+Oczywiście jest istotne, żeby używać wymiarów sprzętów AGD, które odpowiadają w tym samym wielkości.
+12:02
+Następnie W momencie jeżeli chciałbym zastąpić szafkę innym meblem, np.
+12:10
+wybieram ten mebel, klikam prawym, zastąp element, w tym momencie mogę wybrać dowolną szafkę z mebli przykładowych, dolnych, np.
+12:25
+wybieram szafkę.
+12:30
+Chapter marker
+Zastępowanie mebli
+12:30
+D2D albo np.
+12:33
+jakąś szafkę z szufladami klikam wczytaj i nastąpi zastąpienie tej szafki natomiast już do wymiarów obecnie wstawionej.
+12:44
+To wszystko.
+12:45
+Dziękuję za uwagę.

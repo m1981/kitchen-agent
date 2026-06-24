@@ -1,0 +1,185 @@
+# tests/eval/golden_dataset.yaml
+# =================================
+# Golden dataset for evaluating agent responses.
+#
+# Each case defines:
+#   - id: Unique identifier
+#   - question: The user's question
+#   - mode: Prompt mode (general, design, assembly)
+#   - expected: What the response should contain/do
+#
+# Expected fields:
+#   must_mention: List of terms that MUST appear in response
+#   forbidden: List of terms that MUST NOT appear
+#   must_cite: Boolean - response must have citations
+#   must_search: Boolean - agent must call search_knowledge_base
+#   must_use_tools: List of specific tool names expected
+#   min_citations: Minimum number of citations required
+#   citation_must_exist: Boolean - cited files must exist on disk
+#
+# Run with:
+#   .venv/bin/python scripts/run_golden_eval.py
+#   .venv/bin/python scripts/run_golden_eval.py --case eval-001
+#   .venv/bin/python scripts/run_golden_eval.py --report json
+
+# ─── Discovery ─────────────────────────────────────────────────────────────────
+
+- id: eval-001
+  name: 'KB file discovery'
+  question: 'Jakie pliki są w bazie wiedzy o okuciach?'
+  mode: general
+  expected:
+      must_use_tools:
+          - get_repo_map
+      must_mention:
+          - 'Okucia'
+
+- id: eval-002
+  name: 'General file listing'
+  question: 'Pokaż mi strukturę bazy wiedzy'
+  mode: general
+  expected:
+      must_use_tools:
+          - get_repo_map
+
+# ─── Search + Answer ───────────────────────────────────────────────────────────
+
+- id: eval-003
+  name: 'Blum drawer systems overview'
+  question: 'Jakie są systemy szufladowe Blum?'
+  mode: general
+  expected:
+      must_search: true
+      must_cite: true
+      min_citations: 1
+      must_mention:
+          - 'Tandembox'
+          - 'Merivobox'
+
+- id: eval-004
+  name: 'Specific pricing query'
+  question: 'Jaka jest cena Merivobox?'
+  mode: general
+  expected:
+      must_search: true
+      must_cite: true
+      min_citations: 1
+      must_mention:
+          - 'Merivobox'
+
+- id: eval-005
+  name: 'Hardware comparison'
+  question: 'Porównaj Tandembox Antaro z Merivobox'
+  mode: general
+  expected:
+      must_search: true
+      must_cite: true
+      min_citations: 1
+      must_mention:
+          - 'Tandembox'
+          - 'Merivobox'
+
+# ─── Mode-Specific ─────────────────────────────────────────────────────────────
+
+- id: eval-006
+  name: 'Assembly instructions'
+  question: 'Jak zamontować szufladę Merivobox?'
+  mode: assembly
+  expected:
+      must_search: true
+      must_mention:
+          - 'montaż'
+
+- id: eval-007
+  name: 'Ergonomic design query'
+  question: 'Jakie są ergonomiczne wysokości dla blatów kuchennych?'
+  mode: design
+  expected:
+      must_mention:
+          - 'wysokość'
+
+# ─── Edge Cases ────────────────────────────────────────────────────────────────
+
+- id: eval-008
+  name: 'Missing information handling'
+  question: 'Jaka jest cena kuchni IKEA Metod za metr bieżący?'
+  mode: general
+  expected:
+      # Should NOT give a specific price if not in KB
+      forbidden:
+          - 'cena wynosi'
+          - 'kosztuje dokładnie'
+
+- id: eval-009
+  name: 'Out-of-scope question'
+  question: 'Jakie są najlepsze restauracje we Wrocławiu?'
+  mode: general
+  expected:
+      # Should indicate this is outside its domain
+      must_not_search: true
+
+# ─── Multi-Tool ────────────────────────────────────────────────────────────────
+
+- id: eval-010
+  name: 'Read before edit pattern'
+  question: 'Dodaj informację o nowym kolorze Legrabox do pliku o okuciach Blum'
+  mode: general
+  expected:
+      must_use_tools:
+          - get_repo_map
+          - read_file
+          - edit_file
+      trajectory_rules:
+          - 'read_before_edit'
+          - 'map_before_unknown_file'
+
+# ─── Citation Quality ──────────────────────────────────────────────────────────
+
+- id: eval-011
+  name: 'Citations point to real files'
+  question: 'Wymień wszystkie systemy szufladowe Blum z cenami'
+  mode: general
+  expected:
+      must_search: true
+      must_cite: true
+      min_citations: 1
+      citation_must_exist: true
+
+- id: eval-012
+  name: 'Multiple source citations'
+  question: 'Jakie są standardy materiałowe i okucia w tej firmie?'
+  mode: general
+  expected:
+      must_search: true
+      must_cite: true
+      min_citations: 2
+
+# ─── Negative Tests ────────────────────────────────────────────────────────────
+
+- id: eval-013
+  name: 'No hallucinated part numbers'
+  question: 'Podaj mi numer katalogowy prowadnic Blum Tandem'
+  mode: general
+  expected:
+      must_search: true
+      # Should either cite a real part number or say it doesn't know
+      must_cite: true
+
+- id: eval-014
+  name: 'Ambiguous query handling'
+  question: 'Powiedz mi więcej o szufladach'
+  mode: general
+  expected:
+      # Should search broadly or ask for clarification
+      must_search: true
+
+# ─── Knowledge Integration ─────────────────────────────────────────────────────
+
+- id: eval-015
+  name: 'Cross-file knowledge synthesis'
+  question: 'Jak dobrać okucia do kuchni w stylu nowoczesnym?'
+  mode: design
+  expected:
+      must_search: true
+      must_mention:
+          - 'okucia'

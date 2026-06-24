@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Technologie kuchni na wymiar — 2026 (Standard Pragmatyczny)</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #ffffff;
+                color: #333;
+                margin: 0;
+                padding: 20px;
+                display: flex;
+                justify-content: center;
+            }
+
+            .diagram-container {
+                max-width: 1000px;
+                width: 100%;
+            }
+
+            .main-title {
+                text-align: center;
+                font-size: 22px;
+                font-weight: 600;
+                margin-bottom: 30px;
+                color: #222;
+            }
+
+            .grid-layout {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 30px 40px;
+            }
+
+            .section {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .section-header {
+                text-align: center;
+                padding: 12px;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 16px;
+                border: 1px solid;
+            }
+
+            .items-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+
+            .item-box {
+                text-align: center;
+                padding: 15px 10px;
+                border-radius: 8px;
+                border: 1px solid;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                min-height: 60px;
+            }
+
+            .item-title {
+                font-weight: 600;
+                font-size: 15px;
+                margin-bottom: 6px;
+            }
+
+            .item-subtitle {
+                font-size: 13px;
+            }
+
+            /* --- Kolory dla poszczególnych sekcji --- */
+            .theme-plyty .section-header,
+            .theme-plyty .item-box {
+                background-color: #eef7f4;
+                border-color: #8abfae;
+                color: #0f5940;
+            }
+            .theme-okucia .section-header,
+            .theme-okucia .item-box {
+                background-color: #f4f2fa;
+                border-color: #b3a7d8;
+                color: #3b2c7a;
+            }
+            .theme-blaty .section-header,
+            .theme-blaty .item-box {
+                background-color: #fdf6ed;
+                border-color: #dcb897;
+                color: #7a4b1c;
+            }
+            .theme-plytki .section-header,
+            .theme-plytki .item-box {
+                background-color: #fcf1ee;
+                border-color: #d8a59d;
+                color: #7a2c20;
+            }
+            .theme-montaz .section-header,
+            .theme-montaz .item-box {
+                background-color: #f0f5fc;
+                border-color: #a3c2e8;
+                color: #1c4b82;
+            }
+            .theme-tech .section-header,
+            .theme-tech .item-box {
+                background-color: #f2f7ed;
+                border-color: #a8c99b;
+                color: #2d5e1e;
+            }
+
+            @media (max-width: 768px) {
+                .grid-layout {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="diagram-container">
+            <div class="main-title">
+                Technologie kuchni na wymiar — 2026 (Standard Pragmatyczny)
+            </div>
+
+            <div class="grid-layout">
+                <!-- Sekcja 1: Płyty i materiały -->
+                <div class="section theme-plyty">
+                    <div class="section-header">Płyty i materiały (Fronty i Korpusy)</div>
+                    <div class="items-grid">
+                        <div class="item-box">
+                            <div class="item-title">Płyta laminowana EIR</div>
+                            <div class="item-subtitle">Struktura synchroniczna 3D</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Folie PET / Anti-Fingerprint</div>
+                            <div class="item-subtitle">Matowe, odporne na ślady</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">MDF lakierowany UV</div>
+                            <div class="item-subtitle">Szybko utwardzany, powtarzalny</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Obrzeża Laser/Hot-Air</div>
+                            <div class="item-subtitle">Spoina zerowa, wodoodporność</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sekcja 2: Okucia i mechanizmy -->
+                <div class="section theme-okucia">
+                    <div class="section-header">Okucia i mechanizmy</div>
+                    <div class="items-grid">
+                        <div class="item-box">
+                            <div class="item-title">Zawiasy zintegrowane</div>
+                            <div class="item-subtitle">Cichy domyk w puszce</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Cienkościenne szuflady</div>
+                            <div class="item-subtitle">Legrabox / AvanTech YOU</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Systemy Tip-On / Push</div>
+                            <div class="item-subtitle">Mechaniczne otwieranie</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Podnośniki kinematyczne</div>
+                            <div class="item-subtitle">Aventos HK-top (szybki montaż)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sekcja 3: Blaty robocze -->
+                <div class="section theme-blaty">
+                    <div class="section-header">Blaty robocze</div>
+                    <div class="items-grid">
+                        <div class="item-box">
+                            <div class="item-title">Blat wiórowy prosty</div>
+                            <div class="item-subtitle">Oklejany ABS/Laser (szybki)</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Kompakt HPL (10-12mm)</div>
+                            <div class="item-subtitle">Wodoodporny rdzeń, zlew podwieszany</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Spieki kwarcowe</div>
+                            <div class="item-subtitle">Dekton, Neolith (Premium)</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Konglomerat</div>
+                            <div class="item-subtitle">Niewidoczne łączenia</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sekcja 4: Okładziny ścienne (Zamiast płytek) -->
+                <div class="section theme-plytki">
+                    <div class="section-header">Okładziny ścienne (Szybki montaż)</div>
+                    <div class="items-grid">
+                        <div class="item-box">
+                            <div class="item-title">Płyta przyblatowa</div>
+                            <div class="item-subtitle">W dekorze blatu (MFC/HPL)</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Szkło hartowane / Lacobel</div>
+                            <div class="item-subtitle">Czysty montaż na klej</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Spiek wielkoformatowy</div>
+                            <div class="item-subtitle">Kontynuacja blatu na ścianie</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Panele kompozytowe</div>
+                            <div class="item-subtitle">Lekkie, łatwe w obróbce</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sekcja 5: Technologie montażu -->
+                <div class="section theme-montaz">
+                    <div class="section-header">Technologie montażu</div>
+                    <div class="items-grid">
+                        <div class="item-box">
+                            <div class="item-title">Złącza CNC (Cabineo)</div>
+                            <div class="item-subtitle">Szybki montaż bez ścisków</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Mimośrody (Minifix)</div>
+                            <div class="item-subtitle">Klasyczny montaż korpusów</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Szyny montażowe</div>
+                            <div class="item-subtitle">Szybkie wieszanie i regulacja</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Kleje MS Polimer</div>
+                            <div class="item-subtitle">Elastyczne, natychmiastowy chwyt</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sekcja 6: Nowe tech / trendy 2026 -->
+                <div class="section theme-tech">
+                    <div class="section-header">Optymalizacja i Technologie</div>
+                    <div class="items-grid">
+                        <div class="item-box">
+                            <div class="item-title">Skanowanie 3D (LiDAR)</div>
+                            <div class="item-subtitle">Bezbłędny pomiar wnęk</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Oprogramowanie CAD/CAM</div>
+                            <div class="item-subtitle">Od projektu prosto na maszynę</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Nesting CNC</div>
+                            <div class="item-subtitle">Cięcie i wiercenie z 1 płyty</div>
+                        </div>
+                        <div class="item-box">
+                            <div class="item-title">Systemy profili LED</div>
+                            <div class="item-subtitle">Frezowane fabrycznie w korpusie</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

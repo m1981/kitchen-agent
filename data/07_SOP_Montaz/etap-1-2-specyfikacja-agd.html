@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Etap 1.2: Specyfikacja AGD - SOP PRO</title>
+        <link rel="stylesheet" href="./common.css" />
+        <style>
+            .nav-bar {
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .nav-bar a {
+                text-decoration: none;
+                color: var(--primary-color);
+                font-weight: bold;
+            }
+            .nav-bar a:hover {
+                text-decoration: underline;
+            }
+
+            .sop-section {
+                background: #fff;
+                padding: 20px;
+                margin-bottom: 20px;
+                border-left: 4px solid var(--primary-color);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            }
+            .sop-section h2 {
+                margin-top: 0;
+                color: #2c3e50;
+            }
+
+            .agd-card {
+                border: 1px solid var(--border-color);
+                padding: 15px;
+                margin-bottom: 15px;
+                background-color: #fdfefe;
+                border-radius: 4px;
+            }
+            .agd-card h3 {
+                margin-top: 0;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 5px;
+                color: #e67e22;
+            }
+
+            .input-line {
+                width: 100%;
+                border: none;
+                border-bottom: 1px dashed #999;
+                background: transparent;
+                padding: 3px;
+                margin-bottom: 10px;
+            }
+            .input-line:focus {
+                border-bottom: 1px solid var(--primary-color);
+                outline: none;
+            }
+
+            .critical-check {
+                background-color: #fadbd8;
+                padding: 10px;
+                border-left: 4px solid #e74c3c;
+                margin-top: 10px;
+                font-size: 0.9em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="nav-bar">
+                <a href="index.html">← Powrót do Panelu Głównego</a>
+            </div>
+
+            <h1>ETAP 1.2: WYWIAD I SPECYFIKACJA AGD</h1>
+            <p>
+                <em
+                    >Cel: Zamrożenie decyzji klienta. Projektujesz pod konkretne modele, opierając
+                    się na Kartach Technologicznych.</em
+                >
+            </p>
+
+            <div
+                class="warning-box"
+                style="
+                    margin-bottom: 20px;
+                    background-color: #fadbd8;
+                    padding: 15px;
+                    border-left: 4px solid #e74c3c;
+                "
+            >
+                ⚠️ <strong>ZASADA ZERO:</strong> Nie zaczynasz projektowania, dopóki klient nie poda
+                Ci dokładnych modeli sprzętu AGD.
+            </div>
+
+            <div class="sop-section">
+                <h2>KARTA KONTROLNA AGD</h2>
+
+                <div class="agd-card">
+                    <h3>🧊 Lodówka (Zabudowa)</h3>
+                    Model:
+                    <input type="text" class="input-line" placeholder="np. Samsung BRB26602FWW" />
+                    <div style="margin-top: 10px; margin-bottom: 10px">
+                        <strong>Kierunek otwierania (patrząc od przodu):</strong><br />
+                        <label
+                            ><input type="radio" name="lodowka_kierunek" value="lewe" /> Zawiasy po
+                            LEWEJ</label
+                        >
+                        <label style="margin-left: 15px"
+                            ><input type="radio" name="lodowka_kierunek" value="prawe" /> Zawiasy po
+                            PRAWEJ</label
+                        >
+                    </div>
+                    <div class="critical-check">
+                        <strong>Krytyczne punkty z instrukcji:</strong><br />
+                        <label
+                            ><input type="checkbox" /> Sprawdzono schemat wentylacji (kratka w
+                            cokole i wylot górą).</label
+                        ><br />
+                        <label
+                            ><input type="checkbox" /> System montażu frontu:
+                            <strong>Tylko na sztywno (Door-on-Door)!</strong> Unikamy
+                            suwaków.</label
+                        >
+                    </div>
+                </div>
+
+                <div class="agd-card">
+                    <h3>🍽️ Zmywarka</h3>
+                    Model:
+                    <input type="text" class="input-line" placeholder="np. Bosch SMV4EVX14E" />
+                    Szerokość:
+                    <label><input type="radio" name="zmywarka_szer" value="60" /> 60 cm</label>
+                    <label style="margin-left: 15px"
+                        ><input type="radio" name="zmywarka_szer" value="45" /> 45 cm</label
+                    >
+
+                    <div class="critical-check">
+                        <strong>Krytyczne punkty z instrukcji:</strong><br />
+                        <label
+                            ><input type="checkbox" />
+                            <strong
+                                >Czy to model z zawiasem ślizgowym (VarioHinge / Sliding)?</strong
+                            >
+                            (Wymagane przy niskich cokołach 10cm!).</label
+                        ><br />
+                        <label
+                            ><input type="checkbox" /> Sprawdzono max. dopuszczalny ciężar
+                            frontu.</label
+                        >
+                    </div>
+                </div>
+
+                <div class="agd-card">
+                    <h3>🔥 Piekarnik i Mikrofala (Słupek / Pod blatem)</h3>
+                    Piekarnik Model: <input type="text" class="input-line" /> Mikrofala Model:
+                    <input type="text" class="input-line" />
+
+                    <div class="critical-check">
+                        <strong>Krytyczne punkty z instrukcji:</strong><br />
+                        <label
+                            ><input type="checkbox" /> Sprawdzono schemat wentylacji słupka
+                            (szczelina za plecami szafki).</label
+                        ><br />
+                        <label
+                            ><input type="checkbox" /> Czy mikrofala wymaga ramki maskującej, czy
+                            jest w pełni do zabudowy?</label
+                        >
+                    </div>
+                </div>
+
+                <div class="agd-card">
+                    <h3>🍳 Płyta Indukcyjna / Gazowa</h3>
+                    Model: <input type="text" class="input-line" />
+
+                    <div class="critical-check">
+                        <strong>Krytyczne punkty z instrukcji:</strong><br />
+                        <label
+                            ><input type="checkbox" /> Sprawdzono grubość płyty (Czy nie wejdzie w
+                            kolizję z szufladą pod spodem?).</label
+                        ><br />
+                        <label
+                            ><input type="checkbox" /> Wymagania wentylacyjne (szczelina z przodu
+                            pod blatem).</label
+                        ><br />
+                        <label
+                            ><input type="checkbox" /> Jeśli gazowa: Czy zawór gazu jest dostępny w
+                            szafce obok?</label
+                        >
+                        <br />
+                        <label
+                            ><input type="radio" name="indukcja_prad" value="230V" /> 230V (Zwykła
+                            wtyczka)</label
+                        >
+                        <label
+                            ><input type="radio" name="indukcja_prad" value="400V" /> 400V (Siła -
+                            kable bez wtyczki)</label
+                        >
+                    </div>
+                </div>
+
+                <div class="agd-card">
+                    <h3>💨 Okap (Wkład / Kominowy / Zintegrowany z płytą)</h3>
+                    Model: <input type="text" class="input-line" /> Tryb pracy:
+                    <label
+                        ><input type="radio" name="okap_tryb" value="wyciag" /> Wyciąg (rura do
+                        komina)</label
+                    >
+                    <label style="margin-left: 15px"
+                        ><input type="radio" name="okap_tryb" value="pochlaniacz" /> Pochłaniacz
+                        (filtry węglowe)</label
+                    >
+                    <br />Średnica wylotu powietrza:
+                    <input type="text" class="input-line" style="width: 50px" /> mm (np. 120,
+                    150)<br />
+                    <div class="critical-check">
+                        <strong>Krytyczne punkty z instrukcji:</strong><br />
+                        <label
+                            ><input type="checkbox" /> Sprawdzono wymiary wycięcia w wieńcu dolnym
+                            szafki (dla wkładów).</label
+                        ><br />
+                        <label
+                            ><input type="checkbox" /> Zaplanowano trasę rury spiro/płaskiej
+                            wewnątrz szafki (kolizja z półkami!).</label
+                        >
+                    </div>
+                </div>
+
+                <div class="agd-card">
+                    <h3>💧 Zlewozmywak</h3>
+                    Model: <input type="text" class="input-line" /> Typ montażu:
+                    <label
+                        ><input type="radio" name="zlew_typ" value="wpuszczany" /> Wpuszczany</label
+                    >
+                    <label style="margin-left: 15px"
+                        ><input type="radio" name="zlew_typ" value="podwieszany" /> Podwieszany (pod
+                        HPL/Kamień)</label
+                    >
+
+                    <div class="critical-check">
+                        <strong>Krytyczne punkty z instrukcji:</strong><br />
+                        <label
+                            ><input type="checkbox" /> Czy zlew zmieści się w szafce (np. zlew 60cm
+                            do szafki 60cm - uwaga na grubość boków szafki!).</label
+                        ><br />
+                        <label
+                            ><input type="checkbox" /> Czy syfon nie koliduje z szufladami
+                            (konieczność zamówienia szuflady z wycięciem na syfon).</label
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="nav-bar"
+                style="
+                    margin-top: 30px;
+                    border-bottom: none;
+                    border-top: 1px solid var(--border-color);
+                    padding-top: 20px;
+                "
+            >
+                <a href="etap-1-strategia-projekt.html" style="float: left">← Wróć do Etapu 1</a>
+                <a href="etap-1-3-projektowanie-cad.html" style="float: right"
+                    >Przejdź do Etapu 1.3: Projektowanie CAD →</a
+                >
+                <div style="clear: both"></div>
+            </div>
+        </div>
+    </body>
+</html>

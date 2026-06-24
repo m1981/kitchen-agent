@@ -1,0 +1,154 @@
+00:00
+(Beginning of video)
+00:05
+Chapter marker
+Wstęp
+00:05
+Witam Państwa, przewodnik online.
+00:07
+Dziś zajmiemy się podstawami projektowania.
+00:10
+Część pierwsza.
+00:14
+Chapter marker
+Wczytywanie mebli z biblioteki - sposób 1
+00:14
+Zaczniemy od biblioteki.
+00:16
+W jaki sposób wczytujemy meble z biblioteki?
+00:19
+Możemy to zrobić na dwa sposoby.
+00:22
+Albo poprzez otwórz element pojawią nam się tutaj foldery, w których znajdują się konkretne szafki.
+00:32
+W momencie wybierania folderu pojawia się również jego ścieżka.
+00:38
+W tym momencie kolejne dolne mamy.
+00:40
+Mamy kolejne, przez co widzimy, że w łatwy sposób możemy się dostać do poprzednich.
+00:46
+Musimy natomiast wskazać konkretny mebel klikając na jego nazwę, żeby mieć tu podgląd po prawej stronie.
+00:55
+Możemy od razu wpisać wartość wymiarów, na przykład chciałbym szafkę o szerokości 500.
+01:02
+Po pierwszym kliknięciu wczytaj zarówno zmienił się wymiar w podglądzie, jak również mebel został wczytany.
+01:11
+Jeżeli bym na przykład wpisał tu 650, kliknął Enter, pojawi się najpierw sam obrazek, a następnie, oczywiście po edycji, następnie po kliknięciu wczytaj, mamy już wczytany element do biblioteki.
+01:29
+Chapter marker
+Wczytywanie mebli z biblioteki - sposób 2
+01:29
+Żeby cofnąć się wyżej, możemy też użyć tego przycisku cofnić.
+01:35
+Drugi sposób na wczytanie szafki z biblioteki to jest pasek boczny tutaj po prawej stronie.
+01:47
+Mamy bliźniarze podobny przycisk w tym miejscu.
+01:52
+Natomiast ta biblioteka jest pokazana nieco inaczej.
+01:56
+Tu mamy już miniatury.
+01:58
+Wejdę na ten sam folder szafki kuchenne.
+02:02
+Kolejne dolne i widzimy tu pojawiła się nam informacja na temat ścieżki.
+02:08
+Natomiast mamy już te meble w postaci miniaturek przez co od razu widzę jaką szafkę wczytuję.
+02:15
+Po kliknięciu po zaznaczeniu szafki mogę klikać albo wczytaj albo po dwójnym kliknięciu myszy od razu nam się ten mebel wczytuje.
+02:26
+Oczywiście możemy też uprzednio zmienić wymiar.
+02:31
+cofnięcie, jeden krok wstecz tym samym symbolem jaki był w starej wersji i tak możemy się cofnąć aż do samego początku możemy też zmienić ikony na duże, średnie lub małe chcę również pokazać w przypadku biblioteki właśnie tej bocznej mamy wyszukiwarkę, dzięki której jeżeli wpiszę fragment np.
+03:06
+piekarnik znajduje nam wszystkie szafki z piekarnikiem niezależnie czy jest ten wyraz na początku z małej czy z dużej litery właśnie w tym folderze żeby zamknąć tą bibliotekę, klikamy tym dużym czerwonym przyciskiem pamiętajmy, żeby nie pomylić go z tym małym przyciskiem, który służy do usuwania mebli jeżeli chcemy usunąć mebel, najpierw wybieramy, a następnie klikamy tym przyciskiem te poniższe podobnie służą do wczytywania elementów z biblioteki z tym, że już konkretnych ten pierwszy musimy najpierw określić folder np.
+03:51
+nóżki i cokoły, wskazać w tym przypadku COCU i kliknąć wczytaj.
+03:56
+On nam się wczytał za szafkami.
+03:59
+Należałoby go tutaj przesunąć bliżej.
+04:03
+Jeżeli użyłbym innych przycisków, na przykład tylko dotyczących szafek kuchennych, mam tutaj szybki skrót do dolnych, górnych, wysokich blatów roboczych i pozostałych.
+04:17
+Następnie szuflady.
+04:21
+uchwyty, a także fronty czy np.
+04:25
+elementy architektury.
+04:28
+W tym przypadku są to ściany.
+04:34
+Chapter marker
+Poruszanie się wczytanymi elementami w projekcie
+04:34
+Jeżeli mamy już wczytane kilka szafek, w jaki sposób możemy się poruszać tymi szafkami w projekcie?
+04:43
+W poprzednim odcinku pokazałem, w jaki sposób zmieniamy wymiary.
+04:47
+Krótko przypomnę, możemy wpisać gotowy wymiar po prawej stronie, np.
+04:52
+750 i kliknąć ENTER, bądź kliknąć gdzieś w innym miejscu.
+04:59
+Możemy też wpisać minus 123 Jeżeli chcielibyśmy odjąć właśnie taką wartość, po kliknięciu Enter program nam sam obliczy.
+05:12
+I podobnie działają też pozycje X, Y i Z.
+05:18
+Kość X czyli czerwona, Y zielona, Z niebieska.
+05:23
+Jeżeli mamy wskazaną szafkę, tu mamy jej pozycję X i podobnie wpisując np.
+05:29
+plus 200, a następnie Enter o taką wartość przesuniemy nasz mebel w każdym z kierunków.
+05:37
+Oczywiście odpowiednio z minusem np.
+05:41
+minus 100.
+05:43
+będziemy mieli cofnięcie tej szafki w osi Z.
+05:47
+Możemy również swobodnie meblem przesuwać w każdym kierunku, natomiast tutaj nie polecam przesuwanie mebla pod małym kątem z uwagi na to, że on wtedy będzie się poruszał bardzo szybko i nieprecyzyjnie będziemy mogli go ustawić.
+06:07
+Przy lekkim przekoszeniu widoku możemy poruszać się znacznie wygodniej.
+06:17
+Jeżeli zbliżę ten mebel do sąsiedniego, pojawią się dwie linie, niebieska i czerwona.
+06:24
+W następnym momencie, kiedy puszczę, mebel wyrówna się z sąsiedującym.
+06:29
+Jeżeli chciałbym przesunąć kilka mebel na raz, robię to z wciśniętym przyciskiem SHIFT.
+06:37
+i w tym momencie przenosza się jednocześnie kilkoma szafkami na raz pamiętając jednak o tym, że w tym momencie nie działają te linie przyciągania one zadziałają tylko wtedy, jeżeli korzystamy z pojedynczego elementu na przykładu cokół jeżeli wybrałem ten cokół chciałbym go dostawić do tych mebli pierwsze wyrównanie będzie z przodem korpusu.
+07:11
+Dalej, jeżeli go popchnę nieco głębiej, będę miał wyrównanie z tyłem tego korpusu.
+07:21
+Następnie, jeżeli wciąż chciałbym go wzrnąć dalej, dalsze przesuwanie nic nie zmieni, ponieważ cofnie mi do poprzedniego ustawienia.
+07:33
+Chapter marker
+Zmienianie wymiarów mebli
+07:33
+Wtedy muszę skorzystać właśnie z pozycji, w tym przypadku z, i na przykład, jeżeli wpiszę minus 20, przesunę go o 20 mm do wewnątrz.
+07:45
+Dlaczego minus?
+07:46
+Ponieważ tutaj wartość wektoru, wektor mi wskazuje lewą stronę, czyli muszę w prawo, czyli do tyłu przesunąć, jeżeli chciałbym z tym cokołem właśnie w tym kierunku się przesunąć.
+08:03
+Następnie w jaki sposób jeszcze możemy tutaj przesuwać się meblami?
+08:09
+W momencie kiedy wskażę mebel, łapię za strzałkę i przesuwam się w konkretnej oś X, Y, Z w zależności za którą oś w tej chwili aktualnie złapie.
+08:27
+Możemy również wykorzystać dosunięcia szafek do sąsiadujących za pomocą tych przycisków tutaj po lewej stronie.
+08:39
+Ja pokażę na przykładzie trzech szafek.
+08:46
+Chciałem tą szafkę wyrównać albo do lewej, albo do prawej.
+08:53
+Dlatego klikam i w momencie tam gdzie będzie pierwsza przeszkoda tam mebel będzie zatrzymany to samo gdybym chciał skorzystać w osi Y tutaj dodam szafkę górną I w tym przypadku, jeżeli na przykład ten webel znajduje się pod nią i kliknę tym przyciskiem, on zatrzyma się przy pierwszej przeszkodzie.
+09:25
+To samo w osi Z.
+09:28
+Chapter marker
+Dosuwanie mebli do sąsiadujących elementów
+09:28
+W tym przypadku ja przesunę w te miejsca i czy w jednym kierunku, czy w drugim kierunku do pierwszych przeszkód ten element się zatrzyma.
+09:42
+To wszystko.
+09:44
+Dziękuję za uwagę.

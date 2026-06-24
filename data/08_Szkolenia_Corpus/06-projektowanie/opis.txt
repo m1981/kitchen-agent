@@ -1,0 +1,142 @@
+Wstęp
+Program Corpus_Net oferuje zaawansowane funkcje projektowania mebli z możliwością łatwej podmiany elementów, dekorów i komponentów. W tym przewodniku omówimy podstawowe operacje w głównej przestrzeni projektowej, koncentrując się na podmianach nóżek meblowych, uchwytów, szuflad, dekorów oraz dodawaniu wyposażenia kuchennego. Poznamy również różne tryby wyświetlania projektu.
+
+Podmiana nóżek meblowych
+Podstawowa podmiana nóżek
+Aby podmienić nóżki meblowe w projekcie:
+
+Przejdź do Biblioteki
+Wybierz zakładkę 04 Nóżki Sokoły
+Otwórz folder Nóżki CNC
+Jeżeli żadna szafka nie jest wybrana - wybierz nóżkę (np. H150) i kliknij Wczytaj
+Nastąpi podmiana wszystkich nóżek oraz zmiana pozycji corpusów dolnych i górnych szafek
+Selektywna podmiana nóżek
+Dla podmiany tylko wybranych szafek:
+
+Zaznacz konkretne szafki (np. dwie wybrane)
+Wybierz nóżkę z biblioteki i kliknij Wczytaj
+Podmiana nastąpi tylko w zaznaczonych szafkach
+Podmiana z potwierdzeniem
+Przy zaznaczeniu tylko jednego mebla:
+
+Po kliknięciu Wczytaj pojawi się komunikat z liczbą wykrytych obiektów
+Możesz wybrać opcję podmiany wszystkich lub częściowej
+Odznacz niepotrzebne elementy według potrzeb
+Kliknij Zastąp aby potwierdzić
+Automatyczne dostosowanie elementów towarzyszących
+Program automatycznie dostosowuje powiązane elementy:
+
+Przy dodanych cokołach - automatycznie zwiększy ich wysokość
+Przy dodanych formatkach - dostosuje ich wymiary
+Wszystkie elementy zachowują proporcje względem nowej wysokości nóżek
+Podmiana uchwytów
+Proces podmiany uchwytów jest analogiczny do nóżek:
+
+Przejdź do folderu Uchwyty w bibliotece
+Wybierz standardowe szafki lub konkretne zaznaczone
+Wybierz pożądany uchwyt i kliknij Wczytaj
+Dostępne są zarówno uchwyty zwykłe jak i listwowe (typu Gola)
+Podmiana szuflad
+Podmiana przez bibliotekę
+Podstawowa metoda przez bibliotekę:
+
+Wskaż folder Szuflady (np. Autobloom)
+Wybierz dowolną szufladę z dostępnych opcji
+Podmiana przez zmienne parametryczne
+Zalecana metoda dla szuflad z parametrami:
+
+Ukryj fronty aby lepiej widzieć zmiany
+W panelu zmiennych znajdź parametr typu szuflady (np. obecnie Antaro)
+Zmień na pożądany typ: LegraBox, Intivo, Metabox, Muvento
+Podmiana następuje automatycznie wraz z odświeżeniem widoku
+Podmiana dekorów
+Dostęp do biblioteki dekorów
+Otwórz panel dekorów poprzez dedykowaną ikonę:
+
+Po lewej stronie: kolekcje dekorów (Eger, Kronospan, Kronoswiss, Fleiderer)
+Po środku: typy elementów (corpus szafki, front, czoło szuflady, półka, itp.)
+W głównej części: konkretne dekory z wyborem grubości u góry
+Znaczenie grubości materiału
+Wybór grubości ma kluczowe znaczenie:
+
+Zmiana grubości ogranicza dostępne dekory
+Zastosowanie dekoru o innej grubości automatycznie zmieni grubość elementu
+Podmiana jest parametryczna - zmienia zarówno dekor jak i wymiary
+Metody podmiany dekorów
+Metoda 1 - przez typ elementu:
+
+Zaznacz typ elementu (np. Corpus szafki)
+Wybierz konkretny dekor
+Podmiana dotyczy wszystkich elementów tego typu
+Metoda 2 - przeciąganie na element:
+
+Przeciągnij dekor bezpośrednio na wybrany element w projekcie
+Podmiana dotyczy tylko konkretnego elementu
+Przy zaznaczeniu jednego mebla pojawi się potwierdzenie
+Przy zaznaczeniu minimum 2 mebli - podmiana bez pytania
+Zmiana kierunku usłojenia
+Aby zmienić kierunek usłojenia drewna:
+
+Zaznacz wybrane szafki
+Zaznacz opcję Obróć usłojenie
+Przeciągnij dekor na elementy
+Po zmianie checkbox zostanie odznaczony
+Kolejne dekory zachowają nowy kierunek usłojenia
+Podmiana kolorów krawędzi PCV
+Aby zmienić tylko kolory krawędzi:
+
+Ukryj fronty dla lepszej widoczności
+Odznacz Materiały, zostaw Krawędzie
+Dla zmiany tylko krawędzi frontowych: odznacz Szerokości, zostaw Długości
+Przeciągnij wybrany kolor PCV
+W wersji produkcyjnej kod dekoru pojawi się na etykietach i w raportach
+Dodawanie wyposażenia kuchennego
+Dodawanie płyt kuchennych
+Aby dodać płytę kuchenną:
+
+Kliknij prawym przyciskiem myszy na wybranym meblu
+Wybierz Wstaw → Płyta kuchenna
+Przejdź do Wyposażenie kuchenne → Płyty kuchenne
+Wskaż konkretną płytę i kliknij Wczytaj
+Dodawanie zlewozmywaków
+Proces dodawania zlewozmywaka:
+
+Kliknij prawym przyciskiem myszy na wybranym meblu
+Wybierz Wstaw → Zlewozmywak
+Przejdź do Wyposażenie kuchenne
+Wskaż konkretny zlewozmywak i kliknij Wczytaj
+Modyfikacja wyposażenia
+Użyj funkcji Modyfikuj aby dostosować parametry dodanego już wyposażenia kuchennego.
+
+Tryby wyświetlania projektu
+Widok szkieletowy
+Kompleksowy widok techniczny:
+
+Zawiera wszystkie elementy wiertnej pod półki i zawiasy
+Pokazuje pozostałe złącza
+Przydatny do kontroli technicznej projektu
+Pełny szkielet
+Widok 3D bez nawiertów:
+
+Pokazuje modele 3D szuflad, prowadnic, zawiasów
+Ukrywa nawierty dla czystszego obrazu
+Zachowuje pozostałe elementy techniczne
+Kontrola krawędzi
+Specjalistyczny widok do kontroli PCV:
+
+Ukrywa dekory, pokazuje grubości PCV w kolorach
+Zielony kolor = grubość 1
+Czerwony kolor = grubość 2
+Łatwo identyfikuje miejsca bez krawędziowania
+Tekstura
+Standardowy widok roboczy:
+
+Pokazuje rzeczywiste dekory i tekstury
+Domyślnie włączony tryb pracy
+Najlepszy do codziennego projektowania
+Kontury elementów
+Widok z zaznaczonymi krawędziami:
+
+Wyświetla kontury wszystkich elementów
+Bez konturów obraz jest gładszy, ale kolory mogą się zlewać
+Zalecany do normalnej pracy z dekorami

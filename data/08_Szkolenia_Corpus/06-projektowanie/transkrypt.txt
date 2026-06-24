@@ -1,0 +1,264 @@
+
+00:06
+Witam Państwa w Przewodniku Online.
+00:08
+Chapter marker
+Wstęp
+00:08
+Dziś będziemy kontynuowali podstawowe funkcje w głównej przestrzeni projektowej.
+00:13
+Chapter marker
+Podmiana nóżek meblowych
+00:13
+Dodałem sobie kilka takich podstawowych szafek.
+00:17
+Tutaj jest z naszej biblioteki, z nobli przykładowych właśnie z tego folderu, a także z kuchennych górnych.
+00:25
+Na początek zajmiemy się podmianą różnych elementów.
+00:31
+W pierwszej kolejności będą to nóżki meblowe.
+00:35
+Po wejściu do biblioteki mamy zakładkę 04 Nóżki Sokoły.
+00:40
+Jeżeli ją otworzymy, mamy folder Nóżki CNC.
+00:46
+W momencie, jeżeli żadna szafka nie jest wybrana, jeżeli wybiorę nóżkę H150, kliknę wczytaj, nastąpi podmiana wszystkich nóżek, a także zmiana pozycji korpusów zarówno dolnych szafek, jak i górnych.
+01:03
+adekwatnie będzie to w drugą stronę.
+01:08
+W momencie, jeżeli wskażemy na przykład tylko dwie szafki, podmiana nastąpi we dwóch szafkach.
+01:16
+To samo oczywiście w drugą stronę.
+01:19
+Wyjątek stanowi to, gdybyśmy wskazali tylko jeden mebel.
+01:24
+Jeżeli teraz kliknę wczytaj przed podmianą wyskoczy mi taki komunikat, że wykrył 4 obiekty i czy wszystkie podmienić, czy może tylko częściowo, na przykład dwie nóżki, a dwie nie.
+01:38
+Wtedy mogę oznaczyć niepotrzebne.
+01:40
+Jeżeli kliknę zastęp, oczywiście następuje podmiana.
+01:46
+Chapter marker
+Podmiana uchwytów
+01:46
+Jeżeli chodzi jeszcze o kwestie nóżek, pokażę jeszcze jedną rzecz.
+01:51
+W momencie, jeżeli dodam na przykład cokół, taki zwykły cokół, to już nie będę go rozkładał na odpowiednią długość wszystkich mebli.
+02:03
+I wstawię również zwykłą formatkę.
+02:06
+Tę formatkę wykonam przez wstaw wysłone pleców.
+02:12
+Obrócę ją spacją o 90 stopni.
+02:16
+I zrobimy tutaj nóżko, które jest od podłogi na wysokość mebli.
+02:24
+I proszę teraz zwrócić uwagę, że jeżeli w tym momencie będę podmieniał Nóżki CNC na przykład na H150.
+02:36
+Kliknę wczytaj.
+02:37
+Nie tylko podmieni mi nóżkę i podniesie meble, ale również zwiększy wysokość cokołu, czy wymiar cokołu, jak również wymiar formatki.
+02:46
+Także można to używać również do tych funkcji.
+02:52
+Podobnie podmieniamy inne elementy, takie jak na przykład uchwyty.
+02:57
+Tu przejdę od razu do folderu uchwyty.
+03:00
+Wybieramy standardowe szafki.
+03:03
+Jeżeli wybieramy pewien uchwyt kliknął wczytaj.
+03:06
+Wtedy następuje podmiana wszystkich i adekwatnie jeżeli wskazał konkretne szafki na przykład tą tą tą i wskazał konkretny mebel, wtedy dla tych konkretnych.
+03:21
+I oczywiście pamiętajmy o tym, że jeżeli wskaże tylko i wyłączy jeden, przed podmianą zapytamy je czy na pewno obydwa, czy można ewentualnie jeszcze oznaczyć jeden z nich.
+03:36
+Podobnie, jeżeli to nie są uchwyty takie zwykłe, tylko na przykład listwowe, typu zobal, uchwyty Podobnie mogę podmieniać inne elementy, np.
+04:13
+Chapter marker
+Podmiana szuflad
+04:14
+szuflady.
+04:16
+w tym momencie musiałbym wskazać folder szuflady np.
+04:20
+autobloom i podmienić tutaj na dowolną szufladę w tym przypadku jednak nie podmienię z uwagi na to, że te szuflady mają tutaj swoje parametry i zmienne i podmiana szuflady odbywa się za pomocą tutaj zmiennych w tej chwili mam szufladę antaro jeżeli ukryłbym fronty proszę zobaczyć Mam szufladę Antaro.
+04:47
+Jeżeli chciałbym ją zmienić na LegraBox, wystarczy zaznaczyć w tym miejscu.
+04:55
+Jeszcze raz wskażemy.
+04:59
+Antaro.
+05:03
+LegraBox Intivo.
+05:05
+Teraz nastąpiła ta zmiana.
+05:08
+Mamy już podmienioną na inną szufladę.
+05:13
+To samo na przykład na Metabox czy na przykład na Muvento.
+05:24
+Ja za każdym razem muszę ukrywać front z uwagi na to, że odświeża się widok i podmiana szwad następuje wraz z podmianą frontu.
+05:36
+Chapter marker
+Podmiana dekorów
+05:36
+Przejdźmy teraz do podmiany dekorów.
+05:40
+Dekory mamy zawarte w tej ikonce.
+05:44
+Po otwarciu mamy po lewej stronie kolekcję dekorów Eger, Kronospan, Kronoswiss, Fleiderer.
+05:52
+Następnie po środku mamy typy elementów, które występują tutaj w meblach.
+05:58
+To może być korpus szafki, front, czoło szwady, półka itd.
+06:03
+A także tutaj w głównej ikonie mamy już konkretne dekory, gdzie na samej górze wybieramy grubość.
+06:10
+Ta grubość jest bardzo istotna z uwagi na to, że np.
+06:14
+będąc w egerze, w zależności od zmiany grubości widzimy, że następuje ograniczona liczba dekorów.
+06:23
+W momencie, jeżeli Zastosuję dekor o tej grubości właśnie dokładnie podmieni mi w sposób parametryczny nie tylko dekor, ale również zmieni grubość.
+06:36
+W jaki sposób?
+06:37
+Zmieniamy na przykład w korpusach.
+06:40
+Możemy to zrobić na dwa sposoby.
+06:42
+Albo zaznaczyć typ korku z szafki.
+06:44
+Oczywiście dotyczy to wszystkich, ponieważ żaden z dekorów jest nie zaznaczony.
+06:49
+A następnie wybiorę konkretny dekor, na przykład ten.
+06:54
+I nastąpi podmiana na wybrany.
+06:58
+Podmienię w tej chwili na inny.
+07:02
+Może wybiorę na przykład skrono z panu.
+07:06
+Tak, żeby posiadał uswojenie.
+07:08
+Widzimy podmiana uswojenia.
+07:13
+Przybliżyłem widok, żebyśmy zauważyli również, gdyby to była na przykład zmiana na inną grubość, na przykład na 16.
+07:21
+Wybieram ten sam dekor i widzimy, że nastąpiła również zmiana w grubości.
+07:32
+To samo oczywiście dla frontów.
+07:33
+Możemy ten front zaznaczyć i kliknąć i wtedy nastąpi zmiana dekorów.
+07:40
+Innym rodzajem podmiany jest przeniesienie konkretnego dekoru, np.
+07:47
+na korpus szafki.
+07:48
+Nieważne, że jest front zaznaczony, w momencie kiedy przeniosę na ten dekor, nastąpi podmiana właśnie konkretnie tego.
+07:56
+Daje to pewne możliwości, z uwagi na to, że np.
+08:01
+i wygodę, że nie muszę najpierw klikać w to miejsce i później klikać w dekor, tylko od razu mogę w łatwy sposób ten dekor przenieść.
+08:12
+W tym momencie zapyta mnie z uwagi na to, że zaznaczyłem jeden mebel.
+08:17
+Kiedy tych mebli byłoby więcej, minimum 2, wtedy nie pyta, tylko od razu zastępuje na konkretny, właściwy dekor.
+08:32
+Teraz przejdźmy do zmiany kierunku uswojenia.
+08:35
+Pamiętając oczywiście o tym, że to nie jest kontynuacja słoja.
+08:39
+Program Korkus nie posiada tej funkcji.
+08:41
+Tylko zmieniamy kierunek uswojenia.
+08:44
+Ja zmienię dla tych trzech szafek wiszących.
+08:49
+Mam je zaznaczone.
+08:51
+Wybieramy.
+08:52
+W pierwszej kolejności obróć uswojenie, a następnie przenoszę dekor.
+08:57
+Ja przyniosłem ten sam.
+08:59
+Widzimy następuje zmiana.
+09:01
+Oczywiście po zmianie widzimy, że oprócz usłojenie, ten checkbox został odznaczony, więc gdybym teraz przeniósł na przykład ten dekor, zachowa wciąż to usłojenie poziome.
+09:13
+Jeżeli jeszcze raz bym odznaczył i przeniósł ten dekor czy inny, nastąpi właśnie zmiana dekoru.
+09:21
+Pion, poziom.
+09:23
+Zwróćmy oczywiście uwagę, żeby szafki, jeżeli chcemy zachować w tym samym kierunku swojenia, żeby zaznaczać te meble, które potrzeba w tym przypadku ja bym zaznaczył, że chciałbym ich utrzymać pionowe tylko i wyłącznie ten mebel i zmienił w tym kierunku podobnie oczywiście z elementami innymi typu formatka ta formatka ma typ front i zmieniamy właśnie w ten sposób przez zaznaczenie zastąpienie i mamy już w kierunku pionowym Również możemy zmieniać dekory, ale samych PCV-ek.
+10:05
+Ja tutaj ukryję fronty.
+10:10
+Widzimy, że półki nie zmieniły swojego dekoru z uwagi na to, że mają swój oddzielny typ.
+10:18
+Żeby zmienić ten dekor po prostu musimy przyciągnąć tutaj na typ półka.
+10:24
+Gdybym potrzebował zmienić konkretnie dekor PCV odznaczamy tutaj na samej górze materiały pozostawiamy krawędzie ale to nie wszystko bo w tym momencie jeżeli zmieniałbym kolor PCV proszę zwrócić uwagę przeciągam wciąż na korpus dostanę zmianę wszystkich PCV-ek a mi nie zależy na zmianie wszystkich PCV-ek tylko tych frontowych Wracam więc z powrotem do tego samego dekoru i odznaczam szerokości pozostawiając długość.
+11:04
+To jest moja długość, to jest szerokość.
+11:09
+Teraz kiedy zmienię dekor widzimy, że tylko i wyłącznie mam podmienione kolory na frontach i jeżeli wykorzystywałbym pełną wersję programu produkcyjną to w tym momencie również dostanę ten kod dekoru na etykiecie jak również w raportach przywrócę fronty dodam teraz do moich szafek W oddzielnym filmie pokażę szerzej na temat blatów roboczych i ich dodawania.
+12:06
+Chapter marker
+Dodawanie płyty kuchennej i zlewozmywaka
+12:06
+Dodam po prostu tak, żeby ten blat był odpowiednio, też zmienię szerokość np.
+12:13
+na 3300, nie ma to w tej chwili większego znaczenia.
+12:19
+Wprowadzę szybką edycję po to, żeby wyeliminować zarówno zacięcia, jak również i złącza.
+12:32
+Chciałbym teraz Państwu pokazać w jaki sposób można dodać w prosty sposób płytę oraz zlewosmywak.
+12:39
+Wybieramy mebel klikając prawym myszy i używamy funkcji wstaw.
+12:46
+Zlew lub płyta kuchenna przynosi nas do biblioteki, gdzie wybieramy wyposażenie kuchenne, w tym przypadku płyty kuchenne i wskazuje konkretną płytę.
+12:58
+Podobnie jest ze zlewozmywakiem.
+13:00
+Prawym myszy wstaw zlewozmywak, wyposażenie kuchenne i wskazuje konkretny zlewozmywak, na przykład tego typu.
+13:15
+Wczytaj.
+13:17
+Mogę również użyć funkcji modyfikuj.
+13:25
+i wtedy dla konkretnego rodzaju wyposażenia, w tym przypadku dla zlewosmowa, będę modyfikował go.
+13:34
+Podobnie dla płyty.
+13:44
+Chapter marker
+Widoki i kontrola krawędzi
+13:44
+Chciałem Państwu jeszcze pokazać w tym odcinku górny pasek, tu gdzie mamy konkretne widoki.
+13:53
+Pierwszym z nich jest widok szkieletowy, który zawiera wszystkie elementy wierceń pod półki, pod zawiasy, a także pozostałe złącza.
+14:08
+Na temat ich edycji szerzej powiem w innym odcinku.
+14:14
+Kolejnym widokiem jest pełny szkielet, gdzie widzimy to samo, natomiast za wyjątkiem wiertnej.
+14:20
+Widzimy modele 3D, wszelkich szuflad, prowadnic, zawiasów, natomiast już nie widać nawiertów.
+14:29
+Kolejnym widokiem jest kontrola krawędzi.
+14:32
+Tu gdzie nie widzimy konkretnych dekorów, natomiast widzimy grubość PCV, gdzie grubością jest określony kolor.
+14:42
+W tym przypadku jedynka należy do koloru zielonego, a dwójka do koloru czerwonego.
+14:49
+W przypadku ukrycia blatu zwróćcie uwagę, że na przykład tam gdzie nie widzimy Kolejnym widokiem jest tekstura czyli ten widok który na stałe mamy uruchomiony A ostatnim są kontury elementów.
+15:21
+Również zwykle używane.
+15:23
+Widzimy, kiedy ich nie ma.
+15:25
+Ten obraz jest taki bardziej gładki, ale jednocześnie kolory z większej odległości zlewają się ze sobą.
+15:32
+Także polecam używać do normalnej pracy dekorów.
+15:38
+Dziękuję za uwagę.

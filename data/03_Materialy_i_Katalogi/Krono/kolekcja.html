@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Swiss Krono – Zestawy kuchenne</title>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.5/cdn.min.js"
+            defer
+        ></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            /* ── Zmienne kolorystyczne ── */
+            :root {
+                --clr-bg: #f5f4f1;
+                --clr-card: #ffffff;
+                --clr-border: #e2e0da;
+                --clr-accent: #2c5f4a;
+                --clr-accent-light: #e8f0ec;
+                --clr-text: #1a1a18;
+                --clr-muted: #6b6b60;
+                --clr-new: #c8832a;
+            }
+
+            body {
+                background: var(--clr-bg);
+                color: var(--clr-text);
+                font-family: 'Segoe UI', system-ui, sans-serif;
+            }
+
+            /* ── Swatch (kafelek próbki) ── */
+            .swatch {
+                width: 100%;
+                max-width: 80px; /* Strict max-width for consistency */
+                aspect-ratio: 1/1;
+                border-radius: 6px;
+                border: 1.5px solid var(--clr-border);
+                background-size: cover;
+                background-position: center;
+                /* fallback gradient gdy brak pliku */
+                background-color: #d4cfc7;
+                display: flex;
+                align-items: flex-end;
+                overflow: hidden;
+                transition: box-shadow 0.15s;
+                margin: 0 auto; /* Center the swatch in its column */
+            }
+            .swatch:hover {
+                box-shadow: 0 0 0 2px var(--clr-accent);
+            }
+            .swatch-label {
+                width: 100%;
+                font-size: 9px;
+                line-height: 1.2;
+                background: rgba(0, 0, 0, 0.45);
+                color: #fff;
+                padding: 3px 4px;
+                text-align: center;
+            }
+
+            /* ── Wiersz zestawu ── */
+            .row-card {
+                background: var(--clr-card);
+                border: 1px solid var(--clr-border);
+                border-radius: 10px;
+                transition: box-shadow 0.15s;
+            }
+            .row-card:hover {
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            /* ── Badge NEW ── */
+            .badge-new {
+                background: var(--clr-new);
+                color: #fff;
+                font-size: 9px;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                padding: 1px 5px;
+                border-radius: 3px;
+                vertical-align: middle;
+                margin-left: 4px;
+            }
+
+            /* ── Sticky header ── */
+            .sticky-head {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+                background: var(--clr-bg);
+                border-bottom: 1px solid var(--clr-border);
+            }
+
+            /* ── Filtr chips ── */
+            .chip {
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 12px;
+                cursor: pointer;
+                border: 1px solid var(--clr-border);
+                background: #fff;
+                transition: all 0.15s;
+            }
+            .chip.active {
+                background: var(--clr-accent);
+                color: #fff;
+                border-color: var(--clr-accent);
+            }
+
+            /* ── Kolumna-sekcja ── */
+            .col-head {
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.8px;
+                text-transform: uppercase;
+                color: var(--clr-muted);
+            }
+
+            /* ── Placeholder (gdy brak grafiki) ── */
+            .ph {
+                background: repeating-linear-gradient(
+                    45deg,
+                    #e0ddd6,
+                    #e0ddd6 4px,
+                    #eceae4 4px,
+                    #eceae4 8px
+                );
+            }
+
+            /* ── Grid Layout ── */
+            .data-grid {
+                display: grid;
+                grid-template-columns: minmax(200px, 2fr) repeat(4, minmax(90px, 1fr));
+                gap: 12px;
+                align-items: center;
+            }
+        </style>
+    </head>
+
+    <body x-data="app()" x-init="init()">
+        <!-- ══ NAGŁÓWEK ══ -->
+        <header class="sticky-head px-6 py-3 flex items-center gap-4 flex-wrap">
+            <div class="flex items-center gap-2 mr-4">
+                <div class="w-3 h-3 rounded-full" style="background: var(--clr-accent)"></div>
+                <span class="font-bold tracking-wide text-sm">SWISS KRONO</span>
+                <span class="text-xs" style="color: var(--clr-muted)"
+                    >Zestawy kuchenne 02.2026</span
+                >
+            </div>
+
+            <!-- Szukajka -->
+            <input
+                x-model="search"
+                type="search"
+                placeholder="Szukaj dekoru…"
+                class="border rounded-lg px-3 py-1.5 text-sm flex-1 min-w-32 max-w-xs focus:outline-none focus:ring-2 focus:ring-[#2c5f4a] focus:border-transparent"
+                style="border-color: var(--clr-border)"
+            />
+
+            <!-- Filtry kategorii -->
+            <div class="flex gap-1 flex-wrap">
+                <template x-for="cat in categories" :key="cat.id">
+                    <button
+                        @click="toggleCat(cat.id)"
+                        :class="activeCats.includes(cat.id) ? 'chip active' : 'chip'"
+                        x-text="cat.label"
+                    ></button>
+                </template>
+            </div>
+
+            <!-- Licznik -->
+            <span class="text-xs ml-auto whitespace-nowrap" style="color: var(--clr-muted)">
+                <span x-text="filtered.length"></span> / <span x-text="rows.length"></span> zestawów
+            </span>
+        </header>
+
+        <!-- ══ LEGENDA KOLUMN ══ -->
+        <div class="px-6 py-2 data-grid">
+            <div class="col-head">Nazwa dekoru</div>
+            <div class="col-head text-center">🪵 Płyta MFC</div>
+            <div class="col-head text-center">🔲 Blat</div>
+            <div class="col-head text-center">📄 HPL</div>
+            <div class="col-head text-center">🟫 Podłoga</div>
+        </div>
+
+        <!-- ══ SIATKA ZESTAWÓW ══ -->
+        <main class="px-6 pb-10 space-y-2">
+            <template x-if="filtered.length === 0">
+                <div class="text-center py-20 text-sm" style="color: var(--clr-muted)">
+                    Brak wyników dla "<span x-text="search"></span>"
+                </div>
+            </template>
+
+            <template x-for="row in filtered" :key="row.id">
+                <div class="row-card px-4 py-3 data-grid">
+                    <!-- Nazwa + kolekcja -->
+                    <div>
+                        <div class="font-semibold text-sm leading-tight">
+                            <span x-text="row.name"></span>
+                            <span x-show="row.isNew" class="badge-new">NEW</span>
+                        </div>
+                        <div class="text-xs mt-0.5" style="color: var(--clr-muted)">
+                            <span x-text="row.code"></span>
+                            <span
+                                class="ml-2 font-medium"
+                                style="color: var(--clr-accent)"
+                                x-text="row.collection"
+                            ></span>
+                        </div>
+                        <div class="flex gap-1 mt-1 flex-wrap">
+                            <template x-for="tag in row.tags" :key="tag">
+                                <span
+                                    class="text-xs px-1.5 py-0.5 rounded"
+                                    style="
+                                        background: var(--clr-accent-light);
+                                        color: var(--clr-accent);
+                                    "
+                                    x-text="tag"
+                                ></span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Płyta MFC -->
+                    <div class="flex flex-col items-center gap-1 w-full">
+                        <template x-if="row.plyta">
+                            <div class="w-full">
+                                <div
+                                    class="swatch"
+                                    :class="!row.plyta.img && 'ph'"
+                                    :style="row.plyta.img ? `background-image:url('img/${row.plyta.img}')` : ''"
+                                >
+                                    <span class="swatch-label" x-text="row.plyta.code"></span>
+                                </div>
+                                <div
+                                    class="text-center text-xs mt-1"
+                                    style="color: var(--clr-muted)"
+                                    x-text="row.plyta.struct"
+                                ></div>
+                            </div>
+                        </template>
+                        <template x-if="!row.plyta">
+                            <div class="text-xs" style="color: var(--clr-border)">—</div>
+                        </template>
+                    </div>
+
+                    <!-- Blat -->
+                    <div class="flex flex-col items-center gap-1 w-full">
+                        <template x-if="row.blat">
+                            <div class="w-full">
+                                <div
+                                    class="swatch"
+                                    :class="!row.blat.img && 'ph'"
+                                    :style="row.blat.img ? `background-image:url('img/${row.blat.img}')` : ''"
+                                >
+                                    <span class="swatch-label" x-text="row.blat.code"></span>
+                                </div>
+                                <div
+                                    class="text-center text-xs mt-1"
+                                    style="color: var(--clr-muted)"
+                                    x-text="row.blat.struct"
+                                ></div>
+                            </div>
+                        </template>
+                        <template x-if="!row.blat">
+                            <div class="text-xs" style="color: var(--clr-border)">—</div>
+                        </template>
+                    </div>
+
+                    <!-- HPL -->
+                    <div class="flex flex-col items-center gap-1 w-full">
+                        <template x-if="row.hpl">
+                            <div class="w-full">
+                                <div
+                                    class="swatch"
+                                    :class="!row.hpl.img && 'ph'"
+                                    :style="row.hpl.img ? `background-image:url('img/${row.hpl.img}')` : ''"
+                                >
+                                    <span class="swatch-label" x-text="row.hpl.code"></span>
+                                </div>
+                                <div
+                                    class="text-center text-xs mt-1"
+                                    style="color: var(--clr-muted)"
+                                    x-text="row.hpl.struct"
+                                ></div>
+                            </div>
+                        </template>
+                        <template x-if="!row.hpl">
+                            <div class="text-xs" style="color: var(--clr-border)">—</div>
+                        </template>
+                    </div>
+
+                    <!-- Podłoga -->
+                    <div class="flex flex-col items-center gap-1 w-full">
+                        <template x-if="row.podloga">
+                            <div class="w-full">
+                                <div
+                                    class="swatch"
+                                    :class="!row.podloga.img && 'ph'"
+                                    :style="row.podloga.img ? `background-image:url('img/${row.podloga.img}')` : ''"
+                                >
+                                    <span class="swatch-label" x-text="row.podloga.code"></span>
+                                </div>
+                                <div
+                                    class="text-center text-xs mt-1"
+                                    style="color: var(--clr-muted)"
+                                    x-text="row.podloga.struct"
+                                ></div>
+                            </div>
+                        </template>
+                        <template x-if="!row.podloga">
+                            <div class="text-xs text-center" style="color: var(--clr-border)">
+                                —
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </main>
+
+        <script>
+            // ─────────────────────────────────────────────
+            // DANE – przepisane z tabeli 02.2026
+            // Klucz img: nazwa pliku w folderze /img/
+            // Zostaw img: null gdy nie masz jeszcze grafiki
+            // ─────────────────────────────────────────────
+            const RAW = [
+                {
+                    id: 1,
+                    name: 'Allegory',
+                    code: 'D20320',
+                    isNew: true,
+                    cat: 'sensesation',
+                    tags: ['sensesation', 'drewno'],
+                    plyta: { code: 'D20320 CX', struct: 'CX – SenseSation', img: null },
+                    blat: { code: 'D20320 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D20320 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 2,
+                    name: 'Antracyt',
+                    code: 'U164',
+                    isNew: false,
+                    cat: 'unikolor',
+                    tags: ['unikolor'],
+                    plyta: { code: 'U164 PE/VL', struct: 'PE / VL', img: null },
+                    blat: { code: 'U164 KM', struct: 'KM – Kamienna', img: null },
+                    hpl: { code: 'U164 KM', struct: 'KM – Kamienna', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 3,
+                    name: 'Beton',
+                    code: 'D3274',
+                    isNew: false,
+                    cat: 'kamien',
+                    tags: ['beton', 'kamień'],
+                    plyta: { code: 'D3274 BS', struct: 'BS – Biurowa', img: null },
+                    blat: { code: 'D3274 VL', struct: 'VL – Mat', img: null },
+                    hpl: { code: 'D3274 VL', struct: 'VL – Mat', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 4,
+                    name: 'Beton Ciemny',
+                    code: 'D3265',
+                    isNew: false,
+                    cat: 'kamien',
+                    tags: ['beton', 'kamień'],
+                    plyta: { code: 'D3265 BS', struct: 'BS – Biurowa', img: null },
+                    blat: { code: 'D3265 BT', struct: 'BT – Beton', img: null },
+                    hpl: { code: 'D3265 BT', struct: 'BT – Beton', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 5,
+                    name: 'Beton Dekada',
+                    code: 'D3963',
+                    isNew: false,
+                    cat: 'kamien',
+                    tags: ['beton', 'tylko blat'],
+                    plyta: null,
+                    blat: { code: 'D3963 SK', struct: 'SK – Skalna', img: null },
+                    hpl: { code: 'D3963 SK', struct: 'SK – Skalna', img: null },
+                    podloga: { code: 'D3963 OW', struct: 'OW – ONE Wood', img: null }
+                },
+
+                {
+                    id: 6,
+                    name: 'Beton Millenium',
+                    code: 'D1038',
+                    isNew: false,
+                    cat: 'kamien',
+                    tags: ['beton'],
+                    plyta: { code: 'D1038 BS', struct: 'BS – Biurowa', img: null },
+                    blat: { code: 'D1038 SK', struct: 'SK – Skalna', img: null },
+                    hpl: { code: 'D1038 SK', struct: 'SK – Skalna', img: null },
+                    podloga: { code: 'D1038 OW', struct: 'OW – ONE Wood', img: null }
+                },
+
+                {
+                    id: 7,
+                    name: 'Beton Szary',
+                    code: 'D30090',
+                    isNew: false,
+                    cat: 'kamien',
+                    tags: ['beton', 'kamień'],
+                    plyta: { code: 'D30090 TO', struct: 'TO – Touch ONE', img: null },
+                    blat: { code: 'D30090 TO', struct: 'TO – Touch ONE', img: null },
+                    hpl: { code: 'D30090 TO', struct: 'TO – Touch ONE', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 8,
+                    name: 'Biały',
+                    code: 'K101',
+                    isNew: false,
+                    cat: 'unikolor',
+                    tags: ['unikolor', 'biel'],
+                    plyta: { code: 'K101 PE/SE', struct: 'PE / SE', img: null },
+                    blat: { code: 'K101 PE', struct: 'PE – Perlista', img: null },
+                    hpl: { code: 'K101 PE', struct: 'PE – Perlista', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 9,
+                    name: 'Biały Alaska',
+                    code: 'U8681',
+                    isNew: false,
+                    cat: 'unikolor',
+                    tags: ['unikolor', 'biel'],
+                    plyta: { code: 'U8681 SM/VL', struct: 'SM / VL', img: null },
+                    blat: { code: 'U8681 KM', struct: 'KM – Kamienna', img: null },
+                    hpl: { code: 'U8681 KM', struct: 'KM – Kamienna', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 10,
+                    name: 'Biel Alpejska',
+                    code: 'U8685',
+                    isNew: false,
+                    cat: 'unikolor',
+                    tags: ['unikolor', 'biel'],
+                    plyta: { code: 'U8685 SM', struct: 'SM – Gładka', img: null },
+                    blat: { code: 'U8685 SQ', struct: 'SQ – Połysk', img: null },
+                    hpl: { code: 'U8685 SQ', struct: 'SQ – Połysk', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 11,
+                    name: 'Buk Bordeaux',
+                    code: 'D3806',
+                    isNew: false,
+                    cat: 'drewno',
+                    tags: ['buk', 'drewno'],
+                    plyta: { code: 'D3806 OW', struct: 'OW – ONE Wood', img: null },
+                    blat: { code: 'D3806 OW', struct: 'OW – ONE Wood', img: null },
+                    hpl: { code: 'D3806 OW', struct: 'OW – ONE Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 12,
+                    name: 'Czarny',
+                    code: 'U190',
+                    isNew: false,
+                    cat: 'unikolor',
+                    tags: ['unikolor', 'czerń'],
+                    plyta: { code: 'U190 SE/PE', struct: 'SE / PE', img: null },
+                    blat: { code: 'U190 KM', struct: 'KM – Kamienna', img: null },
+                    hpl: { code: 'U190 KM', struct: 'KM – Kamienna', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 13,
+                    name: 'Dąb Artisan',
+                    code: 'D4225',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D4225 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D4225 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D4225 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 14,
+                    name: 'Dąb Biszkoptowy',
+                    code: 'D4032',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D4032 OW', struct: 'OW – ONE Wood', img: null },
+                    blat: { code: 'D4032 OW', struct: 'OW – ONE Wood', img: null },
+                    hpl: { code: 'D4032 OW', struct: 'OW – ONE Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 15,
+                    name: 'Dąb Canyon',
+                    code: 'D3273',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D3273 MX', struct: 'MX – Matrix', img: null },
+                    blat: { code: 'D3273 MX', struct: 'MX – Matrix', img: null },
+                    hpl: { code: 'D3273 MX', struct: 'MX – Matrix', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 16,
+                    name: 'Dąb Fornir',
+                    code: 'D60654',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno', 'fornir'],
+                    plyta: { code: 'D60654 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D60654 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D60654 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 17,
+                    name: 'Dąb Frappe',
+                    code: 'D1096',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D1096 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D1096 NA', struct: 'NA – Natural Wood', img: null },
+                    hpl: { code: 'D1096 NA', struct: 'NA – Natural Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 18,
+                    name: 'Dąb Latte',
+                    code: 'D1094',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D1094 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D1094 NA', struct: 'NA – Natural Wood', img: null },
+                    hpl: { code: 'D1094 NA', struct: 'NA – Natural Wood', img: null },
+                    podloga: { code: 'D50524 OV', struct: 'OV – ONE Vision', img: null }
+                },
+
+                {
+                    id: 19,
+                    name: 'Dąb Letni',
+                    code: 'D20230',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D20230 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D20230 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D20230 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: { code: 'D50564 SO', struct: 'SO', img: null }
+                },
+
+                {
+                    id: 20,
+                    name: 'Dąb Letni Złoty',
+                    code: 'D20551',
+                    isNew: true,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno', 'ONE World PL'],
+                    plyta: { code: 'D20551 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D20551 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D20551 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 21,
+                    name: 'Dąb Liryczny',
+                    code: 'D20140',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D20140 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D20140 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D20140 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 22,
+                    name: 'Dąb Lungo',
+                    code: 'D1089',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D1089 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D1089 NA', struct: 'NA – Natural Wood', img: null },
+                    hpl: { code: 'D1089 NA', struct: 'NA – Natural Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 23,
+                    name: 'Dąb Mocha',
+                    code: 'D1092',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D1092 OW', struct: 'OW – ONE Wood', img: null },
+                    blat: { code: 'D1092 OW', struct: 'OW – ONE Wood', img: null },
+                    hpl: { code: 'D1092 OW', struct: 'OW – ONE Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 24,
+                    name: 'Dąb Nastrojowy',
+                    code: 'D20754',
+                    isNew: true,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno', 'ONE World PL'],
+                    plyta: { code: 'D20754 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D20754 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D20754 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 25,
+                    name: 'Dąb Naturalny',
+                    code: 'D4428',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D4428 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D4428 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D4428 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 26,
+                    name: 'Dąb Nostalgiczny',
+                    code: 'D20110',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D20110 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D20110 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D20110 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 27,
+                    name: 'Dąb Nowy Jork',
+                    code: 'D3823',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D3823 OW', struct: 'OW – ONE Wood', img: null },
+                    blat: { code: 'D3823 OW', struct: 'OW – ONE Wood', img: null },
+                    hpl: { code: 'D3823 OW', struct: 'OW – ONE Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 28,
+                    name: 'Dąb Odwieczny',
+                    code: 'D1041',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D1041 OW', struct: 'OW – ONE Wood', img: null },
+                    blat: { code: 'D1041 OW', struct: 'OW – ONE Wood', img: null },
+                    hpl: { code: 'D1041 OW', struct: 'OW – ONE Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 29,
+                    name: 'Dąb Pradawny',
+                    code: 'D1035',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D1035 OW', struct: 'OW – ONE Wood', img: null },
+                    blat: { code: 'D1035 OW', struct: 'OW – ONE Wood', img: null },
+                    hpl: { code: 'D1035 OW', struct: 'OW – ONE Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 30,
+                    name: 'Dąb Słoneczny',
+                    code: 'D4033',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D4033 OW', struct: 'OW – ONE Wood', img: null },
+                    blat: { code: 'D4033 OW', struct: 'OW – ONE Wood', img: null },
+                    hpl: { code: 'D4033 OW', struct: 'OW – ONE Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 31,
+                    name: 'Dąb Sonoma',
+                    code: 'D3025',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D3025 OW', struct: 'OW – ONE Wood', img: null },
+                    blat: { code: 'D3025 OW', struct: 'OW – ONE Wood', img: null },
+                    hpl: { code: 'D3025 OW', struct: 'OW – ONE Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 32,
+                    name: 'Dąb Sztokholm',
+                    code: 'D3821',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D3821 OW', struct: 'OW – ONE Wood', img: null },
+                    blat: { code: 'D3821 OW', struct: 'OW – ONE Wood', img: null },
+                    hpl: { code: 'D3821 OW', struct: 'OW – ONE Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 33,
+                    name: 'Dąb Wersal',
+                    code: 'D4865',
+                    isNew: false,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno'],
+                    plyta: { code: 'D4865 OW', struct: 'OW – ONE Wood', img: null },
+                    blat: { code: 'D4865 VL', struct: 'VL – Mat', img: null },
+                    hpl: { code: 'D4865 VL', struct: 'VL – Mat', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 34,
+                    name: 'Dąb Wiosenny',
+                    code: 'D20744',
+                    isNew: true,
+                    cat: 'dab',
+                    tags: ['dąb', 'drewno', 'ONE World PL'],
+                    plyta: { code: 'D20744 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D20744 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D20744 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 35,
+                    name: 'Drewno Retro',
+                    code: 'D4040',
+                    isNew: false,
+                    cat: 'drewno',
+                    tags: ['drewno', 'retro'],
+                    plyta: { code: 'D4040 MX', struct: 'MX – Matrix', img: null },
+                    blat: { code: 'D4040 MX', struct: 'MX – Matrix', img: null },
+                    hpl: { code: 'D4040 MX', struct: 'MX – Matrix', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 36,
+                    name: 'Embrace',
+                    code: 'D20280',
+                    isNew: true,
+                    cat: 'sensesation',
+                    tags: ['sensesation', 'drewno'],
+                    plyta: { code: 'D20280 CX', struct: 'CX – SenseSation', img: null },
+                    blat: { code: 'D20280 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D20280 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 37,
+                    name: 'Emotion',
+                    code: 'D20290',
+                    isNew: true,
+                    cat: 'sensesation',
+                    tags: ['sensesation', 'drewno'],
+                    plyta: { code: 'D20290 CX', struct: 'CX – SenseSation', img: null },
+                    blat: { code: 'D20290 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D20290 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 38,
+                    name: 'Jesion Jasny',
+                    code: 'D4426',
+                    isNew: false,
+                    cat: 'drewno',
+                    tags: ['jesion', 'drewno'],
+                    plyta: { code: 'D4426 OV', struct: 'OV – ONE Vision', img: null },
+                    blat: { code: 'D4426 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D4426 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 39,
+                    name: 'Jesion Werona',
+                    code: 'D3158',
+                    isNew: false,
+                    cat: 'drewno',
+                    tags: ['jesion', 'drewno'],
+                    plyta: { code: 'D3158 MX', struct: 'MX – Matrix', img: null },
+                    blat: { code: 'D3158 MX', struct: 'MX – Matrix', img: null },
+                    hpl: { code: 'D3158 MX', struct: 'MX – Matrix', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 40,
+                    name: 'Kwarcyt Szary',
+                    code: 'D30220',
+                    isNew: false,
+                    cat: 'kamien',
+                    tags: ['kamień', 'kwarcyt'],
+                    plyta: { code: 'D30220 TO', struct: 'TO – Touch ONE', img: null },
+                    blat: { code: 'D30220 TO', struct: 'TO – Touch ONE', img: null },
+                    hpl: { code: 'D30220 TO', struct: 'TO – Touch ONE', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 41,
+                    name: 'Marmur Crema',
+                    code: 'D4448',
+                    isNew: false,
+                    cat: 'kamien',
+                    tags: ['kamień', 'marmur'],
+                    plyta: { code: 'D4448 VL', struct: 'VL – Mat', img: null },
+                    blat: { code: 'D4448 SM', struct: 'SM – Gładka', img: null },
+                    hpl: { code: 'D4448 SM', struct: 'SM – Gładka', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 42,
+                    name: 'Oasis',
+                    code: 'D20240',
+                    isNew: true,
+                    cat: 'sensesation',
+                    tags: ['sensesation', 'drewno'],
+                    plyta: { code: 'D20240 CX', struct: 'CX – SenseSation', img: null },
+                    blat: { code: 'D20240 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D20240 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 43,
+                    name: 'Origin',
+                    code: 'D20250',
+                    isNew: true,
+                    cat: 'sensesation',
+                    tags: ['sensesation', 'drewno'],
+                    plyta: { code: 'D20250 CX', struct: 'CX – SenseSation', img: null },
+                    blat: { code: 'D20250 OV', struct: 'OV – ONE Vision', img: null },
+                    hpl: { code: 'D20250 OV', struct: 'OV – ONE Vision', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 44,
+                    name: 'Orzech Nicea',
+                    code: 'D3810',
+                    isNew: false,
+                    cat: 'drewno',
+                    tags: ['orzech', 'drewno'],
+                    plyta: { code: 'D3810 OW', struct: 'OW – ONE Wood', img: null },
+                    blat: { code: 'D3810 OW', struct: 'OW – ONE Wood', img: null },
+                    hpl: { code: 'D3810 OW', struct: 'OW – ONE Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 45,
+                    name: 'Orzech Południowy',
+                    code: 'D1039',
+                    isNew: false,
+                    cat: 'drewno',
+                    tags: ['orzech', 'drewno'],
+                    plyta: { code: 'D1039 OW', struct: 'OW – ONE Wood', img: null },
+                    blat: { code: 'D1039 OW', struct: 'OW – ONE Wood', img: null },
+                    hpl: { code: 'D1039 OW', struct: 'OW – ONE Wood', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 46,
+                    name: 'Wydmy Beżowe',
+                    code: 'D30160',
+                    isNew: false,
+                    cat: 'kamien',
+                    tags: ['kamień', 'piasek'],
+                    plyta: { code: 'D30160 TO', struct: 'TO – Touch ONE', img: null },
+                    blat: { code: 'D30160 TO', struct: 'TO – Touch ONE', img: null },
+                    hpl: { code: 'D30160 TO', struct: 'TO – Touch ONE', img: null },
+                    podloga: null
+                },
+
+                {
+                    id: 47,
+                    name: 'Wytrawny Szary Kamień',
+                    code: 'D4878',
+                    isNew: false,
+                    cat: 'kamien',
+                    tags: ['kamień', 'szary'],
+                    plyta: { code: 'D4878 VL', struct: 'VL – Mat', img: null },
+                    blat: { code: 'D4878 VL', struct: 'VL – Mat', img: null },
+                    hpl: { code: 'D4878 VL', struct: 'VL – Mat', img: null },
+                    podloga: null
+                }
+            ];
+
+            function app() {
+                return {
+                    rows: RAW,
+                    search: '',
+                    activeCats: [],
+                    categories: [
+                        { id: 'sensesation', label: '✦ SenseSation NEW' },
+                        { id: 'dab', label: 'Dąb' },
+                        { id: 'drewno', label: 'Drewno inne' },
+                        { id: 'unikolor', label: 'Unikolory' },
+                        { id: 'kamien', label: 'Kamień / Beton' }
+                    ],
+
+                    init() {
+                        // tutaj możesz w przyszłości fetch() dane z JSON
+                    },
+
+                    toggleCat(id) {
+                        if (this.activeCats.includes(id)) {
+                            this.activeCats = this.activeCats.filter((c) => c !== id);
+                        } else {
+                            this.activeCats.push(id);
+                        }
+                    },
+
+                    get filtered() {
+                        let r = this.rows;
+                        if (this.activeCats.length) {
+                            r = r.filter((row) => this.activeCats.includes(row.cat));
+                        }
+                        if (this.search.trim()) {
+                            const q = this.search.trim().toLowerCase();
+                            r = r.filter(
+                                (row) =>
+                                    row.name.toLowerCase().includes(q) ||
+                                    row.code.toLowerCase().includes(q) ||
+                                    row.tags.some((t) => t.toLowerCase().includes(q))
+                            );
+                        }
+                        return r;
+                    }
+                };
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Karta Pomiarowa - SOP PRO</title>
+        <link rel="stylesheet" href="./common.css" />
+        <style>
+            .section-header {
+                background-color: var(--primary-color);
+                color: white;
+                padding: 10px 15px;
+                margin-top: 30px;
+                margin-bottom: 15px;
+                border-radius: 3px;
+            }
+            .input-small {
+                width: 80px;
+                text-align: center;
+            }
+            .highlight-base {
+                background-color: #fff3cd;
+                font-weight: bold;
+            }
+            .checkbox-inline {
+                margin-right: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div style="margin-bottom: 20px">
+                <a
+                    href="index.html"
+                    style="text-decoration: none; color: var(--primary-color); font-weight: bold"
+                    >← Powrót do Panelu Głównego</a
+                >
+            </div>
+
+            <h1>KARTA POMIAROWA (ETAP 1.1)</h1>
+
+            <table style="margin-bottom: 20px">
+                <tr>
+                    <td style="width: 50%">
+                        <strong>Inwestycja / Klient:</strong>
+                        <input type="text" style="width: 60%" />
+                    </td>
+                    <td style="width: 50%">
+                        <strong>Data:</strong> <input type="text" style="width: 60%" />
+                    </td>
+                </tr>
+            </table>
+
+            <!-- ========================================== -->
+            <!-- SEKCJA A: STAN ZEROWY                      -->
+            <!-- ========================================== -->
+            <h2 class="section-header">🏗️ A. STAN ZEROWY (Co mierzymy?)</h2>
+            <div
+                style="
+                    margin-bottom: 20px;
+                    padding: 10px;
+                    border: 1px solid var(--border-color);
+                    background-color: #fdfefe;
+                "
+            >
+                <label class="checkbox-inline"><input type="checkbox" /> Tynki gotowe</label>
+                <label class="checkbox-inline"><input type="checkbox" /> Gładzie gotowe</label>
+                <label class="checkbox-inline"
+                    ><input type="checkbox" /> Podłoga docelowa leży</label
+                >
+                <label class="checkbox-inline"
+                    ><input type="checkbox" /> Stan surowy (uwaga!)</label
+                >
+                <div style="margin-top: 10px">
+                    <strong>Brakujące warstwy (ile mm doliczyć do projektu?):</strong>
+                    <input
+                        type="text"
+                        style="width: 60%"
+                        placeholder="np. +15mm na panele, +5mm na gładź"
+                    />
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- SEKCJA B: GEOMETRIA POMIESZCZENIA          -->
+            <!-- ========================================== -->
+            <h2 class="section-header">📐 B. GEOMETRIA POMIESZCZENIA</h2>
+            <strong>🧱 Rodzaj ściany nośnej (pod szafki górne):</strong><br />
+            <label><input type="radio" name="sciana" value="zelbet" /> Żelbet / Beton</label>
+            <label><input type="radio" name="sciana" value="silikat" /> Silikat / Cegła</label>
+            <label><input type="radio" name="sciana" value="gazobeton" /> Gazobeton (Ytong)</label>
+            <label><input type="radio" name="sciana" value="gk" /> Karton-Gips (GK) ⚠️</label>
+            <div class="cad-rules">
+                <div class="rules-grid">
+                    <div class="rule-card">
+                        <h3>Zasada 3 Punktów (Szukaj MIN)</h3>
+                        <div class="img-placeholder">
+                            <img src="img/zasada-3-punktow.jpg" alt="Zasada 3 punktów" />
+                        </div>
+                    </div>
+                    <div class="rule-card">
+                        <h3>Kąty i Piony</h3>
+                        <div class="img-placeholder">
+                            <img src="img/katy-piony.jpg" alt="Kąty i piony" />
+                        </div>
+                    </div>
+                    <div class="rule-card">
+                        <h3>Poziom Podłogi (Szukaj MAX)</h3>
+                        <div class="img-placeholder">
+                            <img src="img/poziom-podlogi.jpg" alt="Poziom podłogi" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p>
+                <em
+                    >Zawsze mierz od lewej do prawej. Zaznacz najmniejszy wymiar jako BAZĘ do
+                    projektu.</em
+                >
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Wymiar [mm]</th>
+                        <th style="width: 15%; text-align: center">Dół / Lewo</th>
+                        <th style="width: 15%; text-align: center">Środek</th>
+                        <th style="width: 15%; text-align: center">Góra / Prawo</th>
+                        <th style="width: 15%; text-align: center; background-color: #e67e22">
+                            BAZA (MIN)
+                        </th>
+                        <th style="width: 15%">Uwagi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Szerokość Ściany A (Główna)</strong></td>
+                        <td style="text-align: center">
+                            <input type="text" class="input-small" />
+                        </td>
+                        <td style="text-align: center">
+                            <input type="text" class="input-small" />
+                        </td>
+                        <td style="text-align: center">
+                            <input type="text" class="input-small" />
+                        </td>
+                        <td class="highlight-base" style="text-align: center">
+                            <input type="text" class="input-small" style="font-weight: bold" />
+                        </td>
+                        <td><input type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Szerokość Ściany B (Boczna)</strong></td>
+                        <td style="text-align: center">
+                            <input type="text" class="input-small" />
+                        </td>
+                        <td style="text-align: center">
+                            <input type="text" class="input-small" />
+                        </td>
+                        <td style="text-align: center">
+                            <input type="text" class="input-small" />
+                        </td>
+                        <td class="highlight-base" style="text-align: center">
+                            <input type="text" class="input-small" style="font-weight: bold" />
+                        </td>
+                        <td><input type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Wysokość pomieszczenia</strong></td>
+                        <td style="text-align: center">
+                            <input type="text" class="input-small" />
+                        </td>
+                        <td style="text-align: center">
+                            <input type="text" class="input-small" />
+                        </td>
+                        <td style="text-align: center">
+                            <input type="text" class="input-small" />
+                        </td>
+                        <td class="highlight-base" style="text-align: center">
+                            <input type="text" class="input-small" style="font-weight: bold" />
+                        </td>
+                        <td><input type="text" /></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table style="margin-bottom: 30px">
+                <tr>
+                    <td style="width: 50%">
+                        <strong>Kąt Narożnik Lewy:</strong>
+                        <input type="text" class="input-small" /> stopni<br />
+                        <strong>Kąt Narożnik Prawy:</strong>
+                        <input type="text" class="input-small" /> stopni
+                    </td>
+                    <td style="width: 50%">
+                        <strong>Odchyłka podłogi (ile mm ucieka?):</strong>
+                        <input type="text" style="width: 100px" /><br />
+                        <strong>Odchyłka ścian od pionu:</strong>
+                        <input type="text" style="width: 150px" />
+                    </td>
+                </tr>
+            </table>
+
+            <!-- NOWE: Detale Okna -->
+            <div
+                style="
+                    padding: 10px;
+                    border: 1px solid var(--border-color);
+                    background-color: #fdfefe;
+                    margin-bottom: 30px;
+                "
+            >
+                <strong>🪟 Detale Okna i Parapetu (Analiza Kolizji):</strong><br />
+                <label
+                    ><input type="checkbox" /> Czy bateria zlewozmywakowa zablokuje otwarcie
+                    okna?</label
+                ><br /><br />
+                Wysokość od podłogi do spodu parapetu: <input type="text" class="input-small" /> mm
+                | Głębokość parapetu: <input type="text" class="input-small" /> mm | Oś okna (od
+                narożnika): <input type="text" class="input-small" /> mm
+            </div>
+
+            <!-- ========================================== -->
+            <!-- SEKCJA C: INSTALACJE I PRZYŁĄCZA           -->
+            <!-- ========================================== -->
+            <h2 class="section-header">⚡ C. INSTALACJE I PRZYŁĄCZA</h2>
+
+            <p>
+                <strong>Punkt Referencyjny (Baza 0,0):</strong>
+                <input
+                    type="text"
+                    style="width: 300px"
+                    placeholder="np. Lewy narożnik ściany głównej"
+                />
+            </p>
+
+            <div class="cad-rules">
+                <div class="rules-grid">
+                    <div class="rule-card">
+                        <h3>1. Jeden Punkt Referencyjny</h3>
+                        <div class="img-placeholder">
+                            <img src="img/cad-baza.jpg" alt="Zasada 1 Baza" />
+                        </div>
+                    </div>
+                    <div class="rule-card">
+                        <h3>2. System XYZ (Do osi)</h3>
+                        <div class="img-placeholder">
+                            <img src="img/cad-xyz.jpg" alt="Zasada XYZ" />
+                        </div>
+                    </div>
+                    <div class="rule-card">
+                        <h3>3. Pomiar Narastający</h3>
+                        <div class="img-placeholder">
+                            <img src="img/cad-narastajacy.jpg" alt="Pomiar narastający" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Rodzaj przyłącza</th>
+                        <th style="width: 15%">Oś X (od Bazy) [mm]</th>
+                        <th style="width: 15%">Oś Y (od podłogi) [mm]</th>
+                        <th style="width: 45%">Oś Z (Głębokość) / Uwagi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Woda (Zimna)</strong></td>
+                        <td><input type="text" placeholder="X..." /></td>
+                        <td><input type="text" placeholder="Y..." /></td>
+                        <td><input type="text" placeholder="Ile wystaje ze ściany?" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Woda (Ciepła)</strong></td>
+                        <td><input type="text" placeholder="X..." /></td>
+                        <td><input type="text" placeholder="Y..." /></td>
+                        <td><input type="text" placeholder="Ile wystaje ze ściany?" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Odpływ (Kanalizacja)</strong></td>
+                        <td><input type="text" placeholder="X..." /></td>
+                        <td><input type="text" placeholder="Y..." /></td>
+                        <td><input type="text" placeholder="Średnica rury / Uwagi" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gniazdo: Zmywarka</strong></td>
+                        <td><input type="text" placeholder="X..." /></td>
+                        <td><input type="text" placeholder="Y..." /></td>
+                        <td><input type="text" placeholder="Uwagi" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gniazdo: Piekarnik</strong></td>
+                        <td><input type="text" placeholder="X..." /></td>
+                        <td><input type="text" placeholder="Y..." /></td>
+                        <td><input type="text" placeholder="Uwagi" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gniazdo: Lodówka</strong></td>
+                        <td><input type="text" placeholder="X..." /></td>
+                        <td><input type="text" placeholder="Y..." /></td>
+                        <td><input type="text" placeholder="Uwagi" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Siła (400V - Indukcja)</strong></td>
+                        <td><input type="text" placeholder="X..." /></td>
+                        <td><input type="text" placeholder="Y..." /></td>
+                        <td><input type="text" placeholder="Długość kabla ze ściany" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Kratka wentylacyjna</strong></td>
+                        <td><input type="text" placeholder="X..." /></td>
+                        <td><input type="text" placeholder="Y..." /></td>
+                        <td><input type="text" placeholder="Średnica: fi... / Typ" /></td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>Gniazda robocze (Blat)</strong></td>
+                        <td><input type="text" placeholder="X..." /></td>
+                        <td><input type="text" placeholder="Y..." /></td>
+                        <td><input type="text" placeholder="Uwagi" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gaz (Zawór)</strong></td>
+                        <td><input type="text" placeholder="X..." /></td>
+                        <td><input type="text" placeholder="Y..." /></td>
+                        <td><input type="text" placeholder="Dostępność zaworu" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="background-color: #fdfefe">
+                            <strong>Przeszkody naścienne (Rury CO, skrzynki, termostaty):</strong
+                            ><br />
+                            <input
+                                type="text"
+                                style="width: 100%; margin-top: 5px"
+                                placeholder="Opisz co i gdzie wystaje ze ściany..."
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning-box">
+                ⚠️ KONTROLA ZMYWARKI: Czy za planowanym miejscem zmywarki ściana jest w 100% pusta?
+                <div class="checkbox-group">
+                    <label><input type="radio" name="zmywarka" value="tak" /> TAK</label>
+                    <label style="margin-left: 20px"
+                        ><input type="radio" name="zmywarka" value="nie" /> NIE</label
+                    >
+                </div>
+                <div style="margin-top: 10px">
+                    <input type="text" placeholder="Jeśli NIE, co tam jest i kto to przenosi?" />
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- SEKCJA D: LOGISTYKA                        -->
+            <!-- ========================================== -->
+            <h2 class="section-header">🚚 D. LOGISTYKA I OTOCZENIE</h2>
+            <table style="margin-bottom: 30px">
+                <tr>
+                    <td style="width: 50%">
+                        <strong>Winda (Szer x Gł x Wys):</strong>
+                        <input type="text" style="width: 150px" /><br />
+                        <strong>Przekątna windy (max dł. blatu):</strong>
+                        <input type="text" class="input-small" /> mm
+                    </td>
+                    <td style="width: 50%">
+                        <strong>Klatka schodowa (zakręty?):</strong>
+                        <input type="text" style="width: 150px" /><br />
+                        <strong>Drzwi wejściowe (szerokość):</strong>
+                        <input type="text" class="input-small" /> mm
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <strong>Parking (Rozładunek busa):</strong>
+                        <input
+                            type="text"
+                            style="width: 80%"
+                            placeholder="Gdzie stajemy? Odległość od wejścia?"
+                        />
+                    </td>
+                </tr>
+            </table>
+
+            <!-- ========================================== -->
+            <!-- SEKCJA E: DOKUMENTACJA I USTALENIA         -->
+            <!-- ========================================== -->
+            <h2 class="section-header">📸 E. DOKUMENTACJA I USTALENIA (Zabezpieczenie)</h2>
+
+            <div style="margin-bottom: 15px">
+                <label class="checkbox-inline"
+                    ><input type="checkbox" /> Zrobiono zdjęcia ogólne wszystkich ścian</label
+                ><br />
+                <label class="checkbox-inline"
+                    ><input type="checkbox" /> Zrobiono zdjęcia przyłączy z przyłożoną miarką
+                    (KRYTYCZNE!)</label
+                >
+            </div>
+
+            <table style="margin-bottom: 30px">
+                <tr>
+                    <td style="background-color: #fdfefe">
+                        <strong>Zadania po stronie Klienta (do wykonania PRZED montażem):</strong
+                        ><br />
+                        1. <input type="text" style="width: 95%; margin-top: 5px" /><br />
+                        2. <input type="text" style="width: 95%; margin-top: 5px" /><br />
+                        3. <input type="text" style="width: 95%; margin-top: 5px" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; padding: 30px 20px 10px 20px">
+                        ....................................................................................<br />
+                        <span style="font-size: 12px; color: #666"
+                            >Czytelny podpis Klienta (akceptacja ustaleń)</span
+                        >
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>

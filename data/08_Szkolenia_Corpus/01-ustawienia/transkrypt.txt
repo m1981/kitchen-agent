@@ -1,0 +1,220 @@
+00:00
+(Beginning of video)
+00:06
+Chapter marker
+Witamy w Przewodniku Online
+00:06
+Witam w Przewodniku Online.
+00:08
+Rozpoczynamy cykl filmów szkoleniowych dla użytkowników w wersji net, którzy nie potrzebują pełnej funkcjonalności programu Korpus w wersji produkcyjnej.
+00:19
+Chapter marker
+Logowanie
+00:19
+Jeżeli oglądacie Państwo ten film, to oznacza, że otrzymaliście dostęp do publikacji filmowej, a także login i hasło. Logujemy się.
+00:31
+Wybieram nowy projekt.
+00:38
+Chapter marker
+Wersja wersji net
+00:38
+Na początku chciałbym zaznaczyć, że wersja którą używamy jest to wersja wymagająca dostępu do internetu i tu po prawej stronie widzimy pasek mocy sygnału.
+00:51
+Jest to istotne z uwagi na używaną wersję.
+00:53
+W przypadku pełnej wersji PRO lub wersji FIRST przy użyciu klucza Codemeter wpiętego w komputer nie ma potrzeby dostępu do internetu.
+01:04
+Chyba, że w drugiej wersji możemy go użyć jako klucz serwerowy i wtedy wiadomo, że będzie potrzebny dostęp do internetu, żeby korzystać z programu.
+01:16
+Chapter marker
+Ustawienia predefiniowane programu
+01:16
+Na początku zaczniemy od ustawień predefiniowanych programu.
+01:21
+Natomiast do tych ustawień będę potrzebował wstawienia nowej szafki.
+01:28
+Chapter marker
+Materiały i szafki
+01:28
+i tutaj na tych ustawieniach, które mamy po prostu akceptuje na razie to co otrzymałem to jest zwykły korpus z dwoma listwami ale to powiem za chwilę dlaczego otrzymaliśmy taką szafkę a nie inną jak przejdziemy do ustawień jak już wcześniej wspomniałem są to ustawienia predefiniowane Zaczynając od początku, mamy materiały i szafki, które używamy do wstawienia naszej pierwszej, nowej szafki.
+02:07
+Chapter marker
+Wybór dekorów
+02:07
+W momencie, jeżeli klikniemy na materiał, Dostanę się do kolekcji, gdzie po lewej stronie mamy ich nazwy.
+02:19
+Na samej górze mamy grubości płyt, które będą dodawane, a także konkretny dekor, z których dane szafki będą dodane.
+02:31
+Oczywiście pod konkretny dekor jest przypięta również cena, czyli to nie jest tylko sam dekor, to jest też konkretne usłojenie, rozmiar płyty do optymalizacji, a także właśnie cena do kalkulacji kosztów MEPI.
+02:50
+Jeżeli chcielibyśmy zmienić dany dekor, wystarczy wskazać, który jest z nich. Na przykład ten.
+02:56
+I w momencie, kiedy zamykamy, widzimy, że dany dekor się zmienił.
+03:02
+Po akceptacji...
+03:03
+Każda kolejna szafka uruchomiona przez wstaw nowy element będzie posiadała już tego typu dekory.
+03:16
+Podobnie z korpusem szuflady, frontem, blatem roboczym czy półką.
+03:22
+Chapter marker
+Zmiana dekorów ścian
+03:22
+Następnie pomieszczenie.
+03:24
+Mamy ścianę dolną, ścianę górną i podłogę.
+03:28
+Zmiana tych dekorów będzie dotyczyła zmiany tych ścian, które mamy tutaj w tle.
+03:36
+Natomiast pamiętajmy o tym, że to nie są jeszcze ściany graniczne w naszym pomieszczeniu, tylko granice tego obszaru, który mamy tutaj właśnie pokazany na szarej podłodze.
+03:53
+Mamy poniżej wielkość tego obszaru, szerokość i długość, no i mamy w tym przypadku wysokości tej górnej i dolnej ściany.
+04:01
+Ja mam górną na 0, a dolną na 2700, stąd nie widzimy tutaj podziału pomiędzy nimi.
+04:10
+Chapter marker
+Ustawienia szafki
+04:10
+Kolejną zakładką jest szafka.
+04:14
+Mamy tu te wymiary, które widzieliśmy po uprzednim wczytaniu tego mebla.
+04:20
+Wysokość, głębokość, szerokość.
+04:22
+A także rodzaj konstrukcji szafki.
+04:26
+było wcześniej zaznaczone nóżki, dlatego mamy konstrukcję na nóżkach.
+04:30
+Możemy też otrzymać z bokiem pełnym, wtedy boki schodzą nam do podłogi, a także dodać cokół.
+04:38
+W przypadku boków pełnych jest to cokół pomiędzy bokami, w przypadku gdyby to był mebel na nóżkach, wtedy ten cokół jest od początku do końca mebla po gabarycie szafki.
+04:52
+Mamy też możliwość zmiany szerokości listew.
+04:56
+Jest to predefiniowana założona wielkość tych listew.
+05:00
+W tym przypadku one mają 100 milimetrów, bo takie jest założenie właśnie tutaj opisane.
+05:06
+Tu mamy grubość płyt.
+05:08
+Ta grubość płyt, jak również i cokołu, jest to grubość predefiniowana bez względu na wybór materiału z tego poziomu.
+05:21
+te grubości materiału będą potrzebne do dalszej zmiany grubości w momencie, jeżeli wywołamy właśnie te nasze kolekcje, ale już za pomocą innego przycisku do zmiany bieżących dekorów.
+05:38
+Podstawne informacje dotyczą możliwości dodania szafek.
+05:42
+na różnych dolnych a także właśnie ich wymiarów czy ma być na nóżkach czy z bokiem pełnym czy również z tokołem a także szafek wiszących i na jakiej pozycji Y ma być taka szafka to tak Następnie nóżki.
+05:58
+Mamy tu informacje dotyczące wysokości i grubości nóżek, a także pozycji od przodu, od lewej, od prawej względem konstrukcji mebla.
+06:08
+Chapter marker
+Nóżki
+06:08
+Pamiętajmy o tym, że te nóżki, są to nóżki, które widzimy tutaj na projekcie.
+06:13
+i one nam nie wchodzą do części takiej można powiedzieć produkcyjnej, czyli one nie występują w raportach, a także na produkcji, natomiast są symbolem do łatwej podmiany na inne, które już są dostępne tutaj w bibliotekach programu.
+06:32
+Możemy też ustalić wysokość cokoł, a także cofnięcie tu względem frontu mebla.
+06:40
+Podobnie blenda dla szafek górnych.
+06:44
+Następnie plecy.
+06:45
+Mogą być pełne, po krawędzi lub też wpuszczane.
+06:51
+Wcześniej były zaznaczone pełne, dlatego przy obrocie tej szafki proszę zwrócić uwagę, że mamy plecy pełne w tym meblu.
+07:01
+Gdybyśmy wybrali np.
+07:02
+wpuszczane, mamy tutaj wpust bok, określa jak głęboko bok będzie wpuszczony w mebel, a także cofnięcie, czyli odległość od tyłu mebla do tyłu pleców.
+07:15
+Podobnie dla szafek górnych.
+07:18
+Następnie front i uchwyty.
+07:20
+Chapter marker
+Front i uchwyty
+07:20
+Mamy tu szczeliny, jakie ukażą nam się po dodaniu frontu.
+07:25
+Od lewej strony, od prawej, od góry, od dołu.
+07:27
+A także w przypadku dodania większej liczby frontów, tyle będzie pomiędzy frontami.
+07:33
+Podobnie, gdybyśmy dodawali kilka szuflad, tyle będzie wynosiła odległość szczeliny w milimetrach pomiędzy tymi szufladami.
+07:42
+Poniżej przy zmianie frontów mamy też dodane nowe kody CNC, nowe uwagi.
+07:50
+Można dodawać, zastępować uchwyt, a także dodawać nowe makra.
+07:58
+Następnie front ramkowy.
+08:00
+Chapter marker
+Front ramkowy
+08:00
+Przy dodaniu frontu możemy też dodać nie tylko w postaci takiej gładki, ale też wizualizacji tego frontu w typie połączenia w ramce czy pionowa, czy pozioma, czy gierowana.
+08:14
+I mamy tu poszczególne parametry właśnie tej ramki służącej bardziej do wizualizacji niż do celów produkcyjnych.
+08:24
+Następnie półki, blaty, panele.
+08:27
+Chapter marker
+Półki, blaty, panele
+08:27
+Przy dodawaniu półek mamy ich standardowe domyślne cofnięcie względem korpusu mebla.
+08:36
+Tak samo mamy cofnięcie względem wieńca środkowego, czyli półki na stałe, a także przegrody.
+08:44
+Poniżej mamy jeszcze inne technologiczne.
+08:46
+W momencie, jeżeli wpiszemy tu jakąś wartość, dostaniemy po dodawaniu półek Parametr po prawej stronie, który będzie w zmiennych, nam mówił jaka o ile jest ta półka mniejsza względem wieńca dolnego czy górnego.
+09:03
+Czyli tak zwany luz na półkę.
+09:06
+A także grubość półki.
+09:08
+Poniżej mamy parametry dotyczące blatów roboczych, natomiast zaznaczam, że to jest już część, która nie funkcjonuje w programie Korpus.
+09:17
+Nie ma tutaj automatycznego dodawania blatów, natomiast mamy tutaj blaty, które są dodawane w bibliotece.
+09:29
+Są to blaty, które mają konstrukcję zarówno z wcinką produkcyjną, a także z wycięciami na zarówno zlewozmywak, płytę, baterię itd.
+09:44
+Poniżej też parametry dotyczące górnego panelu, a także dolnego, ograniczenia grubości, a także odległości od krawędzi.
+09:55
+Chapter marker
+Oznaczenia w projekcie
+09:55
+Następnie oznaczenia w projekcie, które dotyczą potencjalnej zmiany widoczności mebla, a także ich oznaczeń.
+10:05
+Gdybym na przykład zmienił na szerokość i oczywiście oznaczył, żeby było to widoczne.
+10:11
+W momencie ruszenia meblem, tam gdzie mamy odświeżenie widoku, widzimy, że pojawił nam się wymiar szerokości.
+10:18
+Gdybym zaznaczył kod szafki, pojawi mi się kod szafki, czy też numer, wtedy względem kolejności dodawania kolejnych szafek do projektu ta numeracja będzie kontynuowana.
+10:33
+Ostatnim ustawieniem jest to ustawienie obiektów, gdzie określamy przyciąganie i odległość przyciągania.
+10:39
+W momencie, jeżeli wstawię kolejny mebel, jeden względem drugiego będę dosuwał.
+10:45
+Gdy one się pojawią w odległości 100 mm od siebie, będą łączyły się bokami lub też narożnikami.
+10:52
+I tak się odbywa w każdej z trzech osi X, Y i Z.
+10:58
+Wyjątkiem stanowi kontrol, a następnie przesunięcie mebla, gdzie w rzucie z góry mamy tutaj możliwość uniknięcia tego przyciągania poprzez wciśnięcie przycisku kontrol.
+11:12
+W przypadku perspektywy ten kontrol po prostu nie działa.
+11:17
+On jest przeznaczony tylko właśnie do wykorzystania dla rzutu.
+11:23
+Chapter marker
+Ustawienia przesunięcia mebli
+11:23
+Następnie możemy zapisać nasze ustawienia.
+11:27
+Teraz pokażę poprzez wczytanie jeszcze jednego mebla Widzimy, tym razem pojawił się mebel w innej kolorystyce, zgodnej właśnie z tymi predefiniowanymi ustawieniami, które ustawiłem, a także gdybym ten mój mebel sąsiedni przesunął, on się znajduje w odległości 100 mm od sąsiedniego mebla i będzie wyrównywany.
+11:56
+To również będę pokazywał w innych filmach, tam gdzie przejdziemy już na poszczególne rzuty projektu.
+12:05
+To wszystko.
+12:06
+Dziękuję za uwagę.

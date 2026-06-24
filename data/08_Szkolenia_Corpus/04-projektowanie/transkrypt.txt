@@ -1,0 +1,169 @@
+	00:00
+(Beginning of video)
+00:05
+Chapter marker
+Wprowadzenie
+00:05
+Witam Państwa w Przewodniku Online.
+00:07
+Chapter marker
+Zmiana widoków i rzutów
+00:07
+W tym odcinku zajmiemy się poszczególnymi rzutami, a także zakładkami z menu górnego.
+00:16
+Na początku wczytam kilka przykładowych mebli z biblioteki.
+00:33
+Chapter marker
+Przyciąganie i obracanie elementów
+00:33
+Żeby przejść do poszczególnego widoku lub rzutu, możemy skorzystać z jednego z trzech przycisków.
+00:41
+Z pierwszym, drugim, a także trzecim w perspektywie.
+00:48
+Przenosi nas do podziału ekranu na cztery, zawsze w prawym dolnym będzie perspektywa, natomiast w poszczególnych będzie odpowiedni widok od frontu, rzut, a także widok boczny.
+01:01
+Chapter marker
+Powiększanie i resetowanie widoków
+01:01
+żeby powiększyć dany ekranik trzeba na niego najpierw kliknąć, a później w lewym górnym rogu jest taka kreseczka widzimy, że mamy w tej chwili rzut jeżeli wskażę dany mebel i zbliżę jeden element do drugiego w tym przypadku nie zostanie przyciągnięty z uwagi na to, że tu w zakładce edytuj i przyciąganie mam wpisane po prostu 0 jeżeli bym wpisał np.
+01:29
+150 kliknął akceptuj to w tym momencie po zliczeniu mebla odpowiednio 1 do 2 wtedy nastąpi to przyciągnięcie oczywiście wzdłuż osi z a także x Za pomocą spacji możemy obracać elementem o 90 stopni.
+01:51
+Może to być albo pojedynczy element, ewentualnie jeżeli z Shift'em zaznaczę wszystkie trzy, a następnie spacja, obracam wtedy o 90 stopni wszystkie zaznaczone elementy.
+02:06
+Jeżeli nie chciałbym, żeby to przyciąganie działało, bo na przykład mam już projekt, gdzie jest bardzo dużo elementów, zawsze mogę wcisnąć przycisk CTRL i w tym momencie, kiedy zbliżam jeden element do drugiego, nie działa mi właśnie to przyciąganie.
+02:25
+To jest przydatne w momencie, kiedy tych elementów w projekcie jest naprawdę dużo, a zależy mi na tym, żeby one się nie przyciągały.
+02:32
+Wystarczy, że puszczę SHIFT, A następnie w momencie kiedy zbliżę mebel do elementu sąsiedniego od razu nastąpi to przyciągnięcie.
+02:43
+Również tutaj w rzucie w momencie kiedy kliknę prawym myszy mamy taki przykładowy element wyśrodku i widok.
+02:53
+Następnie powiększę zaznaczony obszar.
+02:56
+W tym momencie musimy kliknąć w którymś miejscu przeciągnąć i kliknąć po raz drugi.
+03:03
+I powiększamy ten konkretny obszar.
+03:06
+Ostatnie jest to resetuj powiększenie i wtedy nas przenosi do poprzednio wybranego widoku.
+03:16
+Chapter marker
+Zmiana różnych ustawień widoku
+03:16
+Natomiast w momencie kiedy mamy wybrany konkretny widok to nie oznacza, że zawsze po prawej jest frontowy, a po lewej jest żółty.
+03:28
+Możemy równie dobrze za pomocą tego górnego menu wybrać, żeby na przykład chciałbym mieć dwa żółty, bo na przykład w tym po prawej stronie chciałbym mieć widok na jeden element, a na przykład w tym drugim jakiś zupełnie inny.
+03:44
+I możemy operować tutaj w dwóch widokach jednocześnie na takim podziale ekranu na cztery.
+03:54
+Jedno jest też istotne, mamy tutaj do wyboru też widok 3D.
+04:00
+Nie mylmy widoku 3D z perspektywą.
+04:03
+Z uwagi na to, że w perspektywie widzimy zarówno podłogi, jak również i ściany, wraz z ich dekorami.
+04:13
+Tu nie widzimy, tu wielkość obszaru jest wyznaczona za pomocą tych linii.
+04:18
+Inaczej natomiast operujemy.
+04:21
+W perspektywie, tak jak pamiętamy, za pomocą myszki, a także przesuwania z wykorzystaniem przycisku SHIFT LEWO, PRAWO i CTRL GÓRA, DÓŁ.
+04:32
+Tu natomiast, ja powiększę ten widok 3D, Działamy identycznie jak w edytorze, gdzie lewy przycisk myszy nas przenosi lewo-prawo, natomiast prawy powoduje obrót samej kamery i całego widoku.
+04:50
+Jeżeli również użyjemy tutaj wymiarowania i linii pomocniczych, w tym widoku 3D również będziemy widzieli, w przeciwieństwie do widoku perspektywy, gdzie po prostu tego już nie będzie.
+05:05
+Jeżeli mamy widok uruchomiony, którykolwiek, mamy aktywne przyciski do konfiguracji linii wymiarowych, linie wymiarowe, a także przycisk przesunięcia ścieżki, który omówiłem w innym filmie, Natomiast w przypadku rzutu 3D jest nieaktywny.
+05:27
+Przy rzucie mamy wszystkie przyciski aktywne i one służą głównie do rysowania linii wymiarowych, a następnie wyznaczenia pomieszczenia w danym projekcie.
+05:42
+Wróćmy teraz do perspektywy.
+05:46
+Chapter marker
+Korzystanie z zakładek górnych
+05:46
+I przejdźmy do zakładek górnych.
+05:50
+Najpierw projekt.
+05:52
+Nowy otwórz lub zapisz dotyczy identycznie jak tych trzech ikonek.
+06:01
+Dotyczy oczywiście całości projektu.
+06:04
+Można zapisać lub też zapisać projekt jako pod konkretną nazwą.
+06:10
+Drukuj przynosi nas do tej drukareczki, gdzie za pomocą przykładowych szablonów możemy wydrukować konkretnie przygotowany szablon.
+06:25
+Następnie mamy ustawienia graficzne, gdzie tutaj za pomocą, w zależności od mocy karty graficznej, możemy wybrać odpowiednio, żeby te ustawienia anti-aliasingu były jak najdokładniejsze, jak najwyższe, wtedy te nie będą poszarpane, będą naprawdę ładnie wyglądały, ostro.
+06:48
+Ustawienia główne.
+06:50
+Następnie formularz projektu, tu gdzie możemy wpisać numer produkcyjny, numer projektu, a także wypełnić dane dotyczące projektanta, sprzedawcy, informacje o kliencie.
+07:11
+Chapter marker
+Edycja elementów i projektu
+07:11
+zamknięcie i wyjście z projektu w przycisku edytuj mamy usuń, kopiuj, wklej, powiel znane nam już z tego przycisku jak również powielenie możemy skrócać z tego kopiuj wymiary, wklej wymiary a także erytuj element erytuj element służy do przejścia do erytora szerzej na temat erytora powiem w innych filmach możemy też skorzystać z tego przycisku służy identycznie jak erytuj element ostatnim przyciskiem jest przyciąganie tak jak wcześniej wskazywałem tutaj podajemy wartość tego przyciągnięcia następnie widoki.
+07:55
+Mamy właśnie jedno okno, rzut z góry, widok od frontu, boczne perspektywa, są to widoki z podziału ekranu, cztery okna, no to mamy tutaj przejście, mamy jeszcze jedną możliwość przejścia poza tymi przyciskami, a także pokazania co jest aktywne, czyli kontury elementów, odbicia, cienie, można też pokazywać etykiety, a także przyciski do ukrywania.
+08:22
+Ukryj urządzenia, ukryj fronty, ukryj szafki dolne i górne i odpowiednio te cztery ukrycia mamy aktywne za pomocą tych czterech przycisków.
+08:32
+Pierwsze urządzenie, drugie dotyczy ukrycia frontów, kolejne szafek dolnych i górnych.
+08:40
+To pokażę Państwu, tylko dodam kilka przykładowych szafek górnych.
+08:52
+Pierwszy z nich, ukryj fronty.
+08:54
+Oczywiście można te fronty ukrywać też wybiórczo, zaznaczając konkretne szafki.
+09:01
+Następnie ukryj wszystkie dolne, ukryj wszystkie górne.
+09:05
+I adekwatnie możemy też za pomocą użycia tego przycisku.
+09:11
+Chapter marker
+Wstawianie nowych elementów
+09:11
+Następnie wstaw.
+09:14
+Możemy wstawić nowy element, szafkę, tak jak pokazywałem już wcześniej, natomiast szeroko omówię też te ustawienia w innym filmie.
+09:21
+Możemy też wstawić biblioteki, wtedy po prostu otwiera nam się biblioteka, tak samo jak spod tego przycisku.
+09:29
+Możemy też wstawić urządzenie.
+09:33
+Poniżej mamy też blat ROBO, czyli listwa przyblatowa, górny padel, paneli aż tak do cokołu.
+09:40
+Tych zakładek nie będę omawiał z uwagi na to, że one już nie są dostępne w programie Korpus w wersji PRO, zarówno w wersji FIRST, no z uwagi na już kolejne wersje programu.
+09:58
+Jest aktywna natomiast wysłona pleców i działa ona w ten sposób.
+10:05
+przezaznaczamy pierwszy mebel klikając wysłona pleców uzyskujemy formatkę akurat na szerokość mebla i wysokość jego korpusu ewentualnie jeżeli zaznaczę pierwszy mebel i z shiftem ostatni wstaw dostanę wysłonę pleców na wszystkie trzy szafki Następnie przycisk wybierz.
+10:40
+Możemy użyć albo skrótu, albo zaznaczyć wszystko.
+10:45
+Możemy też wstawić z biblioteki.
+10:50
+Możemy też użyć brak zaznaczenia.
+10:55
+Odwrócić zaznaczenie w momencie, jeżeli mam na przykład zaznaczone te trzy elementy.
+11:02
+Odwrócimy zaznaczenie, widzimy, które w tej chwili są zaznaczone.
+11:07
+Możemy też zaznaczyć wszystkie szafki dolne.
+11:12
+Jeszcze raz.
+11:16
+Wszystkie dolne, wszystkie górne, wszystkie blaty czy sokoły, jeżeli oczywiście użyjemy, czy listwy przyblatowe.
+11:26
+Chapter marker
+Korzystanie z różnych widoków kamery
+11:26
+Następnie, jeżeli przejdziemy na kamerę, i widoki.
+11:32
+Mamy znowu rzut na poszczególne widoki, perspektywy, które już wcześniej omówiałem jak je ustawić.
+11:40
+Jeszcze wrócę na chwilę do zakładki z wstawianiem blatu roboczego, ponieważ tu mamy jeszcze w tej wersji starszej Corpusnet możliwość wstawienia tego blatu roboczego automatycznego.
+11:53
+Natomiast ja polecam korzystać już z tych blatów, które są tutaj dostępne.
+12:00
+Dziękuje za uwagę.

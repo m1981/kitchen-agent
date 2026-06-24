@@ -1,0 +1,87 @@
+Wstęp
+Program Corpus Net oferuje zaawansowane narzędzia do projektowania mebli kuchennych. W trzeciej części przewodnika poznasz szczegółowo funkcje głównego menu projektowego, koncentrując się na ukrywaniu elementów, zarządzaniu kolizjami oraz modyfikacji mebli. Te narzędzia znacznie ułatwią pracę z projektami kuchennymi i pozwolą na efektywne zarządzanie wizualizacją.
+
+Podstawowe operacje na meblach
+Dodawanie i pozycjonowanie mebli
+Przed rozpoczęciem pracy z zaawansowanymi funkcjami, dodaj meble do projektu. Użyj funkcji "Wybierz" → "Zaznacz wszystko", aby zaznaczyć wszystkie elementy, a następnie przenieś je na środek obszaru roboczego. Możesz także wykorzystać funkcję "Dosunięcie do boku" dla precyzyjnego pozycjonowania kolejnych mebli.
+
+System ukrywania elementów
+Ukrywanie za pomocą przycisków dolnych
+Program oferuje kilka przycisków do szybkiego ukrywania różnych typów elementów:
+
+Ukryj urządzenia AGD - pierwszy przycisk w dolnej części interfejsu
+Ukryj fronty - ukrywa fronty wszystkich lub wybranych szafek
+Ukryj szafki dolne - ukrywa wszystkie szafki typu dolnego
+Ukryj szafki górne - ukrywa wszystkie szafki typu górnego
+Podział ekranu na 4 - ostatni przycisk służy do podziału widoku
+Ważne: Gdy szafki górne są ukryte, przy ikonie danej szafki nie pojawia się oznaczenie wykreślenia. Należy zwrócić szczególną uwagę na aktywność tych ikon, ponieważ nowo dodawane elementy mogą pozostać niewidoczne do momentu ponownej aktywacji ikony.
+
+Ukrywanie indywidualne
+Aby ukryć konkretny mebel, kliknij na ikonę oczka przy nazwie elementu na liście. Ta metoda pozwala na precyzyjne kontrolowanie widoczności poszczególnych elementów.
+
+Zaawansowane opcje ukrywania
+W menu znajdziesz także dodatkowe opcje ukrywania, które wymagają wcześniejszego zaznaczenia elementów (przytrzymaj SHIFT do zaznaczenia wielu elementów):
+
+Pokaż wyłącznie zaznaczone elementy - ukrywa wszystkie inne elementy
+Ukryj zaznaczone - ukrywa wybrane elementy
+Pokaż zaznaczone - pokazuje wcześniej ukryte zaznaczone elementy
+Odwrócenie pokazywania - zmienia widoczność na odwrotną
+Pokaż wszystkie - przywraca widoczność wszystkich elementów
+Zarządzanie kolizjami
+Ustawienia kolizji
+Funkcje kolizji znajdziesz w głównym menu projektowym. Po aktywacji pojawi się dedykowana ikona z następującymi opcjami:
+
+Blokowanie kolizji
+Opcja "Blokuj kolizję" uniemożliwia nachodzenie jednego elementu na drugi. Po wyłączeniu tej funkcji meble mogą się przenikać. Jeśli kolizja jest płytka, mebel automatycznie wróci do poprzedniej pozycji dzięki działaniu przyciągania. Głębokie kolizje pozostaną aktywne.
+
+Wizualizacja kolizji
+Pokaż kolizję - aktywuje kolorowe oznaczenie kolizji
+Zmiana koloru kolizji - możliwość personalizacji koloru oznaczenia
+Pokaż składowe - wyświetla wszystkie elementy biorące udział w kolizji
+Ustawienie przezroczystości - reguluje intensywność kolorów kolizji
+Tworzenie wysłon pleców
+Wysłona dla pojedynczej szafki
+Zaznacz szafkę i wybierz "Wstaw" → "Wysłona pleców". Otrzymasz niezależną formatkę, którą możesz obracać klawiszem Spacja i pozycjonować za pomocą przyciągania. Formatka może służyć jako wysłona pleców, boku lub innego elementu wykończeniowego.
+
+Wysłona dla wielu szafek
+Zaznacz pierwszą i ostatnią szafkę (nie wszystkie jednocześnie), następnie wybierz "Wstaw" → "Wysłona pleców". Program automatycznie utworzy wysłonę na całą długość wybranych elementów.
+
+Modyfikacja wymiarów wysłony
+Po utworzeniu wysłony możesz precyzyjnie ustawić jej wymiary:
+
+Szerokość - np. 560 mm
+Wysokość - np. 820 mm
+Położenie - np. 0 mm
+Potwierdź zmiany klawiszem Spacja.
+
+Modyfikacja elementów prawym przyciskiem myszy
+Zmiana dekoru boków
+Kliknij prawym przyciskiem myszy na szafkę i wybierz "Boki". Możesz zmieniać dekor lewego i prawego boku, wybierając między opcjami:
+
+Dekor jak corpus
+Dekor jak front
+Użyj rolki myszy do odświeżenia widoku i zobaczenia zmian.
+
+Zmiana kierunku otwierania
+Dla szafek z pojedynczym frontem dostępna jest opcja "Otwieranie". Możesz wybrać:
+
+Otwieranie lewe
+Otwieranie prawe
+Zmiana wpływa nie tylko na pozycję uchwytu, ale też na całą konstrukcję zawiasów.
+
+Modyfikacja AGD w słupkach
+Dla szafek-słupków wybierz "Modyfikuj" i wskaż element do zmiany:
+
+Piekarnik - otwiera menu "Wyposażenie kuchenne" → "Piekarniki"
+Mikrofalówka - otwiera menu "Wyposażenie kuchenne" → "Mikrofalówki"
+Po wyborze urządzenia kliknij "Wczytaj" aby zastąpić obecny element.
+
+Zastępowanie elementów
+Aby zastąpić szafkę innym meblem:
+
+Zaznacz element do zamiany
+Kliknij prawym przyciskiem myszy
+Wybierz "Zastąp element"
+Wybierz nowy mebel z dostępnych kategorii
+Kliknij "Wczytaj"
+Nowy element przejmie wymiary poprzedniej szafki.

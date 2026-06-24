@@ -1,0 +1,161 @@
+00:00
+(Beginning of video)
+00:05
+Chapter marker
+Wstęp
+00:05
+Witam Państwa w Przewodniku Online.
+00:07
+W tym odcinku zajmiemy się podstawami interfejsu.
+00:13
+Chapter marker
+Nowy element - szafka
+00:13
+Na początku wstawię nowy element, szafkę, z ustawieniami domyślnymi.
+00:21
+Chapter marker
+Zakładka elementy
+00:21
+Po prawej stronie mamy dwie zakładki, elementy, a także pomieszczenie.
+00:28
+W zakładce elementy i w poniższej wszystkie mamy te rzeczy, które są zawarte w projekcie.
+00:35
+Przy dodawaniu pierwszej szafki widzimy, że nie pojawiła ona nam się w projekcie.
+00:40
+W momencie kiedy klikniemy na nią, ona już się będzie pojawiać i w tym momencie każde kolejne szafki też będą się pojawiały już bez konieczności tutaj wskazywania ich.
+00:51
+Chapter marker
+Dodatkowe przyciski
+00:51
+Poniżej mamy dodatkowe przyciski, które służą po pierwsze do kopiowania już wcześniej wybranej szafki, usuwania, możemy usunąć albo za pomocą tego X lub za pomocą CTRL DELTA.
+01:08
+Tak samo jeżeli chodzi o kwestie powielania, mamy tu jeszcze jeden przycisk, który służy dokładnie do tego samego.
+01:17
+strzałki na dół lub w górę powodują po prostu kolejkowanie tych szafek na tej liście.
+01:24
+Chapter marker
+Zakładka edytuj
+01:24
+Następnie poniżej mamy zakładkę edytuj, gdzie są wymiary wysokości, szerokości i głębokości danej szafki, a dokładniej takiego zielonego boksu, w którym zawarta jest ta szafka.
+01:40
+O tym zielonym boksie powiem szerzej, kiedy przejdziemy do erytora.
+01:45
+Obok mamy pozycje X, Y i Z.
+01:48
+Dotyczy to pozycjonowania konkretnej, wybranej szafki wzdłuż osi X, czyli tej czerwonej, Y czyli zielonej, a także niebieskiej, czyli osi Z.
+02:03
+tu wcześniej mieliśmy też nazwę szafki w momencie jeżeli zmieniamy tą nazwę na przykład dolna 123 trzeba zakończyć wciśnięcie Enter i wtedy będzie zaakceptowana nazwa nie możemy nigdzie klikać obok bo po prostu ta nazwa wróci do poprzedniej Poniżej mamy zakładkę zmienne.
+02:27
+Chapter marker
+Zakładka zmienne
+02:27
+Tutaj zakładka zmienne dotyczy zmiennych, które są dodawane w edytorze.
+02:33
+Natomiast jest to możliwe w wersji PRO, a także w wersji FIRST.
+02:38
+W przypadku tej wersji, którą obecnie Państwu prezentuję, czyli NET, nie ma możliwości dodania własnych zmiennych.
+02:44
+Natomiast jest możliwość korzystania z tych zmiennych już z załadowanej biblioteki z wyższych wersji programu.
+02:53
+To wszystko jeżeli chodzi o zakładkę elementy.
+02:56
+Następnie zakładka pomieszczenie.
+03:00
+Chapter marker
+Zakładka pomieszczenie
+03:00
+Pierwsza pozycja to jest światło.
+03:04
+Tu jeżeli się trochę oddalimy.
+03:07
+Może zanim pokażę światło jeszcze zaznaczę tutaj cienie.
+03:10
+Widzimy mamy pokazane cienie w momencie kiedy aktywuję słoneczko.
+03:18
+i uruchomię, widzimy pojawiły się orbity i ustawienia A, czyli obrót tej orbity dookoła.
+03:25
+Widzimy zmianę pozycji cienia, nachylenie, a także już bezpośrednie poruszanie się słoneczka po tej orbicie i na bieżąco zmiana tego cienia.
+03:44
+Następnie oczywiście możemy też to dezaktywować.
+03:51
+Następnie mamy światło otoczenia, jego moc, światło rozproszone, a także światło lustrzane.
+04:05
+Tu również mamy możliwość zmiany natężenia otoczenia.
+04:12
+Poniżej, po aktywacji cieni, mamy intensywność tych cieni, albo bledsze, albo takie bardzo ostre.
+04:20
+poniżej pomieszczenie głębokość i szerokość to są wymiary tego naszego obszaru w którym pracujemy jeżeli bym wpisał na przykład 8000 bo to jest wymiar w milimetrach na przykład na 8000 widzimy, że odpowiednio się pomniejszyło pamiętajmy o tym, że to jest wielkość tego obecnego pomieszczenia W ustawieniach mamy również ustawienia tego pomieszczenia, natomiast w wartości domyślnej, czyli za każdym razem, która będzie pojawiać się po wywołaniu nowego okna, nowego projektu.
+05:05
+T8000x8000 dotyczy tylko i wyłącznie tego.
+05:08
+Tak samo ściana górna i ściana dolna, mamy możliwość podziału.
+05:14
+To się wzięło ze starszych wersji programu, gdzie nie było jeszcze dodatkowych ścian i pracowaliśmy na ścianie górnej i dolnej, dodając do nich szafki.
+05:25
+W tej chwili jest to niekonieczne.
+05:28
+Ja na przykład stosuję po prostu jedną ścianę, czyli tą granicę obszaru, tak żeby nie pojawiał się ten pasek dzielący.
+05:36
+Następnie na samej górze mamy takie niebieskie strzałki.
+05:40
+W pośrodku z nich jest początek, tam gdzie nam przykierowuje kamerę na sam środek pomieszczania.
+05:47
+Jest to bardzo przydatny przycisk, kiedy gdzieś nam się za bardzo przesunie ekran, jak również przy stosowaniu wymiarowania czy aktywacji tych przycisków, wtedy resetujemy tym początkiem widok.
+06:02
+Obok strzałki przesuwają nam widok kamery o konkretny kąt w prawo lub w lewo lub też o 90 stopni od razu za pomocą tych skrajnych.
+06:15
+Obok mamy minus i plus, dotyczy powiększenia i pomniejszenia.
+06:22
+a następnie obracanie kamerą te strzałki niebieskie są to identyczne strzałki jak te działające też obracają o konkretną ilość stopni zapisaną poniżej lub też mamy przyciąganie kamerą przesuwanie kamery odpowiednio w lewo, prawo, góra i dół możemy też zapisać zdjęcie w dwóch formatach BMP lub JPG Następnie w jaki sposób możemy poruszać się po pomieszczeniu?
+07:01
+Chapter marker
+Poruszanie się po pomieszczeniu
+07:01
+Rolka służy do oddalania i przybliżania, podobnie jak te lubki z plusem i minusem.
+07:08
+Jeżeli chcemy się przesunąć w lewo i w prawo, stosujemy przycisk SHIFT i wtedy lewym myszy i przesuwamy się lewo-prawo.
+07:17
+Jeżeli góra-dół, to z shiftem.
+07:20
+Czyli możemy albo za pomocą kamer, albo za pomocą tych dwóch przycisków.
+07:25
+Jest również trzeci sposób, bardzo wygodny, za pomocą manipulatora 3D Connection.
+07:31
+Ja w tej chwili nie używam w ogóle myszki i poruszam się bardzo płynnie w każdym wymiarze.
+07:39
+Mogę nawet w kilku naraz.
+07:40
+Natomiast wymaga to użycia manipulatora 3D Connection.
+07:46
+Działa on również z innymi programami, jest bardzo wygodny.
+07:50
+Szczególnie właśnie przy programie Corpus, jak również Sim Lab Composer.
+07:55
+Chapter marker
+Menu górne
+07:55
+Tu w lewym górnym rogu mamy menu górne, czyli nowy projekt.
+08:00
+Można otworzyć już wcześniej zapisany, zapisać cały projekt lub wczytać z biblioteki konkretny mebel lub element.
+08:13
+Na temat biblioteki powiem szerzej w następnym odcinku.
+08:16
+Bibliotekę uruchamiamy zarówno spod tego przycisku, jak również tutaj po prawej stronie.
+08:22
+Następnie przyciski służące do różnych wydruków.
+08:28
+Uprzednio oczywiście wgranych do tego programu.
+08:35
+Jak również tutaj przycisk powielenia.
+08:40
+Mamy też przyciski, które pokazują konkretne widoki, ale to opiszę w innych odcinkach.
+08:47
+Po lewej stronie mamy przycisk wyboru.
+08:51
+Po pierwsze, pierwszy z nich jest to przycisk dodawania rzeczy z biblioteki, ale innych niż meble, takie jak elementy z modelami 3D, czy Bruma, Hethisza, Hafele, czy konkretne po prostu jakieś modele 3D, które służą jako wystrój wnętrza do wizualizacji.
+09:10
+Poniżej mamy dekory, ofertę, a także przyciski służące do poruszania się i skrajnego przesuwania mebla we lewo, w prawo, w górę, w dół lub do przodu, do tyłu.
+09:25
+To pokażę szerzej opisując poruszanie się mebla.
+09:32
+To wszystko, dziękuję za uwagę.

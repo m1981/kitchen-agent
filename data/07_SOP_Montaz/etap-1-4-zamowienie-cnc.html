@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Etap 1.4: Zamówienie CNC - SOP PRO</title>
+        <!doctype html>
+        <html lang="pl">
+            <head>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <title>Etap 1.4: Zamówienie CNC - SOP PRO</title>
+                <link rel="stylesheet" href="./common.css" />
+                <style>
+                    .nav-bar {
+                        margin-bottom: 20px;
+                        padding-bottom: 10px;
+                        border-bottom: 1px solid var(--border-color);
+                    }
+                    .nav-bar a {
+                        text-decoration: none;
+                        color: var(--primary-color);
+                        font-weight: bold;
+                    }
+                    .nav-bar a:hover {
+                        text-decoration: underline;
+                    }
+
+                    .sop-section {
+                        background: #fff;
+                        padding: 20px;
+                        margin-bottom: 20px;
+                        border-left: 4px solid var(--primary-color);
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                    }
+                    .sop-section h2 {
+                        margin-top: 0;
+                        color: #2c3e50;
+                        border-bottom: 1px solid #eee;
+                        padding-bottom: 10px;
+                    }
+
+                    .warning-box {
+                        background-color: #fadbd8;
+                        border-left: 4px solid #e74c3c;
+                        padding: 15px;
+                        margin: 15px 0;
+                        font-weight: bold;
+                    }
+                    .pro-tip {
+                        background-color: #e8f4f8;
+                        border-left: 4px solid #3498db;
+                        padding: 15px;
+                        margin: 15px 0;
+                        font-style: italic;
+                    }
+
+                    .cnc-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 15px;
+                        font-size: 0.95em;
+                    }
+                    .cnc-table th,
+                    .cnc-table td {
+                        border: 1px solid var(--border-color);
+                        padding: 8px;
+                        text-align: center;
+                    }
+                    .cnc-table th {
+                        background-color: #ecf0f1;
+                    }
+                    .cnc-table td.left-align {
+                        text-align: left;
+                    }
+
+                    .edge-indicator {
+                        display: inline-block;
+                        width: 15px;
+                        height: 15px;
+                        border: 1px solid #000;
+                        margin: 0 2px;
+                    }
+                    .edge-top {
+                        border-top: 3px solid #e74c3c;
+                    }
+                    .edge-bottom {
+                        border-bottom: 3px solid #e74c3c;
+                    }
+                    .edge-left {
+                        border-left: 3px solid #e74c3c;
+                    }
+                    .edge-right {
+                        border-right: 3px solid #e74c3c;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="nav-bar">
+                        <a href="index.html">← Powrót do Panelu Głównego</a>
+                    </div>
+
+                    <h1>ETAP 1.4: ZAMÓWIENIE CNC (Generowanie "Klocków LEGO")</h1>
+                    <p>
+                        <em
+                            >Cel: Stworzenie bezbłędnej listy formatek, oklein i nawiertów dla
+                            zewnętrznej stolarni.</em
+                        >
+                    </p>
+
+                    <div class="warning-box">
+                        ⚠️ ZASADA: Stolarnia tnie to, co wpiszesz. Sprawdzaj listę 3 razy przed
+                        kliknięciem "Zamów".
+                    </div>
+
+                    <div class="sop-section">
+                        <h2>1. Wymiary i Kierunek Usłojenia (Krytyczne)</h2>
+                        <p>
+                            Większość systemów CNC wymaga podania wymiarów w formacie:
+                            <strong>Długość (L) x Szerokość (W)</strong>.
+                        </p>
+
+                        <ul style="line-height: 1.8">
+                            <li>
+                                <strong>Długość (L):</strong> To wymiar <em>wzdłuż</em> słojów
+                                (struktury drewna).
+                            </li>
+                            <li>
+                                <strong>Szerokość (W):</strong> To wymiar <em>w poprzek</em> słojów.
+                            </li>
+                            <li>
+                                <strong>Brak słojów (np. biały mat):</strong> Wymiar L to zazwyczaj
+                                dłuższy bok formatki (dla optymalizacji cięcia).
+                            </li>
+                        </ul>
+
+                        <div class="pro-tip">
+                            <strong>Fronty drewnopodobne (Kontynuacja usłojenia):</strong> Jeśli
+                            masz 3 szuflady jedna pod drugą i chcesz, aby słoje przechodziły płynnie
+                            przez wszystkie fronty, musisz to wyraźnie zaznaczyć w systemie CNC
+                            (opcja "Grupowanie / Kontynuacja usłojenia").
+                        </div>
+                    </div>
+
+                    <div class="sop-section">
+                        <h2>2. Strategia Okleinowania (Tylko PUR)</h2>
+                        <p>
+                            Okleinowanie kosztuje. Nie oklejaj krawędzi, których nigdy nie będzie
+                            widać, ale zabezpiecz te, które są narażone na wilgoć.
+                        </p>
+
+                        <table class="cnc-table">
+                            <tr>
+                                <th class="left-align">Element Korpusu</th>
+                                <th>Przód</th>
+                                <th>Tył</th>
+                                <th>Góra</th>
+                                <th>Dół</th>
+                                <th class="left-align">Uzasadnienie</th>
+                            </tr>
+                            <tr>
+                                <td class="left-align"><strong>Bok szafki dolnej</strong></td>
+                                <td><span class="edge-indicator edge-left"></span> 1mm</td>
+                                <td>Brak</td>
+                                <td>Brak</td>
+                                <td><span class="edge-indicator edge-bottom"></span> 1mm</td>
+                                <td class="left-align">
+                                    Przód widoczny. Dół oklejony chroni przed piciem wody z podłogi
+                                    w razie zalania (KRYTYCZNE!). Tył i góra niewidoczne.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="left-align"><strong>Wieniec dolny / Półka</strong></td>
+                                <td><span class="edge-indicator edge-left"></span> 1mm</td>
+                                <td>Brak</td>
+                                <td>Brak</td>
+                                <td>Brak</td>
+                                <td class="left-align">
+                                    Tylko przednia krawędź jest widoczna po otwarciu szafki.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="left-align"><strong>Front (MDF PET)</strong></td>
+                                <td><span class="edge-indicator edge-left"></span> 1mm</td>
+                                <td><span class="edge-indicator edge-right"></span> 1mm</td>
+                                <td><span class="edge-indicator edge-top"></span> 1mm</td>
+                                <td><span class="edge-indicator edge-bottom"></span> 1mm</td>
+                                <td class="left-align">
+                                    Front oklejamy zawsze dookoła (4 krawędzie). Używamy obrzeża
+                                    dopasowanego do płyty (np. 1mm lub 1.2mm).
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div
+                            class="warning-box"
+                            style="background-color: #fcf3cf; border-color: #f1c40f; color: #8a6d3b"
+                        >
+                            <strong>Klej PUR to standard:</strong> Zawsze zlecaj okleinowanie na
+                            kleju poliuretanowym (PUR). Jest wodoodporny i ma niewidoczną spoinę.
+                            Klej EVA (tradycyjny) rozpuści się od pary ze zmywarki.
+                        </div>
+                    </div>
+                    <div class="sop-section">
+                        <h2>2. Checklista przed wysłaniem zamówienia (OSTATECZNA)</h2>
+                        <ul style="line-height: 1.8; list-style-type: none; padding-left: 0">
+                            <li>
+                                <label
+                                    ><input type="checkbox" /> <strong>BOKI WIDOCZNE:</strong> Czy
+                                    upewniłem się, że boki skrajnych szafek są wycięte z materiału
+                                    frontowego (PM), a nie korpusowego (ST9)?</label
+                                >
+                            </li>
+                            <li>
+                                <label
+                                    ><input type="checkbox" /> <strong>USŁOJENIE:</strong> Czy
+                                    kierunek słojów na frontach drewnopodobnych jest poprawny
+                                    (pionowy)?</label
+                                >
+                            </li>
+                            <li>
+                                <label
+                                    ><input type="checkbox" /> <strong>WILGOĆ:</strong> Czy dolne
+                                    krawędzie boków szafek stojących są oklejone?</label
+                                >
+                            </li>
+                            <li>
+                                <label
+                                    ><input type="checkbox" /> <strong>KLEJ:</strong> Czy wyraźnie
+                                    zaznaczyłem klej PUR dla całego zamówienia?</label
+                                >
+                            </li>
+                            <li>
+                                <label
+                                    ><input type="checkbox" /> <strong>GRUBOŚCI:</strong> Czy
+                                    grubości płyt w zamówieniu zgadzają się z projektem (np. korpusy
+                                    18mm, fronty 18/19mm, plecy 3mm)?</label
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="sop-section">
+                        <h2>3. Nawierty i Frezowania (Opcja Premium)</h2>
+                        <p>
+                            Zlecanie nawiertów na CNC kosztuje dodatkowo, ale oszczędza godziny
+                            pracy na montażu i gwarantuje idealne kąty proste.
+                        </p>
+
+                        <ul style="line-height: 1.8">
+                            <li>
+                                <strong>Złącza:</strong> Zlecaj nawierty pod konfirmaty (fi 5mm) lub
+                                mimośrody (Minifix).
+                            </li>
+                            <li>
+                                <strong>Zawiasy:</strong> Zlecaj frezowanie puszek pod zawiasy (fi
+                                35mm) we frontach. Standardowy wymiar to 22,5 mm od krawędzi frontu
+                                do osi puszki (dla zawiasów Blum).
+                            </li>
+                            <li>
+                                <strong>Plecy (Nuta):</strong> Zlecaj frezowanie rowka (nuty) na
+                                plecy HDF. Standard: szerokość rowka 3.2mm, głębokość 8mm,
+                                odsunięcie od tylnej krawędzi 16mm.
+                            </li>
+                            <li>
+                                <strong>Oświetlenie LED:</strong> Zlecaj frezowanie korytek pod
+                                profile aluminiowe LED w wieńcach dolnych szafek wiszących.
+                                Unikniesz pyłu z frezarki w mieszkaniu klienta.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="sop-section">
+                        <h2>4. Checklista przed wysłaniem zamówienia</h2>
+                        <ul style="line-height: 1.8">
+                            <li>
+                                <input type="checkbox" /> Czy odjąłem grubość okleiny od wymiarów
+                                formatek?
+                            </li>
+                            <li>
+                                <input type="checkbox" /> Czy kierunek słojów na frontach jest
+                                poprawny (L x W)?
+                            </li>
+                            <li>
+                                <input type="checkbox" /> Czy dolne krawędzie boków szafek stojących
+                                są oklejone?
+                            </li>
+                            <li>
+                                <input type="checkbox" /> Czy zaznaczyłem klej PUR dla całego
+                                zamówienia?
+                            </li>
+                            <li>
+                                <input type="checkbox" /> Czy grubości płyt w zamówieniu zgadzają
+                                się z projektem (np. korpusy 18mm, fronty 18/19mm, plecy 3mm)?
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div
+                        class="nav-bar"
+                        style="
+                            margin-top: 30px;
+                            border-bottom: none;
+                            border-top: 1px solid var(--border-color);
+                            padding-top: 20px;
+                        "
+                    >
+                        <a href="etap-1-3-projektowanie-cad.html" style="float: left"
+                            >← Wróć do Etapu 1.3</a
+                        >
+                        <a href="etap-2-logistyka-warsztat.html" style="float: right"
+                            >Przejdź do Etapu 2: Logistyka i Warsztat →</a
+                        >
+                        <div style="clear: both"></div>
+                    </div>
+                </div>
+            </body>
+        </html>
+
+        <link rel="stylesheet" href="./common.css" />
+        <style>
+            .nav-bar {
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .nav-bar a {
+                text-decoration: none;
+                color: var(--primary-color);
+                font-weight: bold;
+            }
+            .nav-bar a:hover {
+                text-decoration: underline;
+            }
+
+            .sop-section {
+                background: #fff;
+                padding: 20px;
+                margin-bottom: 20px;
+                border-left: 4px solid var(--primary-color);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            }
+            .sop-section h2 {
+                margin-top: 0;
+                color: #2c3e50;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 10px;
+            }
+
+            .warning-box {
+                background-color: #fadbd8;
+                border-left: 4px solid #e74c3c;
+                padding: 15px;
+                margin: 15px 0;
+                font-weight: bold;
+            }
+            .pro-tip {
+                background-color: #e8f4f8;
+                border-left: 4px solid #3498db;
+                padding: 15px;
+                margin: 15px 0;
+                font-style: italic;
+            }
+
+            .cnc-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+                font-size: 0.95em;
+            }
+            .cnc-table th,
+            .cnc-table td {
+                border: 1px solid var(--border-color);
+                padding: 8px;
+                text-align: center;
+            }
+            .cnc-table th {
+                background-color: #ecf0f1;
+            }
+            .cnc-table td.left-align {
+                text-align: left;
+            }
+
+            .edge-indicator {
+                display: inline-block;
+                width: 15px;
+                height: 15px;
+                border: 1px solid #000;
+                margin: 0 2px;
+            }
+            .edge-top {
+                border-top: 3px solid #e74c3c;
+            }
+            .edge-bottom {
+                border-bottom: 3px solid #e74c3c;
+            }
+            .edge-left {
+                border-left: 3px solid #e74c3c;
+            }
+            .edge-right {
+                border-right: 3px solid #e74c3c;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="nav-bar">
+                <a href="index.html">← Powrót do Panelu Głównego</a>
+            </div>
+
+            <h1>ETAP 1.4: ZAMÓWIENIE CNC (Generowanie "Klocków LEGO")</h1>
+            <p>
+                <em
+                    >Cel: Stworzenie bezbłędnej listy formatek, oklein i nawiertów dla zewnętrznej
+                    stolarni.</em
+                >
+            </p>
+
+            <div class="warning-box">
+                ⚠️ ZASADA: Stolarnia tnie to, co wpiszesz. Sprawdzaj listę 3 razy przed kliknięciem
+                "Zamów".
+            </div>
+
+            <div class="sop-section">
+                <h2>1. Wymiary i Kierunek Usłojenia (Krytyczne)</h2>
+                <p>
+                    Większość systemów CNC wymaga podania wymiarów w formacie:
+                    <strong>Długość (L) x Szerokość (W)</strong>.
+                </p>
+
+                <ul style="line-height: 1.8">
+                    <li>
+                        <strong>Długość (L):</strong> To wymiar <em>wzdłuż</em> słojów (struktury
+                        drewna).
+                    </li>
+                    <li><strong>Szerokość (W):</strong> To wymiar <em>w poprzek</em> słojów.</li>
+                    <li>
+                        <strong>Brak słojów (np. biały mat):</strong> Wymiar L to zazwyczaj dłuższy
+                        bok formatki (dla optymalizacji cięcia).
+                    </li>
+                </ul>
+
+                <div class="pro-tip">
+                    <strong>Fronty drewnopodobne (Kontynuacja usłojenia):</strong> Jeśli masz 3
+                    szuflady jedna pod drugą i chcesz, aby słoje przechodziły płynnie przez
+                    wszystkie fronty, musisz to wyraźnie zaznaczyć w systemie CNC (opcja "Grupowanie
+                    / Kontynuacja usłojenia").
+                </div>
+            </div>
+
+            <div class="sop-section">
+                <h2>2. Strategia Okleinowania (Tylko PUR)</h2>
+                <p>
+                    Okleinowanie kosztuje. Nie oklejaj krawędzi, których nigdy nie będzie widać, ale
+                    zabezpiecz te, które są narażone na wilgoć.
+                </p>
+
+                <table class="cnc-table">
+                    <tr>
+                        <th class="left-align">Element Korpusu</th>
+                        <th>Przód</th>
+                        <th>Tył</th>
+                        <th>Góra</th>
+                        <th>Dół</th>
+                        <th class="left-align">Uzasadnienie</th>
+                    </tr>
+                    <tr>
+                        <td class="left-align"><strong>Bok szafki dolnej</strong></td>
+                        <td><span class="edge-indicator edge-left"></span> 1mm</td>
+                        <td>Brak</td>
+                        <td>Brak</td>
+                        <td><span class="edge-indicator edge-bottom"></span> 1mm</td>
+                        <td class="left-align">
+                            Przód widoczny. Dół oklejony chroni przed piciem wody z podłogi w razie
+                            zalania (KRYTYCZNE!). Tył i góra niewidoczne.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left-align"><strong>Wieniec dolny / Półka</strong></td>
+                        <td><span class="edge-indicator edge-left"></span> 1mm</td>
+                        <td>Brak</td>
+                        <td>Brak</td>
+                        <td>Brak</td>
+                        <td class="left-align">
+                            Tylko przednia krawędź jest widoczna po otwarciu szafki.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left-align"><strong>Front (MDF PET)</strong></td>
+                        <td><span class="edge-indicator edge-left"></span> 1mm</td>
+                        <td><span class="edge-indicator edge-right"></span> 1mm</td>
+                        <td><span class="edge-indicator edge-top"></span> 1mm</td>
+                        <td><span class="edge-indicator edge-bottom"></span> 1mm</td>
+                        <td class="left-align">
+                            Front oklejamy zawsze dookoła (4 krawędzie). Używamy obrzeża
+                            dopasowanego do płyty (np. 1mm lub 1.2mm).
+                        </td>
+                    </tr>
+                </table>
+
+                <div
+                    class="warning-box"
+                    style="background-color: #fcf3cf; border-color: #f1c40f; color: #8a6d3b"
+                >
+                    <strong>Klej PUR to standard:</strong> Zawsze zlecaj okleinowanie na kleju
+                    poliuretanowym (PUR). Jest wodoodporny i ma niewidoczną spoinę. Klej EVA
+                    (tradycyjny) rozpuści się od pary ze zmywarki.
+                </div>
+            </div>
+            <div class="sop-section">
+                <h2>2. Checklista przed wysłaniem zamówienia (OSTATECZNA)</h2>
+                <ul style="line-height: 1.8; list-style-type: none; padding-left: 0">
+                    <li>
+                        <label
+                            ><input type="checkbox" /> <strong>BOKI WIDOCZNE:</strong> Czy upewniłem
+                            się, że boki skrajnych szafek są wycięte z materiału frontowego (PM), a
+                            nie korpusowego (ST9)?</label
+                        >
+                    </li>
+                    <li>
+                        <label
+                            ><input type="checkbox" /> <strong>USŁOJENIE:</strong> Czy kierunek
+                            słojów na frontach drewnopodobnych jest poprawny (pionowy)?</label
+                        >
+                    </li>
+                    <li>
+                        <label
+                            ><input type="checkbox" /> <strong>WILGOĆ:</strong> Czy dolne krawędzie
+                            boków szafek stojących są oklejone?</label
+                        >
+                    </li>
+                    <li>
+                        <label
+                            ><input type="checkbox" /> <strong>KLEJ:</strong> Czy wyraźnie
+                            zaznaczyłem klej PUR dla całego zamówienia?</label
+                        >
+                    </li>
+                    <li>
+                        <label
+                            ><input type="checkbox" /> <strong>GRUBOŚCI:</strong> Czy grubości płyt
+                            w zamówieniu zgadzają się z projektem (np. korpusy 18mm, fronty 18/19mm,
+                            plecy 3mm)?</label
+                        >
+                    </li>
+                </ul>
+            </div>
+            <div class="sop-section">
+                <h2>3. Nawierty i Frezowania (Opcja Premium)</h2>
+                <p>
+                    Zlecanie nawiertów na CNC kosztuje dodatkowo, ale oszczędza godziny pracy na
+                    montażu i gwarantuje idealne kąty proste.
+                </p>
+
+                <ul style="line-height: 1.8">
+                    <li>
+                        <strong>Złącza:</strong> Zlecaj nawierty pod konfirmaty (fi 5mm) lub
+                        mimośrody (Minifix).
+                    </li>
+                    <li>
+                        <strong>Zawiasy:</strong> Zlecaj frezowanie puszek pod zawiasy (fi 35mm) we
+                        frontach. Standardowy wymiar to 22,5 mm od krawędzi frontu do osi puszki
+                        (dla zawiasów Blum).
+                    </li>
+                    <li>
+                        <strong>Plecy (Nuta):</strong> Zlecaj frezowanie rowka (nuty) na plecy HDF.
+                        Standard: szerokość rowka 3.2mm, głębokość 8mm, odsunięcie od tylnej
+                        krawędzi 16mm.
+                    </li>
+                    <li>
+                        <strong>Oświetlenie LED:</strong> Zlecaj frezowanie korytek pod profile
+                        aluminiowe LED w wieńcach dolnych szafek wiszących. Unikniesz pyłu z
+                        frezarki w mieszkaniu klienta.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sop-section">
+                <h2>4. Checklista przed wysłaniem zamówienia</h2>
+                <ul style="line-height: 1.8">
+                    <li>
+                        <input type="checkbox" /> Czy odjąłem grubość okleiny od wymiarów formatek?
+                    </li>
+                    <li>
+                        <input type="checkbox" /> Czy kierunek słojów na frontach jest poprawny (L x
+                        W)?
+                    </li>
+                    <li>
+                        <input type="checkbox" /> Czy dolne krawędzie boków szafek stojących są
+                        oklejone?
+                    </li>
+                    <li>
+                        <input type="checkbox" /> Czy zaznaczyłem klej PUR dla całego zamówienia?
+                    </li>
+                    <li>
+                        <input type="checkbox" /> Czy grubości płyt w zamówieniu zgadzają się z
+                        projektem (np. korpusy 18mm, fronty 18/19mm, plecy 3mm)?
+                    </li>
+                </ul>
+            </div>
+
+            <div
+                class="nav-bar"
+                style="
+                    margin-top: 30px;
+                    border-bottom: none;
+                    border-top: 1px solid var(--border-color);
+                    padding-top: 20px;
+                "
+            >
+                <a href="etap-1-3-projektowanie-cad.html" style="float: left"
+                    >← Wróć do Etapu 1.3</a
+                >
+                <a href="etap-2-logistyka-warsztat.html" style="float: right"
+                    >Przejdź do Etapu 2: Logistyka i Warsztat →</a
+                >
+                <div style="clear: both"></div>
+            </div>
+        </div>
+    </body>
+</html>

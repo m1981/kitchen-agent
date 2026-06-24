@@ -1,0 +1,247 @@
+
+Okno Projektowe - część 1
+
+
+[00:00](https://youtu.be/bkcsR2XFU48?t=0)(https://youtu.be/bkcsR2XFU48?t=0) [Muzyka]
+[00:14](https://youtu.be/bkcsR2XFU48?t=14)(https://youtu.be/bkcsR2XFU48?t=14) Witam w przewodniku online w tym filmie
+[00:16](https://youtu.be/bkcsR2XFU48?t=16)(https://youtu.be/bkcsR2XFU48?t=16) Omówię podstawy poruszania się po oknie
+[00:19](https://youtu.be/bkcsR2XFU48?t=19)(https://youtu.be/bkcsR2XFU48?t=19) projektowym programu korpus oraz po
+[00:22](https://youtu.be/bkcsR2XFU48?t=22)(https://youtu.be/bkcsR2XFU48?t=22) przyciskach z górnego
+[00:24](https://youtu.be/bkcsR2XFU48?t=24)(https://youtu.be/bkcsR2XFU48?t=24) paska przede wszystkim w programie kpus
+[00:27](https://youtu.be/bkcsR2XFU48?t=27)(https://youtu.be/bkcsR2XFU48?t=27) mam dwiw
+[00:29](https://youtu.be/bkcsR2XFU48?t=29)(https://youtu.be/bkcsR2XFU48?t=29) [Muzyka]
+[00:31](https://youtu.be/bkcsR2XFU48?t=31)(https://youtu.be/bkcsR2XFU48?t=31) j to konektor 3D który pozwala poruszać
+[00:34](https://youtu.be/bkcsR2XFU48?t=34)(https://youtu.be/bkcsR2XFU48?t=34) się we wszystkich osiach w jednym czasie
+[00:38](https://youtu.be/bkcsR2XFU48?t=38)(https://youtu.be/bkcsR2XFU48?t=38) natomiast druga metoda to lewy przycisk
+[00:41](https://youtu.be/bkcsR2XFU48?t=41)(https://youtu.be/bkcsR2XFU48?t=41) myszy który obraca nam kamerę po
+[00:45](https://youtu.be/bkcsR2XFU48?t=45)(https://youtu.be/bkcsR2XFU48?t=45) przytrzymaniu oraz lewy przycisk myszy w
+[00:47](https://youtu.be/bkcsR2XFU48?t=47)(https://youtu.be/bkcsR2XFU48?t=47) połączeniu z dwoma przyciskami z
+[00:49](https://youtu.be/bkcsR2XFU48?t=49)(https://youtu.be/bkcsR2XFU48?t=49) klawiatury Pierwszy z nich to shift
+[00:52](https://youtu.be/bkcsR2XFU48?t=52)(https://youtu.be/bkcsR2XFU48?t=52) przytrzymując shift i naciskając lewy
+[00:54](https://youtu.be/bkcsR2XFU48?t=54)(https://youtu.be/bkcsR2XFU48?t=54) przycisk myszy możemy poruszać się na
+[00:56](https://youtu.be/bkcsR2XFU48?t=56)(https://youtu.be/bkcsR2XFU48?t=56) boki oraz do przodu i do tyłu natomiast
+[01:01](https://youtu.be/bkcsR2XFU48?t=61)(https://youtu.be/bkcsR2XFU48?t=61) naciskając klawisz Control możemy
+[01:03](https://youtu.be/bkcsR2XFU48?t=63)(https://youtu.be/bkcsR2XFU48?t=63) poruszać się góra dół No i oczywiście
+[01:06](https://youtu.be/bkcsR2XFU48?t=66)(https://youtu.be/bkcsR2XFU48?t=66) rolka myszki przybliża i oddala widok
+[01:09](https://youtu.be/bkcsR2XFU48?t=69)(https://youtu.be/bkcsR2XFU48?t=69) jeżeli byśmy się zgubili w przestrzeni i
+[01:11](https://youtu.be/bkcsR2XFU48?t=71)(https://youtu.be/bkcsR2XFU48?t=71) mieli czarny ekran Klikamy przycisk
+[01:14](https://youtu.be/bkcsR2XFU48?t=74)(https://youtu.be/bkcsR2XFU48?t=74) enter przycisk enter nie tylko powraca
+[01:18](https://youtu.be/bkcsR2XFU48?t=78)(https://youtu.be/bkcsR2XFU48?t=78) do widoku naszego okna ale także zeruje
+[01:21](https://youtu.be/bkcsR2XFU48?t=81)(https://youtu.be/bkcsR2XFU48?t=81) go całkowicie Co to znaczy to znaczy że
+[01:23](https://youtu.be/bkcsR2XFU48?t=83)(https://youtu.be/bkcsR2XFU48?t=83) jeżeli mamy pomieszczenie kwadratowe tak
+[01:26](https://youtu.be/bkcsR2XFU48?t=86)(https://youtu.be/bkcsR2XFU48?t=86) jak tutaj i nie wiemy Która ściana jest
+[01:28](https://youtu.be/bkcsR2XFU48?t=88)(https://youtu.be/bkcsR2XFU48?t=88) początkiem
+[01:30](https://youtu.be/bkcsR2XFU48?t=90)(https://youtu.be/bkcsR2XFU48?t=90) pomieszczenia naciskamy enter i po
+[01:33](https://youtu.be/bkcsR2XFU48?t=93)(https://youtu.be/bkcsR2XFU48?t=93) naciśnięciu entera wiemy że tutaj w tym
+[01:36](https://youtu.be/bkcsR2XFU48?t=96)(https://youtu.be/bkcsR2XFU48?t=96) narożniku pomieszczenia znajduje się
+[01:38](https://youtu.be/bkcsR2XFU48?t=98)(https://youtu.be/bkcsR2XFU48?t=98) punkt
+[01:39](https://youtu.be/bkcsR2XFU48?t=99)(https://youtu.be/bkcsR2XFU48?t=99) 00 jednego dużego układu współrzędnych
+[01:43](https://youtu.be/bkcsR2XFU48?t=103)(https://youtu.be/bkcsR2XFU48?t=103) którym właśnie jest nasze pomieszczenie
+[01:45](https://youtu.be/bkcsR2XFU48?t=105)(https://youtu.be/bkcsR2XFU48?t=105) mamy tutaj Oś x która przebiega w
+[01:47](https://youtu.be/bkcsR2XFU48?t=107)(https://youtu.be/bkcsR2XFU48?t=107) poziomie oś Y która przebiega w pionie
+[01:51](https://youtu.be/bkcsR2XFU48?t=111)(https://youtu.be/bkcsR2XFU48?t=111) oś z która przebiega w naszą stronę tak
+[01:55](https://youtu.be/bkcsR2XFU48?t=115)(https://youtu.be/bkcsR2XFU48?t=115) więc mamy tutaj taki trzyosiowy układ
+[01:57](https://youtu.be/bkcsR2XFU48?t=117)(https://youtu.be/bkcsR2XFU48?t=117) współrzędnych
+[02:00](https://youtu.be/bkcsR2XFU48?t=120)(https://youtu.be/bkcsR2XFU48?t=120) było nam poznać Kolejne funkcje naszego
+[02:03](https://youtu.be/bkcsR2XFU48?t=123)(https://youtu.be/bkcsR2XFU48?t=123) programu dodamy sobie szafkę z
+[02:05](https://youtu.be/bkcsR2XFU48?t=125)(https://youtu.be/bkcsR2XFU48?t=125) biblioteki szafkę z biblioteki można też
+[02:08](https://youtu.be/bkcsR2XFU48?t=128)(https://youtu.be/bkcsR2XFU48?t=128) dodać na parę sposobów Jednym z nich
+[02:10](https://youtu.be/bkcsR2XFU48?t=130)(https://youtu.be/bkcsR2XFU48?t=130) jest wybranie biblioteki tutaj z prawego
+[02:13](https://youtu.be/bkcsR2XFU48?t=133)(https://youtu.be/bkcsR2XFU48?t=133) paska przycisków cała biblioteka otwiera
+[02:16](https://youtu.be/bkcsR2XFU48?t=136)(https://youtu.be/bkcsR2XFU48?t=136) nam się biblioteka wchodzimy na przykład
+[02:18](https://youtu.be/bkcsR2XFU48?t=138)(https://youtu.be/bkcsR2XFU48?t=138) w meble
+[02:19](https://youtu.be/bkcsR2XFU48?t=139)(https://youtu.be/bkcsR2XFU48?t=139) przykładowe następnie kuchenne dolne i
+[02:23](https://youtu.be/bkcsR2XFU48?t=143)(https://youtu.be/bkcsR2XFU48?t=143) weźmiemy sobie szafkę d1d i tutaj szafka
+[02:26](https://youtu.be/bkcsR2XFU48?t=146)(https://youtu.be/bkcsR2XFU48?t=146) d1d została zapisana do biblioteki z
+[02:29](https://youtu.be/bkcsR2XFU48?t=149)(https://youtu.be/bkcsR2XFU48?t=149) jakim
+[02:31](https://youtu.be/bkcsR2XFU48?t=151)(https://youtu.be/bkcsR2XFU48?t=151) które po jej kliknięciu wyświetlają się
+[02:33](https://youtu.be/bkcsR2XFU48?t=153)(https://youtu.be/bkcsR2XFU48?t=153) na dole mogę oczywiście Te wymiary teraz
+[02:36](https://youtu.be/bkcsR2XFU48?t=156)(https://youtu.be/bkcsR2XFU48?t=156) sobie zmienić na przykład wysokość
+[02:38](https://youtu.be/bkcsR2XFU48?t=158)(https://youtu.be/bkcsR2XFU48?t=158) zrobię
+[02:39](https://youtu.be/bkcsR2XFU48?t=159)(https://youtu.be/bkcsR2XFU48?t=159) 850 a głębokość na 510 po kliknięciu
+[02:44](https://youtu.be/bkcsR2XFU48?t=164)(https://youtu.be/bkcsR2XFU48?t=164) wczytaj szafka wczytuje mi się z tymi
+[02:47](https://youtu.be/bkcsR2XFU48?t=167)(https://youtu.be/bkcsR2XFU48?t=167) wymiarami które zadałem jeżeli bym
+[02:49](https://youtu.be/bkcsR2XFU48?t=169)(https://youtu.be/bkcsR2XFU48?t=169) kliknął dwa razy na szafkę to wczyta mi
+[02:51](https://youtu.be/bkcsR2XFU48?t=171)(https://youtu.be/bkcsR2XFU48?t=171) się wtedy z tymi wymiarami
+[02:54](https://youtu.be/bkcsR2XFU48?t=174)(https://youtu.be/bkcsR2XFU48?t=174) domyślnymi od razu bezpośrednio żeby
+[02:57](https://youtu.be/bkcsR2XFU48?t=177)(https://youtu.be/bkcsR2XFU48?t=177) wyjść z biblioteki klikamy czerwony kzy
+[03:00](https://youtu.be/bkcsR2XFU48?t=180)(https://youtu.be/bkcsR2XFU48?t=180) n przyciskiem całej biblioteki po
+[03:03](https://youtu.be/bkcsR2XFU48?t=183)(https://youtu.be/bkcsR2XFU48?t=183) kliknięciu na szafkę pojawia mi się cała
+[03:05](https://youtu.be/bkcsR2XFU48?t=185)(https://youtu.be/bkcsR2XFU48?t=185) lista szafek tutaj w tym białym polu
+[03:08](https://youtu.be/bkcsR2XFU48?t=188)(https://youtu.be/bkcsR2XFU48?t=188) Generalnie to białe pole zawiera
+[03:09](https://youtu.be/bkcsR2XFU48?t=189)(https://youtu.be/bkcsR2XFU48?t=189) wszystkie elementy które znajdują się w
+[03:12](https://youtu.be/bkcsR2XFU48?t=192)(https://youtu.be/bkcsR2XFU48?t=192) naszym projekcie są to nie tylko szafki
+[03:14](https://youtu.be/bkcsR2XFU48?t=194)(https://youtu.be/bkcsR2XFU48?t=194) ale są to także blaty cokoły listwy
+[03:18](https://youtu.be/bkcsR2XFU48?t=198)(https://youtu.be/bkcsR2XFU48?t=198) blendy kończące i tak dalej Po
+[03:21](https://youtu.be/bkcsR2XFU48?t=201)(https://youtu.be/bkcsR2XFU48?t=201) zaznaczeniu szafki podświetla się ona
+[03:23](https://youtu.be/bkcsR2XFU48?t=203)(https://youtu.be/bkcsR2XFU48?t=203) takim układem współrzędnych i tutaj ten
+[03:25](https://youtu.be/bkcsR2XFU48?t=205)(https://youtu.be/bkcsR2XFU48?t=205) układ współrzędnych ma swój początek
+[03:28](https://youtu.be/bkcsR2XFU48?t=208)(https://youtu.be/bkcsR2XFU48?t=208) wirtualnie
+[03:30](https://youtu.be/bkcsR2XFU48?t=210)(https://youtu.be/bkcsR2XFU48?t=210) s jeżeli byśmy weszli na chwilę do
+[03:34](https://youtu.be/bkcsR2XFU48?t=214)(https://youtu.be/bkcsR2XFU48?t=214) edytora ten punkt znajduje się w tym
+[03:37](https://youtu.be/bkcsR2XFU48?t=217)(https://youtu.be/bkcsR2XFU48?t=217) miejscu to jest taki wirtualny punkt o
+[03:40](https://youtu.be/bkcsR2XFU48?t=220)(https://youtu.be/bkcsR2XFU48?t=220) którym trzeba pamiętać on się znajduje
+[03:42](https://youtu.be/bkcsR2XFU48?t=222)(https://youtu.be/bkcsR2XFU48?t=222) tutaj na początku naszego korpusu No i
+[03:45](https://youtu.be/bkcsR2XFU48?t=225)(https://youtu.be/bkcsR2XFU48?t=225) oczywiście na samym dole szafki z lewej
+[03:48](https://youtu.be/bkcsR2XFU48?t=228)(https://youtu.be/bkcsR2XFU48?t=228) strony patrząc od
+[03:51](https://youtu.be/bkcsR2XFU48?t=231)(https://youtu.be/bkcsR2XFU48?t=231) przodu żeby ustawić tą szafkę WM
+[03:55](https://youtu.be/bkcsR2XFU48?t=235)(https://youtu.be/bkcsR2XFU48?t=235) pomieszczeni to doję chę
+[04:00](https://youtu.be/bkcsR2XFU48?t=240)(https://youtu.be/bkcsR2XFU48?t=240) po prawej stronie natomiast wracając do
+[04:02](https://youtu.be/bkcsR2XFU48?t=242)(https://youtu.be/bkcsR2XFU48?t=242) naszego białego pola możemy tutaj
+[04:04](https://youtu.be/bkcsR2XFU48?t=244)(https://youtu.be/bkcsR2XFU48?t=244) zaznaczoną szafkę powielić za pomocą
+[04:08](https://youtu.be/bkcsR2XFU48?t=248)(https://youtu.be/bkcsR2XFU48?t=248) zielonego plusika możemy także szafkę za
+[04:11](https://youtu.be/bkcsR2XFU48?t=251)(https://youtu.be/bkcsR2XFU48?t=251) pomocą czerwonego krzyżyka usunąć Możemy
+[04:14](https://youtu.be/bkcsR2XFU48?t=254)(https://youtu.be/bkcsR2XFU48?t=254) także szafkę wygasić tutaj przy każdym z
+[04:17](https://youtu.be/bkcsR2XFU48?t=257)(https://youtu.be/bkcsR2XFU48?t=257) elementów mamy takie oczko możemy
+[04:19](https://youtu.be/bkcsR2XFU48?t=259)(https://youtu.be/bkcsR2XFU48?t=259) kliknąć na oczko i szafka nam się
+[04:21](https://youtu.be/bkcsR2XFU48?t=261)(https://youtu.be/bkcsR2XFU48?t=261) wygasił się wygasza znaczy to że nie
+[04:24](https://youtu.be/bkcsR2XFU48?t=264)(https://youtu.be/bkcsR2XFU48?t=264) jest widoczna do generowania plików
+[04:27](https://youtu.be/bkcsR2XFU48?t=267)(https://youtu.be/bkcsR2XFU48?t=267) natomiast nie znika nam z projektu
+[04:29](https://youtu.be/bkcsR2XFU48?t=269)(https://youtu.be/bkcsR2XFU48?t=269) możemy
+[04:31](https://youtu.be/bkcsR2XFU48?t=271)(https://youtu.be/bkcsR2XFU48?t=271) przywrócić dalej mamy nazwę i kod szafki
+[04:35](https://youtu.be/bkcsR2XFU48?t=275)(https://youtu.be/bkcsR2XFU48?t=275) mamy właśnie jej wymiary gabarytowe oraz
+[04:38](https://youtu.be/bkcsR2XFU48?t=278)(https://youtu.be/bkcsR2XFU48?t=278) ustawienie w układzie współrzędnych
+[04:41](https://youtu.be/bkcsR2XFU48?t=281)(https://youtu.be/bkcsR2XFU48?t=281) właśnie tym trzyosiowy tutaj mamy trzy
+[04:43](https://youtu.be/bkcsR2XFU48?t=283)(https://youtu.be/bkcsR2XFU48?t=283) osie gdzie x jest czerwona y zielona z
+[04:47](https://youtu.be/bkcsR2XFU48?t=287)(https://youtu.be/bkcsR2XFU48?t=287) niebieska i te kolory generalnie przez
+[04:49](https://youtu.be/bkcsR2XFU48?t=289)(https://youtu.be/bkcsR2XFU48?t=289) cały program się powtarzają wszystkie te
+[04:51](https://youtu.be/bkcsR2XFU48?t=291)(https://youtu.be/bkcsR2XFU48?t=291) okienka tutaj przyjmują działania
+[04:54](https://youtu.be/bkcsR2XFU48?t=294)(https://youtu.be/bkcsR2XFU48?t=294) matematyczne więc mogę na przykład
+[04:55](https://youtu.be/bkcsR2XFU48?t=295)(https://youtu.be/bkcsR2XFU48?t=295) wysokość szafki zmniejszyć o 100 mm
+[05:00](https://youtu.be/bkcsR2XFU48?t=300)(https://youtu.be/bkcsR2XFU48?t=300) mogę zwiększyć szafkę o 100 mm z
+[05:03](https://youtu.be/bkcsR2XFU48?t=303)(https://youtu.be/bkcsR2XFU48?t=303) szerokości mogę ją na przykład przesunąć
+[05:05](https://youtu.be/bkcsR2XFU48?t=305)(https://youtu.be/bkcsR2XFU48?t=305) o 200 mm w prawo tutaj do tego
+[05:08](https://youtu.be/bkcsR2XFU48?t=308)(https://youtu.be/bkcsR2XFU48?t=308) ustawienia właśnie teraz przejdziemy
+[05:11](https://youtu.be/bkcsR2XFU48?t=311)(https://youtu.be/bkcsR2XFU48?t=311) Żeby ustawić szafkę precyzyjnie
+[05:13](https://youtu.be/bkcsR2XFU48?t=313)(https://youtu.be/bkcsR2XFU48?t=313) wykorzystujemy Właśnie te trzy okienka
+[05:15](https://youtu.be/bkcsR2XFU48?t=315)(https://youtu.be/bkcsR2XFU48?t=315) Oczywiście mogę kliknąć na szafkę
+[05:18](https://youtu.be/bkcsR2XFU48?t=318)(https://youtu.be/bkcsR2XFU48?t=318) później złapać ją lewym przyciskiem
+[05:19](https://youtu.be/bkcsR2XFU48?t=319)(https://youtu.be/bkcsR2XFU48?t=319) myszy i przesunąć dowolnie natomiast
+[05:22](https://youtu.be/bkcsR2XFU48?t=322)(https://youtu.be/bkcsR2XFU48?t=322) bardziej precyzyjne jest ustawianie za
+[05:24](https://youtu.be/bkcsR2XFU48?t=324)(https://youtu.be/bkcsR2XFU48?t=324) pomocą tych trzech okienek i tutaj po
+[05:27](https://youtu.be/bkcsR2XFU48?t=327)(https://youtu.be/bkcsR2XFU48?t=327) kliknięciu na szafkę jak chciałbym na
+[05:28](https://youtu.be/bkcsR2XFU48?t=328)(https://youtu.be/bkcsR2XFU48?t=328) przykład ją
+[05:30](https://youtu.be/bkcsR2XFU48?t=330)(https://youtu.be/bkcsR2XFU48?t=330) 21 mm od lewej ściany to jest de facto
+[05:33](https://youtu.be/bkcsR2XFU48?t=333)(https://youtu.be/bkcsR2XFU48?t=333) dystans między tym punktem 00 a tym
+[05:36](https://youtu.be/bkcsR2XFU48?t=336)(https://youtu.be/bkcsR2XFU48?t=336) punktem który wcześniej pokazałem czyli
+[05:39](https://youtu.be/bkcsR2XFU48?t=339)(https://youtu.be/bkcsR2XFU48?t=339) tym punktem bazowym naszej szafki No
+[05:41](https://youtu.be/bkcsR2XFU48?t=341)(https://youtu.be/bkcsR2XFU48?t=341) więc teraz w xie wpisujemy sobie 21 i
+[05:44](https://youtu.be/bkcsR2XFU48?t=344)(https://youtu.be/bkcsR2XFU48?t=344) zatwierdzamy enterem Generalnie
+[05:46](https://youtu.be/bkcsR2XFU48?t=346)(https://youtu.be/bkcsR2XFU48?t=346) wszystkie zmiany w tych okienkach
+[05:48](https://youtu.be/bkcsR2XFU48?t=348)(https://youtu.be/bkcsR2XFU48?t=348) zatwierdzamy enterem mamy szafkę
+[05:50](https://youtu.be/bkcsR2XFU48?t=350)(https://youtu.be/bkcsR2XFU48?t=350) ustawioną 21 mm od ściany lewej
+[05:54](https://youtu.be/bkcsR2XFU48?t=354)(https://youtu.be/bkcsR2XFU48?t=354) natomiast szafka ma głębokość 510 więc
+[05:57](https://youtu.be/bkcsR2XFU48?t=357)(https://youtu.be/bkcsR2XFU48?t=357) tutaj na przykład chciałbym
+[06:00](https://youtu.be/bkcsR2XFU48?t=360)(https://youtu.be/bkcsR2XFU48?t=360) ją w taki sposób żeby 5 cm luzu było
+[06:03](https://youtu.be/bkcsR2XFU48?t=363)(https://youtu.be/bkcsR2XFU48?t=363) pomiędzy ścianą a szafką więc od tego
+[06:06](https://youtu.be/bkcsR2XFU48?t=366)(https://youtu.be/bkcsR2XFU48?t=366) punktu
+[06:07](https://youtu.be/bkcsR2XFU48?t=367)(https://youtu.be/bkcsR2XFU48?t=367) 00 do punktu bazowego mojej szafki muszę
+[06:11](https://youtu.be/bkcsR2XFU48?t=371)(https://youtu.be/bkcsR2XFU48?t=371) zrobić wymiar 510 plus 50 560 Mam
+[06:16](https://youtu.be/bkcsR2XFU48?t=376)(https://youtu.be/bkcsR2XFU48?t=376) ustawioną szafkę w bardzo precyzyjny
+[06:19](https://youtu.be/bkcsR2XFU48?t=379)(https://youtu.be/bkcsR2XFU48?t=379) sposób wszystkie koordynaty mi się tutaj
+[06:21](https://youtu.be/bkcsR2XFU48?t=381)(https://youtu.be/bkcsR2XFU48?t=381) zgadzają co do
+[06:23](https://youtu.be/bkcsR2XFU48?t=383)(https://youtu.be/bkcsR2XFU48?t=383) milimetra
+[06:25](https://youtu.be/bkcsR2XFU48?t=385)(https://youtu.be/bkcsR2XFU48?t=385) następnie jeżeli odas sobie tą drugą
+[06:27](https://youtu.be/bkcsR2XFU48?t=387)(https://youtu.be/bkcsR2XFU48?t=387) szafkę
+[06:30](https://youtu.be/bkcsR2XFU48?t=390)(https://youtu.be/bkcsR2XFU48?t=390) lekiem myszy możemy tą szafkę
+[06:33](https://youtu.be/bkcsR2XFU48?t=393)(https://youtu.be/bkcsR2XFU48?t=393) przyciągnąć i
+[06:34](https://youtu.be/bkcsR2XFU48?t=394)(https://youtu.be/bkcsR2XFU48?t=394) tutaj pojawia nam się taka niebieska
+[06:37](https://youtu.be/bkcsR2XFU48?t=397)(https://youtu.be/bkcsR2XFU48?t=397) gruba linia przyciąganie domyślnie jest
+[06:39](https://youtu.be/bkcsR2XFU48?t=399)(https://youtu.be/bkcsR2XFU48?t=399) ustawione na 300 lub mniej milim więc
+[06:42](https://youtu.be/bkcsR2XFU48?t=402)(https://youtu.be/bkcsR2XFU48?t=402) jeżeli Zbliżę się do tej szafki na 300
+[06:45](https://youtu.be/bkcsR2XFU48?t=405)(https://youtu.be/bkcsR2XFU48?t=405) lub na mniejszy dystans No to po prostu
+[06:48](https://youtu.be/bkcsR2XFU48?t=408)(https://youtu.be/bkcsR2XFU48?t=408) pojawia się taka gruba Niebieska Linia i
+[06:51](https://youtu.be/bkcsR2XFU48?t=411)(https://youtu.be/bkcsR2XFU48?t=411) po puszczeniu
+[06:52](https://youtu.be/bkcsR2XFU48?t=412)(https://youtu.be/bkcsR2XFU48?t=412) szafki jesta precyzyjnie docięta jeżeli
+[06:55](https://youtu.be/bkcsR2XFU48?t=415)(https://youtu.be/bkcsR2XFU48?t=415) Puszczę tutaj to dociąg mi na rów tyłem
+[06:59](https://youtu.be/bkcsR2XFU48?t=419)(https://youtu.be/bkcsR2XFU48?t=419) jeżeli tutaj No to dociąg mi się w ten
+[07:02](https://youtu.be/bkcsR2XFU48?t=422)(https://youtu.be/bkcsR2XFU48?t=422) sposób że tył szafki jest na równo z
+[07:04](https://youtu.be/bkcsR2XFU48?t=424)(https://youtu.be/bkcsR2XFU48?t=424) przodem oczywiście przyciąganie działa
+[07:06](https://youtu.be/bkcsR2XFU48?t=426)(https://youtu.be/bkcsR2XFU48?t=426) do zielonego Boka o tym jeszcze
+[07:09](https://youtu.be/bkcsR2XFU48?t=429)(https://youtu.be/bkcsR2XFU48?t=429) powiem Dalej poniżej naszych koordynatów
+[07:12](https://youtu.be/bkcsR2XFU48?t=432)(https://youtu.be/bkcsR2XFU48?t=432) mamy opis i notatkę mamy Także zmienne
+[07:16](https://youtu.be/bkcsR2XFU48?t=436)(https://youtu.be/bkcsR2XFU48?t=436) do szafki zmienne polegają na tym że
+[07:19](https://youtu.be/bkcsR2XFU48?t=439)(https://youtu.be/bkcsR2XFU48?t=439) możemy dokonać zmian w szafce bez jej
+[07:21](https://youtu.be/bkcsR2XFU48?t=441)(https://youtu.be/bkcsR2XFU48?t=441) bezpośredniej edycji czyli na przykład
+[07:23](https://youtu.be/bkcsR2XFU48?t=443)(https://youtu.be/bkcsR2XFU48?t=443) mamy wysokość nóżki na 100 mm wpisujemy
+[07:26](https://youtu.be/bkcsR2XFU48?t=446)(https://youtu.be/bkcsR2XFU48?t=446) sobie 80 zatwierdzamy enterem i nóżki mi
+[07:30](https://youtu.be/bkcsR2XFU48?t=450)(https://youtu.be/bkcsR2XFU48?t=450) się skracają szafka Się rozciąga także
+[07:33](https://youtu.be/bkcsR2XFU48?t=453)(https://youtu.be/bkcsR2XFU48?t=453) takie zmienne będziemy też tworzyć w
+[07:35](https://youtu.be/bkcsR2XFU48?t=455)(https://youtu.be/bkcsR2XFU48?t=455) późniejszym czasie dalej mamy jeszcze
+[07:37](https://youtu.be/bkcsR2XFU48?t=457)(https://youtu.be/bkcsR2XFU48?t=457) edycje krawędzi No i tutaj żeby edycję
+[07:40](https://youtu.be/bkcsR2XFU48?t=460)(https://youtu.be/bkcsR2XFU48?t=460) krawędzi sobie zobaczyć jak to działa
+[07:43](https://youtu.be/bkcsR2XFU48?t=463)(https://youtu.be/bkcsR2XFU48?t=463) musimy przejść przez te przyciski na
+[07:44](https://youtu.be/bkcsR2XFU48?t=464)(https://youtu.be/bkcsR2XFU48?t=464) górze ekranu Oczywiście mamy tutaj
+[07:47](https://youtu.be/bkcsR2XFU48?t=467)(https://youtu.be/bkcsR2XFU48?t=467) przycisk do tworzenia nowego projektu do
+[07:50](https://youtu.be/bkcsR2XFU48?t=470)(https://youtu.be/bkcsR2XFU48?t=470) otwierania projektu następny zapisuje
+[07:54](https://youtu.be/bkcsR2XFU48?t=474)(https://youtu.be/bkcsR2XFU48?t=474) nam projekt bieżący kolejny przycisk to
+[07:57](https://youtu.be/bkcsR2XFU48?t=477)(https://youtu.be/bkcsR2XFU48?t=477) otwórz element czyli
+[08:00](https://youtu.be/bkcsR2XFU48?t=480)(https://youtu.be/bkcsR2XFU48?t=480) elementu z biblioteki Generalnie to samo
+[08:02](https://youtu.be/bkcsR2XFU48?t=482)(https://youtu.be/bkcsR2XFU48?t=482) co mieliśmy tutaj po prawej stronie
+[08:04](https://youtu.be/bkcsR2XFU48?t=484)(https://youtu.be/bkcsR2XFU48?t=484) ekranu tylko w troszeczkę innej formie
+[08:06](https://youtu.be/bkcsR2XFU48?t=486)(https://youtu.be/bkcsR2XFU48?t=486) tutaj mamy możliwość podejrzenia całej
+[08:09](https://youtu.be/bkcsR2XFU48?t=489)(https://youtu.be/bkcsR2XFU48?t=489) szafki i obracania jej
+[08:13](https://youtu.be/bkcsR2XFU48?t=493)(https://youtu.be/bkcsR2XFU48?t=493) modelu następny przycisk zapisuje szafkę
+[08:16](https://youtu.be/bkcsR2XFU48?t=496)(https://youtu.be/bkcsR2XFU48?t=496) do biblioteki Czyli jeżeli zaznaczymy
+[08:18](https://youtu.be/bkcsR2XFU48?t=498)(https://youtu.be/bkcsR2XFU48?t=498) szafkę i klikniemy ten przycisk Zapisz
+[08:21](https://youtu.be/bkcsR2XFU48?t=501)(https://youtu.be/bkcsR2XFU48?t=501) element to
+[08:23](https://youtu.be/bkcsR2XFU48?t=503)(https://youtu.be/bkcsR2XFU48?t=503) możemy sę w dow folderze pod
+[08:31](https://youtu.be/bkcsR2XFU48?t=511)(https://youtu.be/bkcsR2XFU48?t=511) Drukujemy raporty to będziemy omawiać w
+[08:34](https://youtu.be/bkcsR2XFU48?t=514)(https://youtu.be/bkcsR2XFU48?t=514) późniejszym czasie w innych filmach
+[08:37](https://youtu.be/bkcsR2XFU48?t=517)(https://youtu.be/bkcsR2XFU48?t=517) następny przycisk to przycisk powiel
+[08:39](https://youtu.be/bkcsR2XFU48?t=519)(https://youtu.be/bkcsR2XFU48?t=519) Generalnie to samo co Zielony plusik
+[08:42](https://youtu.be/bkcsR2XFU48?t=522)(https://youtu.be/bkcsR2XFU48?t=522) następny przycisk to szkielet i tutaj
+[08:46](https://youtu.be/bkcsR2XFU48?t=526)(https://youtu.be/bkcsR2XFU48?t=526) mamy szkielet czyli szafkę w
+[08:50](https://youtu.be/bkcsR2XFU48?t=530)(https://youtu.be/bkcsR2XFU48?t=530) prześwietleniu razem z nawiert i tu od
+[08:53](https://youtu.be/bkcsR2XFU48?t=533)(https://youtu.be/bkcsR2XFU48?t=533) razu powiem że nawierty wó
+[08:58](https://youtu.be/bkcsR2XFU48?t=538)(https://youtu.be/bkcsR2XFU48?t=538) kolorach kolor żółty i zielony gdzie
+[09:01](https://youtu.be/bkcsR2XFU48?t=541)(https://youtu.be/bkcsR2XFU48?t=541) zielony to czubek wiertła to jest bardzo
+[09:03](https://youtu.be/bkcsR2XFU48?t=543)(https://youtu.be/bkcsR2XFU48?t=543) istotne w momencie kiedy kontrolujemy
+[09:05](https://youtu.be/bkcsR2XFU48?t=545)(https://youtu.be/bkcsR2XFU48?t=545) szafkę w widoku 2D mamy tutaj wiedzę od
+[09:09](https://youtu.be/bkcsR2XFU48?t=549)(https://youtu.be/bkcsR2XFU48?t=549) razu na ten temat z której strony
+[09:11](https://youtu.be/bkcsR2XFU48?t=551)(https://youtu.be/bkcsR2XFU48?t=551) wiertło wchodzi w daną formatkę
+[09:14](https://youtu.be/bkcsR2XFU48?t=554)(https://youtu.be/bkcsR2XFU48?t=554) następnie mamy pełny szkielet czyli
+[09:16](https://youtu.be/bkcsR2XFU48?t=556)(https://youtu.be/bkcsR2XFU48?t=556) szkielet z modelami 3D natomiast bez
+[09:19](https://youtu.be/bkcsR2XFU48?t=559)(https://youtu.be/bkcsR2XFU48?t=559) nawiertów Jedyna różnica to właśnie brak
+[09:21](https://youtu.be/bkcsR2XFU48?t=561)(https://youtu.be/bkcsR2XFU48?t=561) wyświetlanych nawiertów w tym widoku No
+[09:24](https://youtu.be/bkcsR2XFU48?t=564)(https://youtu.be/bkcsR2XFU48?t=564) i następny to kontrola krawędzi kontrola
+[09:27](https://youtu.be/bkcsR2XFU48?t=567)(https://youtu.be/bkcsR2XFU48?t=567) krawędzi czyli wyświetlenie jakim
+[09:30](https://youtu.be/bkcsR2XFU48?t=570)(https://youtu.be/bkcsR2XFU48?t=570) obrzeżem oklejona jest dana krawędź
+[09:33](https://youtu.be/bkcsR2XFU48?t=573)(https://youtu.be/bkcsR2XFU48?t=573) biały to brak obrzeża zielony to obrzeże
+[09:36](https://youtu.be/bkcsR2XFU48?t=576)(https://youtu.be/bkcsR2XFU48?t=576) PCV 1ka czerwony to PCV d i tu na
+[09:40](https://youtu.be/bkcsR2XFU48?t=580)(https://youtu.be/bkcsR2XFU48?t=580) przykład właśnie edycja krawędzi mi się
+[09:43](https://youtu.be/bkcsR2XFU48?t=583)(https://youtu.be/bkcsR2XFU48?t=583) teraz sprawdzi w tym widoku zaznaczę
+[09:45](https://youtu.be/bkcsR2XFU48?t=585)(https://youtu.be/bkcsR2XFU48?t=585) sobie szafki Które chcę zmodyfikować i
+[09:48](https://youtu.be/bkcsR2XFU48?t=588)(https://youtu.be/bkcsR2XFU48?t=588) zaznaczę co chcę zmodyfikować na tych
+[09:50](https://youtu.be/bkcsR2XFU48?t=590)(https://youtu.be/bkcsR2XFU48?t=590) szafkach chciałbym na przykład
+[09:51](https://youtu.be/bkcsR2XFU48?t=591)(https://youtu.be/bkcsR2XFU48?t=591) zmodyfikować obrzeże na frontach czyli
+[09:54](https://youtu.be/bkcsR2XFU48?t=594)(https://youtu.be/bkcsR2XFU48?t=594) wybieram fronty i poniżej schodząc
+[09:57](https://youtu.be/bkcsR2XFU48?t=597)(https://youtu.be/bkcsR2XFU48?t=597) wybieram krawędzie które krawędzie
+[09:59](https://youtu.be/bkcsR2XFU48?t=599)(https://youtu.be/bkcsR2XFU48?t=599) zmienić chc zmienić obie długości na
+[10:01](https://youtu.be/bkcsR2XFU48?t=601)(https://youtu.be/bkcsR2XFU48?t=601) formatkach i obie szerokości mam wybraną
+[10:04](https://youtu.be/bkcsR2XFU48?t=604)(https://youtu.be/bkcsR2XFU48?t=604) tutaj PCV je i tak też zostawię i Teraz
+[10:07](https://youtu.be/bkcsR2XFU48?t=607)(https://youtu.be/bkcsR2XFU48?t=607) klikam modyfikuj PCV została zmieniona
+[10:11](https://youtu.be/bkcsR2XFU48?t=611)(https://youtu.be/bkcsR2XFU48?t=611) na jedynkę jeżeli bym kliknął Usuń No to
+[10:14](https://youtu.be/bkcsR2XFU48?t=614)(https://youtu.be/bkcsR2XFU48?t=614) teraz w tym momencie tej PCV nie ma co
+[10:16](https://youtu.be/bkcsR2XFU48?t=616)(https://youtu.be/bkcsR2XFU48?t=616) też się zdarza przy frontach na przykład
+[10:18](https://youtu.be/bkcsR2XFU48?t=618)(https://youtu.be/bkcsR2XFU48?t=618) lakierowanych jeżeli kliknę Dodaj No to
+[10:20](https://youtu.be/bkcsR2XFU48?t=620)(https://youtu.be/bkcsR2XFU48?t=620) on mi Doda z powrotem tą
+[10:24](https://youtu.be/bkcsR2XFU48?t=624)(https://youtu.be/bkcsR2XFU48?t=624) PCV następne przyciski tutaj mamy dalej
+[10:28](https://youtu.be/bkcsR2XFU48?t=628)(https://youtu.be/bkcsR2XFU48?t=628) teksturę mamy włącz wyłącz kontury
+[10:31](https://youtu.be/bkcsR2XFU48?t=631)(https://youtu.be/bkcsR2XFU48?t=631) następnie mamy edytor elementu Czyli to
+[10:34](https://youtu.be/bkcsR2XFU48?t=634)(https://youtu.be/bkcsR2XFU48?t=634) co już pokazywałem w momencie kiedy
+[10:36](https://youtu.be/bkcsR2XFU48?t=636)(https://youtu.be/bkcsR2XFU48?t=636) mówiłem o punkcie
+[10:37](https://youtu.be/bkcsR2XFU48?t=637)(https://youtu.be/bkcsR2XFU48?t=637) bazowym po zaznaczeniu szafki kliknięciu
+[10:40](https://youtu.be/bkcsR2XFU48?t=640)(https://youtu.be/bkcsR2XFU48?t=640) tego przycisku przechodzimy do edytora
+[10:42](https://youtu.be/bkcsR2XFU48?t=642)(https://youtu.be/bkcsR2XFU48?t=642) ale o tym będzie oddzielna seria
+[10:45](https://youtu.be/bkcsR2XFU48?t=645)(https://youtu.be/bkcsR2XFU48?t=645) filmów dalej mamy użyte
+[10:48](https://youtu.be/bkcsR2XFU48?t=648)(https://youtu.be/bkcsR2XFU48?t=648) materiały czyli wszystkie formatki które
+[10:52](https://youtu.be/bkcsR2XFU48?t=652)(https://youtu.be/bkcsR2XFU48?t=652) są w projekcie wszystkie płyty wszystkie
+[10:55](https://youtu.be/bkcsR2XFU48?t=655)(https://youtu.be/bkcsR2XFU48?t=655) okucia obrzeża i tak dalej całą tą
+[10:58](https://youtu.be/bkcsR2XFU48?t=658)(https://youtu.be/bkcsR2XFU48?t=658) sekcję też będziemy omawiać później No i
+[11:00](https://youtu.be/bkcsR2XFU48?t=660)(https://youtu.be/bkcsR2XFU48?t=660) dalej
+[11:01](https://youtu.be/bkcsR2XFU48?t=661)(https://youtu.be/bkcsR2XFU48?t=661) mamy dokumentację automatyczną o tym
+[11:05](https://youtu.be/bkcsR2XFU48?t=665)(https://youtu.be/bkcsR2XFU48?t=665) filmie możemy już znaleźć w innej
+[11:07](https://youtu.be/bkcsR2XFU48?t=667)(https://youtu.be/bkcsR2XFU48?t=667) kategorii w tym filmie to wszystko
+[11:10](https://youtu.be/bkcsR2XFU48?t=670)(https://youtu.be/bkcsR2XFU48?t=670) Zapraszam na kolejne Dziękuję za uwagę
+[11:20](https://youtu.be/bkcsR2XFU48?t=680)(https://youtu.be/bkcsR2XFU48?t=680) [Muzyka]

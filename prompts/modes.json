@@ -1,0 +1,20 @@
+[
+    {
+        "id": "general",
+        "label": "General",
+        "eyebrow": "Workspace help",
+        "file": "general.md"
+    },
+    {
+        "id": "design",
+        "label": "Design",
+        "eyebrow": "Ergonomics and layout",
+        "file": "design.md"
+    },
+    {
+        "id": "assembly",
+        "label": "Assembly",
+        "eyebrow": "Build and fitting",
+        "file": "assembly.md"
+    }
+]

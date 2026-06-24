@@ -1,0 +1,111 @@
+Film prezentuje podstawy projektowania w programie Corpus Net. Instruktor pokazuje dwa sposoby wczytywania mebli z biblioteki - przez opcję "otwórz element" oraz pasek boczny z miniaturkami. Demonstruje jak zmieniać wymiary mebli, przesuwać je w przestrzeni 3D oraz wykorzystywać funkcje przyciągania i wyrównywania. Omawia również narzędzia do grupowego przesuwania elementów.
+
+
+Wstęp
+Program Corpus Net oferuje zaawansowane możliwości projektowania mebli kuchennych. W tej pierwszej części przewodnika skupimy się na podstawowych funkcjach projektowania, w szczególności na wczytywaniu mebli z biblioteki oraz manipulowaniu nimi w przestrzeni projektowej. Poznanie tych fundamentalnych operacji jest kluczowe dla efektywnej pracy z programem i tworzenia profesjonalnych projektów.
+
+Wczytywanie mebli z biblioteki - metoda pierwsza
+Otwieranie biblioteki przez menu główne
+Pierwszy sposób dostępu do biblioteki mebli odbywa się poprzez przycisk Otwórz element w menu głównym. Po jego aktywacji pojawia się struktura folderów zawierających różne kategorie mebli.
+
+Kliknij przycisk Otwórz element
+Przejrzyj dostępne foldery z meblami
+Po wyborze folderu automatycznie wyświetli się ścieżka dostępu
+Kliknij na konkretną nazwę mebla, aby zobaczyć podgląd po prawej stronie
+Modyfikacja wymiarów przed wczytaniem
+Przed wczytaniem mebla do projektu możesz zmienić jego wymiary:
+
+W polu wymiarów wpisz żądaną szerokość (np. 500)
+Kliknij przycisk Wczytaj - wymiar zmieni się w podglądzie i mebel zostanie wczytany
+Alternatywnie wpisz nowy wymiar (np. 650) i naciśnij Enter
+Po kliknięciu Wczytaj mebel zostanie dodany do projektu
+Nawigacja w strukturze folderów
+Do poruszania się po strukturze biblioteki służy przycisk Cofnij, który pozwala wrócić do wyższego poziomu w hierarchii folderów.
+
+Wczytywanie mebli z biblioteki - metoda druga
+Korzystanie z panelu bocznego
+Druga metoda wykorzystuje pasek boczny po prawej stronie interfejsu, oferując bardziej wizualny sposób przeglądania biblioteki:
+
+Otwórz panel biblioteki w pasku bocznym po prawej stronie
+Przeglądaj meble w postaci miniaturek
+Wybierz folder (np. Szafki kuchenne > Dolne)
+Ścieżka dostępu wyświetli się automatycznie
+Wczytywanie przez panel boczny
+Po wyborze mebla w panelu bocznym masz dwie opcje wczytania:
+
+Zaznacz szafkę i kliknij przycisk Wczytaj
+Wykonaj podwójne kliknięcie na wybranym meblu
+Przed wczytaniem możesz zmienić wymiary w odpowiednim polu
+Dodatkowe funkcje panelu bocznego
+Nawigacja i widok
+Użyj przycisku cofania (ten sam symbol co w poprzedniej wersji)
+Zmień rozmiar ikon: duże, średnie lub małe
+Zamknij bibliotekę za pomocą dużego czerwonego przycisku (nie mylić z małym przyciskiem usuwania)
+Funkcja wyszukiwania
+Panel boczny oferuje zaawansowaną wyszukiwarkę:
+
+Wpisz fragment nazwy (np. piekarnik)
+System znajdzie wszystkie szafki zawierające ten wyraz
+Wyszukiwanie działa niezależnie od wielkości liter
+Przeszukiwany jest aktualnie otwarty folder
+Szybkie wczytywanie elementów specjalistycznych
+Przyciski szybkiego dostępu
+Program oferuje szereg przycisków do szybkiego dostępu do konkretnych kategorii elementów:
+
+Elementy ogólne: wymagają wskazania folderu (np. Nóżki i cokoły > COCU)
+Szafki kuchenne: bezpośredni dostęp do dolnych, górnych, wysokich, blatów roboczych
+Szuflady, uchwyty, fronty: dedykowane przyciski
+Elementy architektury: w tym ściany
+Manipulowanie meblami w projekcie
+Zmiana wymiarów
+Wymiary wybranego mebla można modyfikować na kilka sposobów:
+
+Wpisz nowy wymiar (np. 750) i naciśnij Enter lub kliknij w inne miejsce
+Użyj operacji matematycznych: minus 123 aby odjąć wartość
+Program automatycznie obliczy wynik po naciśnięciu Enter
+Pozycjonowanie w osiach X, Y, Z
+System koordynatów w programie:
+
+Oś X (czerwona): przesuwanie w poziomie
+Oś Y (zielona): przesuwanie w głąb
+Oś Z (niebieska): przesuwanie w pionie
+Zmiana pozycji przez wartości liczbowe
+Wpisz plus 200 aby przesunąć o 200 mm w danym kierunku
+Wpisz minus 100 aby cofnąć o 100 mm
+Naciśnij Enter aby zatwierdzić zmianę
+Przesuwanie manualne
+Przesuwanie pojedynczych elementów
+Złap mebel myszą i przeciągnij w żądane miejsce
+Unikaj przesuwania pod małym kątem widoku (nieprecyzyjne sterowanie)
+Przy lekkim przekoszeniu widoku przesuwanie jest wygodniejsze
+Przy zbliżeniu do sąsiedniego mebla pojawią się linie przyciągania (niebieska i czerwona)
+Po puszczeniu mebel automatycznie wyrówna się z sąsiadującym
+Przesuwanie wielu elementów
+Przytrzymaj przycisk Shift
+Wybierz kilka mebli
+Przeciągnij - wszystkie zaznaczone elementy przesuwają się jednocześnie
+Uwaga: przy grupowym przesuwaniu linie przyciągania nie działają
+Przesuwanie za pomocą strzałek osi
+Po wskazaniu mebla możesz wykorzystać strzałki osi:
+
+Złap za strzałkę osi X, Y lub Z
+Przesuń mebel w kierunku wybranej osi
+Ruch ograniczony jest tylko do jednego kierunku
+Precyzyjne pozycjonowanie elementów
+Przyciski dosunięcia
+Program oferuje przyciski automatycznego dosunięcia do sąsiadujących elementów:
+
+Dosunięcie w osi X: lewo/prawo do pierwszej przeszkody
+Dosunięcie w osi Y: przód/tył do pierwszej przeszkody
+Dosunięcie w osi Z: góra/dół do pierwszej przeszkody
+Pozycjonowanie cokołów
+Cokół wymaga szczególnego podejścia do pozycjonowania:
+
+Pierwsze zbliżenie: wyrównanie z przodem corpusu
+Dalsze dosuwanie: wyrównanie z tyłem corpusu
+Dodatkowe przesunięcie: użyj pozycji Z (np. minus 20 dla przesunięcia o 20mm do wewnątrz)
+Usuwanie elementów
+Procedura usuwania
+Wybierz mebel do usunięcia
+Kliknij mały przycisk usuwania
+Uwaga: nie mylić z dużym czerwonym przyciskiem zamykania biblioteki

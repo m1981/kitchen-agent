@@ -1,0 +1,81 @@
+Wstęp
+Corpus Net to profesjonalne oprogramowanie do projektowania mebli i wnętrz, które oferuje intuicyjny interfejs umożliwiający sprawne tworzenie projektów. Ten przewodnik przedstawi podstawy obsługi interfejsu programu, koncentrując się na najważniejszych funkcjach i narzędziach dostępnych w prawym panelu oraz głównych elementach sterowania widokiem.
+
+Panel prawostronny - Zakładka Elementy
+Dodawanie i zarządzanie szafkami
+W prawej części interfejsu znajdują się dwie główne zakładki: Elementy i Pomieszczenie. Zakładka Elementy zawiera wszystkie komponenty projektu.
+
+Po dodaniu pierwszej szafki z ustawieniami domyślnymi, element może nie pojawić się od razu w projekcie. Aby go aktywować, należy:
+
+Kliknąć na dodaną szafkę w liście elementów
+Po aktywacji pierwsze szafki, wszystkie kolejne będą pojawiać się automatycznie
+Narzędzia zarządzania elementami
+Panel oferuje następujące funkcje zarządzania:
+
+Kopiowanie - przycisk powielania wybranej szafki
+Usuwanie - przycisk X lub skrót klawiszowy Ctrl + Delete
+Kolejkowanie - strzałki góra/dół do zmiany kolejności elementów na liście
+Zakładka Edytuj - Parametry elementów
+W sekcji Edytuj można modyfikować:
+
+Wymiary - wysokość, szerokość i głębokość zielonego boksu zawierającego szafkę
+Pozycjonowanie - współrzędne X (oś czerwona), Y (oś zielona), Z (oś niebieska)
+Nazwa elementu - po wprowadzeniu zmiany należy nacisnąć Enter do zatwierdzenia
+Zakładka Zmienne
+Funkcja zmiennych jest dostępna w wersjach PRO i FIRST. W wersji NET:
+
+Brak możliwości dodawania własnych zmiennych
+Możliwość korzystania ze zmiennych z załadowanej biblioteki z wyższych wersji programu
+Panel prawostronny - Zakładka Pomieszczenie
+Ustawienia oświetlenia
+Sekcja światła umożliwia kontrolę nad oświetleniem sceny:
+
+Światło słoneczne - aktywacja przycisku "słoneczko" uruchamia orbity z ustawieniem A (obrót orbity)
+Cienie - możliwość aktywacji/deaktywacji wyświetlania cieni
+Światło otoczenia - regulacja mocy oświetlenia ogólnego
+Światło rozproszone i lustrzane - dodatkowe opcje oświetlenia
+Intensywność cieni - regulacja od bladych do bardzo ostrych
+Wymiary pomieszczenia
+Parametry obszaru roboczego:
+
+Głębokość i szerokość - wymiary w milimetrach (np. 8000x8000)
+Ustawienia domyślne - wartości dla nowych projektów
+Ściana górna i dolna - opcje podziału z poprzednich wersji programu
+Nawigacja i sterowanie widokiem
+Panel górny - niebieskie strzałki
+Narzędzia kontroli kamery:
+
+Początek - przycisk resetujący widok do centrum pomieszczenia
+Strzałki obrotowe - przesuwanie widoku o konkretny kąt lub 90 stopni (strzałki skrajne)
+Minus/Plus - powiększenie i pomniejszenie widoku
+Strzałki przesuwania - przesuwanie kamery w lewo, prawo, górę i dół
+Metody poruszania się po pomieszczeniu
+Program oferuje kilka sposobów nawigacji:
+
+Rolka myszy - oddalanie i przybliżanie widoku
+Shift + lewy przycisk myszy - przesuwanie lewo-prawo i góra-dół
+Manipulator 3D Connection - płynne poruszanie w wielu wymiarach jednocześnie
+Zapisywanie widoków
+Możliwość zapisania zdjęcia w formatach:
+
+BMP
+JPG
+Menu główne i dodatkowe funkcje
+Menu górne - lewy róg
+Podstawowe operacje na projektach:
+
+Nowy projekt
+Otwórz - wcześniej zapisane projekty
+Zapisz - bieżący projekt
+Biblioteka - wczytywanie mebli i elementów
+Wydruki - różne rodzaje wydruków
+Powielenie
+Panel lewy - dodatkowe narzędzia
+Funkcje uzupełniające:
+
+Przycisk wyboru
+Biblioteka elementów - modele 3D, elementy Bruma, Hethisza, Hafele
+Dekory i oferta
+Przyciski przesuwania mebli - we wszystkich kierunkach (lewo, prawo, góra, dół, przód, tył)
+Podsumowanie
+Interfejs Corpus Net został zaprojektowany z myślą o efektywnej pracy projektanta. Kluczowe elementy to panel prawostronny z zakładkami Elementy i Pomieszczenie, system nawigacji 3D oraz menu główne z podstawowymi funkcjami. Opanowanie tych podstaw umożliwi sprawne tworzenie projektów meblarskich. Szczególnie przydatne są skróty klawiszowe, funkcja resetowania widoku przyciskiem "Początek" oraz różne metody nawigacji dostosowane do indywidualnych preferencji użytkownika.
