@@ -20,7 +20,8 @@ import structlog
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 
-from src.chat_service import ChatService, ChatTurnRequest
+from src.chat_service import ChatService, ChatTurnResponse
+from src.agent.turn_orchestrator import TurnInput
 from src.config import settings
 from src.dependencies import (
     get_chat_service,
@@ -97,7 +98,7 @@ async def chat(
 
         loop = asyncio.get_event_loop()
 
-        chat_request = ChatTurnRequest(
+        chat_request = TurnInput(
             session_id=request.session_id,
             user_message=request.message,
             system_prompt=system_instruction,
@@ -204,7 +205,7 @@ async def chat_stream(
     # Resolve context files
     resolved_context_files = _resolve_context_file_paths(request.context_files)
 
-    chat_request = ChatTurnRequest(
+    chat_request = TurnInput(
         session_id=request.session_id,
         user_message=request.message,
         system_prompt=system_instruction,

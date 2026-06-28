@@ -183,7 +183,7 @@ class TestErrorHandling:
 
 class TestProviderThreading:
     def test_provider_passed_to_service(self, mock_service):
-        """Request provider/model forwarded to ChatTurnRequest."""
+        """Request provider/model forwarded to TurnInput."""
         mock_service.handle_turn.return_value = _result(
             provider_name="mimo", model_name="mimo-v2.5-pro"
         )

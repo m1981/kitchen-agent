@@ -117,14 +117,23 @@ def _make_orchestrator(responses: list) -> TurnOrchestrator:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# B8 CONTRACT: History roundtrip
+# B8 CONTRACT: History roundtrip (via ChatService._build_api_history)
 # ═══════════════════════════════════════════════════════════════════════
 
 class TestHistoryRoundtripContract:
     """
-    Contract: TurnOutput.updated_api_history must survive
-    dehydrate_history → hydrate_history roundtrip.
+    Contract: ChatService._build_api_history() produces history that
+    survives dehydrate_history → hydrate_history roundtrip.
+
+    History building moved from TurnOrchestrator to ChatService.
     """
+
+    @staticmethod
+    def _build_history(existing, turn_input, output):
+        """Call ChatService._build_api_history without a real service."""
+        from src.chat_service import ChatService
+        # Use the static method directly
+        return ChatService._build_api_history(None, existing, turn_input, output)
 
     def test_text_turn_survives_roundtrip(self):
         """Simple text turn → dehydrate → hydrate → same structure."""
@@ -135,14 +144,16 @@ class TestHistoryRoundtripContract:
             turn_input=TurnInput(user_message="Hi"),
         )
 
+        history = self._build_history([], TurnInput(user_message="Hi"), output)
+
         # Serialize
-        json_str = dehydrate_history(output.updated_api_history, turn_ids=None)
+        json_str = dehydrate_history(history, turn_ids=None)
 
         # Deserialize
         restored = hydrate_history(json_str)
 
         # Verify structure
-        assert len(restored) == len(output.updated_api_history)
+        assert len(restored) == len(history)
 
         # User message preserved
         user_msgs = [m for m in restored if m.get("role") == "user"]
@@ -167,14 +178,16 @@ class TestHistoryRoundtripContract:
             turn_input=TurnInput(user_message="Read file"),
         )
 
+        history = self._build_history([], TurnInput(user_message="Read file"), output)
+
         # Serialize
-        json_str = dehydrate_history(output.updated_api_history, turn_ids=None)
+        json_str = dehydrate_history(history, turn_ids=None)
 
         # Deserialize
         restored = hydrate_history(json_str)
 
         # Verify structure
-        assert len(restored) == len(output.updated_api_history)
+        assert len(restored) == len(history)
 
         # Must have user, assistant (tool call), tool, assistant (text)
         roles = [m.get("role") for m in restored]
@@ -183,7 +196,6 @@ class TestHistoryRoundtripContract:
 
     def test_multi_turn_survives_roundtrip(self):
         """Multiple turns in history → roundtrip preserves all."""
-        # Start with existing history
         existing = [
             {"role": "user", "content": "Previous question"},
             {"role": "assistant", "content": "Previous answer"},
@@ -196,8 +208,10 @@ class TestHistoryRoundtripContract:
             turn_input=TurnInput(user_message="New question"),
         )
 
+        history = self._build_history(existing, TurnInput(user_message="New question"), output)
+
         # Serialize
-        json_str = dehydrate_history(output.updated_api_history, turn_ids=None)
+        json_str = dehydrate_history(history, turn_ids=None)
 
         # Deserialize
         restored = hydrate_history(json_str)
@@ -220,7 +234,9 @@ class TestHistoryRoundtripContract:
             turn_input=TurnInput(user_message="Read"),
         )
 
-        json_str = dehydrate_history(output.updated_api_history, turn_ids=None)
+        history = self._build_history([], TurnInput(user_message="Read"), output)
+
+        json_str = dehydrate_history(history, turn_ids=None)
         restored = hydrate_history(json_str)
 
         # Find the tool call in restored history

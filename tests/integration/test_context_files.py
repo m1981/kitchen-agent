@@ -42,7 +42,8 @@ from src import config
 from src.main import app
 from src.dependencies import get_session_repo, get_chat_service
 from src.repositories import SQLiteConnection, SQLiteSessionRepository
-from src.chat_service import ChatService, ChatTurnRequest, ChatTurnResponse
+from src.chat_service import ChatService, ChatTurnResponse
+from src.agent.turn_orchestrator import TurnInput
 from tests.helpers import FakeOrchestrator
 
 
@@ -127,7 +128,8 @@ class TestContextFilePathResolution:
             captured.append(request.context_files)
             return ChatTurnResponse(session_id=request.session_id, assistant_message="ok", ui_history=[], tool_calls_made=[])
 
-        from src.chat_service import ChatService, ChatTurnRequest, ChatTurnResponse
+        from src.chat_service import ChatService, ChatTurnResponse
+        from src.agent.turn_orchestrator import TurnInput
 
         svc = MagicMock(spec=ChatService)
         svc.handle_turn.side_effect = lambda req: (captured.append(req.context_files), ChatTurnResponse(session_id=req.session_id, assistant_message="ok", ui_history=[], user_turn_id="test-user-id", assistant_turn_id="test-assistant-id", tool_calls_made=[]))[1]

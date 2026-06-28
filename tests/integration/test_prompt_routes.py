@@ -464,7 +464,7 @@ def test_chat_response_includes_turn_ids(tmp_path: Path, monkeypatch) -> None:
 # ---------------------------------------------------------------------------
 
 def test_chat_passes_provider_and_model(tmp_path: Path, monkeypatch) -> None:
-    """provider and model from request must be forwarded to ChatTurnRequest."""
+    """provider and model from request must be forwarded to TurnInput."""
     pm = _make_prompt_manager(tmp_path)
     captured: dict = {}
 
@@ -501,7 +501,7 @@ def test_chat_passes_provider_and_model(tmp_path: Path, monkeypatch) -> None:
 
 
 def test_chat_no_provider_uses_none(tmp_path: Path, monkeypatch) -> None:
-    """When provider/model omitted, ChatTurnRequest fields should be None."""
+    """When provider/model omitted, TurnInput fields should be None."""
     pm = _make_prompt_manager(tmp_path)
     captured: dict = {}
 

@@ -35,7 +35,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from src.prompt_manager import PromptManager, PromptMode
-from src.chat_service import ChatService, ChatTurnRequest, ChatTurnResponse
+from src.chat_service import ChatService, ChatTurnResponse
+from src.agent.turn_orchestrator import TurnInput
 from src.repositories import SQLiteConnection, SQLiteSessionRepository
 from src.main import app
 from src.dependencies import get_chat_service
@@ -188,7 +189,7 @@ class TestChatServiceToolsFlag:
             turn_orchestrator=orchestrator,
         )
 
-        svc.handle_turn(ChatTurnRequest(session_id="s1", user_message="hello"))
+        svc.handle_turn(TurnInput(session_id="s1", user_message="hello"))
 
         assert orchestrator.last_turn_input is not None
         assert orchestrator.last_turn_input.use_tools is True
@@ -204,7 +205,7 @@ class TestChatServiceToolsFlag:
             turn_orchestrator=orchestrator,
         )
 
-        svc.handle_turn(ChatTurnRequest(session_id="s2", user_message="tell me a joke", use_tools=False))
+        svc.handle_turn(TurnInput(session_id="s2", user_message="tell me a joke", use_tools=False))
 
         assert orchestrator.last_turn_input is not None
         assert orchestrator.last_turn_input.use_tools is False
@@ -220,7 +221,7 @@ class TestChatServiceToolsFlag:
             turn_orchestrator=orchestrator,
         )
 
-        r = svc.handle_turn(ChatTurnRequest(session_id="s3", user_message="quick question", use_tools=False))
+        r = svc.handle_turn(TurnInput(session_id="s3", user_message="quick question", use_tools=False))
         text, tool_logs = r.assistant_message, r.tool_calls_made
 
         assert text == "direct reply"
@@ -237,7 +238,7 @@ class TestChatServiceToolsFlag:
             turn_orchestrator=orchestrator,
         )
 
-        svc.handle_turn(ChatTurnRequest(session_id="s4", user_message="just chat", use_tools=False))
+        svc.handle_turn(TurnInput(session_id="s4", user_message="just chat", use_tools=False))
 
         _, ui_json, _ = repo.load_session("s4")
         ui = json.loads(ui_json)

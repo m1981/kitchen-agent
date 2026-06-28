@@ -56,34 +56,18 @@ from src.serializers import dehydrate_history, hydrate_history
 from src.title_generator import derive_title
 
 if TYPE_CHECKING:
-    from src.agent.turn_orchestrator import TurnOrchestrator, TurnOutput
+    from src.agent.turn_orchestrator import TurnInput, TurnOrchestrator, TurnOutput
 
 log = structlog.get_logger(__name__)
 
 
+# Re-export TurnInput so callers can import from chat_service
+from src.agent.turn_orchestrator import TurnInput  # noqa: E402
+
+
 # ---------------------------------------------------------------------------
-# Request / Response dataclasses
+# Response dataclass
 # ---------------------------------------------------------------------------
-
-@dataclass
-class ChatTurnRequest:
-    """
-    Everything ChatService needs for one turn.
-    """
-
-    session_id: str
-    user_message: str
-    system_prompt: str | None = None
-    images: list[dict] = field(default_factory=list)
-    context_files: list[str] = field(default_factory=list)
-    mode: str = "default"
-    note_ids: list[str] = field(default_factory=list)
-    file_ids: list[str] = field(default_factory=list)
-    use_tools: bool = True
-    # Provider routing — when set, overrides the server default for this turn.
-    provider: str | None = None
-    model: str | None = None
-
 
 @dataclass
 class ChatTurnResponse:
@@ -166,7 +150,7 @@ class ChatService:
     # ── Shared helpers ──────────────────────────────────────────────────
 
     def _load_session(
-        self, request: ChatTurnRequest
+        self, request: "TurnInput"
     ) -> tuple[list[dict], list[dict], str | None]:
         """Load session state from repository. Returns (api_history, ui_history, system_prompt)."""
         api_history_json, ui_history_json, saved_system_prompt = (
@@ -175,31 +159,59 @@ class ChatService:
         api_history = hydrate_history(api_history_json)
         ui_history: list[dict] = json.loads(ui_history_json) if ui_history_json else []
         # Priority: explicit request override > saved override > None (use mode default)
-        # Use 'is not None' to distinguish between "not provided" (None) and "explicitly cleared" ("")
         if request.system_prompt is not None:
             system_prompt = request.system_prompt
         else:
             system_prompt = saved_system_prompt
         return api_history, ui_history, system_prompt
 
-    def _build_turn_input(
-        self, request: ChatTurnRequest, system_prompt: str | None
-    ) -> "TurnInput":
-        """Build TurnInput from request. Shared by handle_turn and stream_turn."""
-        from src.agent.turn_orchestrator import TurnInput
+    def _build_api_history(
+        self,
+        existing: list[dict],
+        turn_input: "TurnInput",
+        output: "TurnOutput",
+    ) -> list[dict]:
+        """
+        Build updated API history from raw orchestrator output.
 
-        return TurnInput(
-            user_message=request.user_message,
-            mode=request.mode,
-            images=request.images,
-            context_files=request.context_files,
-            note_ids=request.note_ids,
-            file_ids=request.file_ids,
-            use_tools=request.use_tools,
-            system_prompt=system_prompt,
-            provider=request.provider,
-            model=request.model,
-        )
+        ChatService owns this — the orchestrator returns raw facts only.
+        """
+        updated = list(existing)
+
+        # User message
+        updated.append({
+            "role": "user",
+            "content": turn_input.user_message,
+            "token_count": output.token_breakdown.user_message_tokens,
+        })
+
+        # Tool call/response pairs
+        for detail in output.tool_details:
+            updated.append({
+                "role": "assistant",
+                "content": "",
+                "tool_calls": [{
+                    "id": detail.id,
+                    "name": detail.name,
+                    "arguments": detail.arguments,
+                }],
+                "token_count": detail.call_tokens,
+            })
+            updated.append({
+                "role": "tool",
+                "tool_call_id": detail.id,
+                "content": detail.result_content,
+                "token_count": detail.result_tokens,
+            })
+
+        # Assistant response
+        updated.append({
+            "role": "assistant",
+            "content": output.assistant_message,
+            "token_count": output.token_breakdown.assistant_tokens,
+        })
+
+        return updated
 
     def _build_ui_history(
         self,
@@ -252,7 +264,7 @@ class ChatService:
 
     def _persist(
         self,
-        request: ChatTurnRequest,
+        session_id: str,
         system_prompt: str | None,
         api_history: list[dict],
         ui_history: list[dict],
@@ -260,7 +272,7 @@ class ChatService:
         """Persist session state and return the derived title."""
         title = _make_title(ui_history)
         self._sessions.save_session(
-            session_id=request.session_id,
+            session_id=session_id,
             title=title,
             api_history_json=dehydrate_history(api_history),
             ui_history_json=json.dumps(ui_history),
@@ -270,7 +282,7 @@ class ChatService:
 
     # ── Sync turn ───────────────────────────────────────────────────────
 
-    def handle_turn(self, request: ChatTurnRequest) -> ChatTurnResponse:
+    def handle_turn(self, request: TurnInput) -> ChatTurnResponse:
         """
         Execute one complete chat turn.
         Single code path — always through TurnOrchestrator.
@@ -288,22 +300,22 @@ class ChatService:
         with log_timing(self._log, "turn_load_session"):
             api_history, ui_history, system_prompt = self._load_session(request)
 
+        # Propagate resolved system_prompt back into request
+        request.system_prompt = system_prompt
+
         self._log.info(
             "turn_session_loaded",
             history_turns=len(api_history),
             has_system_prompt=bool(system_prompt),
         )
 
-        # ── 2. Build TurnInput ────────────────────────────────────────
-        turn_input = self._build_turn_input(request, system_prompt)
-
+        # ── 2. Execute turn ───────────────────────────────────────────
         session = {
             "session_id": request.session_id,
             "messages": api_history,
             "system_prompt": system_prompt,
         }
 
-        # ── 3. Execute turn ───────────────────────────────────────────
         bind_request_context(
             provider=request.provider or "(default)",
             model=request.model or "(default)",
@@ -312,14 +324,16 @@ class ChatService:
         with log_timing(self._log, "turn_orchestrator_complete") as timing:
             turn_output = self._orchestrator.run(
                 session=session,
-                turn_input=turn_input,
+                turn_input=request,
             )
         timing["provider"] = turn_output.provider_name
         timing["model"] = turn_output.model_name
         timing["response_length"] = len(turn_output.assistant_message)
         timing["tool_calls"] = len(turn_output.tool_calls_made)
 
-        # ── 4. Build updated histories ────────────────────────────────
+        # ── 3. Build updated histories ────────────────────────────────
+        new_api_history = self._build_api_history(api_history, request, turn_output)
+
         new_ui_history = self._build_ui_history(
             existing=ui_history,
             user_message=request.user_message,
@@ -334,13 +348,13 @@ class ChatService:
             assistant_tokens=turn_output.token_breakdown.assistant_tokens,
         )
 
-        # ── 5. Persist ────────────────────────────────────────────────
+        # ── 4. Persist ────────────────────────────────────────────────
         title = self._persist(
-            request, system_prompt,
-            turn_output.updated_api_history, new_ui_history,
+            request.session_id, system_prompt,
+            new_api_history, new_ui_history,
         )
 
-        # ── 6. Log ────────────────────────────────────────────────────
+        # ── 5. Log ────────────────────────────────────────────────────
         log_turn(
             user_message=request.user_message,
             tool_logs=turn_output.tool_logs,
@@ -348,13 +362,9 @@ class ChatService:
             session_title=title,
         )
 
-        log.debug(
-            "turn_result",
-            tool_calls_made=[t.name for t in turn_output.tool_calls_made],
-            tool_logs_count=len(turn_output.tool_logs),
-            response_length=len(turn_output.assistant_message),
-            provider=turn_output.provider_name,
-            model=turn_output.model_name,
+        # Calculate conversation_total from built history
+        conversation_total = sum(
+            msg.get("token_count", 0) for msg in new_api_history if isinstance(msg, dict)
         )
 
         return ChatTurnResponse(
@@ -374,13 +384,13 @@ class ChatService:
                 "tool_results_tokens": turn_output.token_breakdown.tool_results_tokens,
                 "assistant_tokens": turn_output.token_breakdown.assistant_tokens,
                 "turn_total": turn_output.token_breakdown.turn_total,
-                "conversation_total": turn_output.token_breakdown.conversation_total,
+                "conversation_total": conversation_total,
             },
         )
 
     # ── Streaming turn ──────────────────────────────────────────────────
 
-    def stream_turn(self, request: ChatTurnRequest) -> Iterator[dict]:
+    def stream_turn(self, request: TurnInput) -> Iterator[dict]:
         """
         Stream one complete chat turn.
         Yields event dicts for SSE serialization.
@@ -394,7 +404,7 @@ class ChatService:
 
         # ── 1. Load session + build input (shared) ────────────────────
         api_history, ui_history, system_prompt = self._load_session(request)
-        turn_input = self._build_turn_input(request, system_prompt)
+        request.system_prompt = system_prompt
 
         session = {
             "session_id": request.session_id,
@@ -417,7 +427,7 @@ class ChatService:
         assistant_turn_id = ""
         done_tool_details: list = []
 
-        for event in self._orchestrator.stream(session, turn_input):
+        for event in self._orchestrator.stream(session, request):
             event_type = event.get("type")
 
             if event_type == "text_delta":
@@ -454,52 +464,42 @@ class ChatService:
                 done_tool_details = event.get("tool_details", [])
                 done_token_breakdown = event.get("token_breakdown", {})
 
-        # ── 3. Build updated API history ──────────────────────────────
-        # Use token counts from orchestrator's done event
-        user_tokens = done_token_breakdown.get("user_message_tokens", 0)
-        tool_calls_tokens = done_token_breakdown.get("tool_calls_tokens", 0)
-        tool_results_tokens = done_token_breakdown.get("tool_results_tokens", 0)
-        assistant_tokens = done_token_breakdown.get("assistant_tokens", 0)
-        turn_total = done_token_breakdown.get("turn_total", 0)
+        # ── 3. Build updated API history (ChatService owns this) ─────
+        # Build a synthetic TurnOutput-like object for _build_api_history
+        from src.agent.turn_orchestrator import TokenBreakdown, ToolCallDetail
 
-        updated_api_history = list(api_history)
-        updated_api_history.append({"role": "user", "content": request.user_message, "token_count": user_tokens})
+        tb = TokenBreakdown(
+            user_message_tokens=done_token_breakdown.get("user_message_tokens", 0),
+            tool_calls_tokens=done_token_breakdown.get("tool_calls_tokens", 0),
+            tool_results_tokens=done_token_breakdown.get("tool_results_tokens", 0),
+            assistant_tokens=done_token_breakdown.get("assistant_tokens", 0),
+            turn_total=done_token_breakdown.get("turn_total", 0),
+        )
 
-        for detail in done_tool_details:
-            call_tokens = detail.call_tokens if hasattr(detail, 'call_tokens') else 0
-            result_tokens = detail.result_tokens if hasattr(detail, 'result_tokens') else 0
-            updated_api_history.append({
-                "role": "assistant",
-                "content": "",
-                "tool_calls": [{
-                    "id": detail.id,
-                    "name": detail.name,
-                    "arguments": detail.arguments,
-                }],
-                "token_count": call_tokens,
-            })
-            updated_api_history.append({
-                "role": "tool",
-                "tool_call_id": detail.id,
-                "content": detail.result_content,
-                "token_count": result_tokens,
-            })
+        # Build a lightweight output shim for _build_api_history
+        class _StreamOutput:
+            def __init__(self, text, details, breakdown):
+                self.assistant_message = text
+                self.tool_details = details
+                self.token_breakdown = breakdown
 
-        updated_api_history.append({"role": "assistant", "content": full_text, "token_count": assistant_tokens})
+        stream_output = _StreamOutput(full_text, done_tool_details, tb)
+        updated_api_history = self._build_api_history(api_history, request, stream_output)
 
         # Calculate conversation total
         conversation_total = sum(msg.get("token_count", 0) for msg in updated_api_history if isinstance(msg, dict))
+        tb.conversation_total = conversation_total
 
         token_breakdown = {
-            "user_message_tokens": user_tokens,
-            "tool_calls_tokens": tool_calls_tokens,
-            "tool_results_tokens": tool_results_tokens,
-            "assistant_tokens": assistant_tokens,
-            "turn_total": turn_total,
+            "user_message_tokens": tb.user_message_tokens,
+            "tool_calls_tokens": tb.tool_calls_tokens,
+            "tool_results_tokens": tb.tool_results_tokens,
+            "assistant_tokens": tb.assistant_tokens,
+            "turn_total": tb.turn_total,
             "conversation_total": conversation_total,
         }
 
-        # ── 4. Build UI history (shared helper) ───────────────────────
+        # ── 4. Build UI history ───────────────────────────────────────
         new_ui_history = self._build_ui_history(
             existing=ui_history,
             user_message=request.user_message,
@@ -510,13 +510,13 @@ class ChatService:
             provider_name=provider_name,
             model_name=model_name,
             context_files=request.context_files,
-            user_tokens=user_tokens,
-            assistant_tokens=assistant_tokens,
+            user_tokens=tb.user_message_tokens,
+            assistant_tokens=tb.assistant_tokens,
         )
 
-        # ── 5. Persist (shared helper) ────────────────────────────────
+        # ── 5. Persist ────────────────────────────────────────────────
         title = self._persist(
-            request, system_prompt,
+            request.session_id, system_prompt,
             updated_api_history, new_ui_history,
         )
 

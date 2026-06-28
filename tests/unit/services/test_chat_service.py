@@ -12,7 +12,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.chat_service import ChatService, ChatTurnRequest, _make_title
+from src.chat_service import ChatService
+from src.chat_service import ChatService, _make_title
+from src.agent.turn_orchestrator import TurnInput
 from src.repositories import SQLiteConnection, SQLiteSessionRepository
 
 
@@ -77,7 +79,7 @@ def test_handle_turn_saves_session(
     )
     session_id = "test-orch-001"
 
-    result = service.handle_turn(ChatTurnRequest(
+    result = service.handle_turn(TurnInput(
         session_id=session_id,
         user_message="What hinges should I use?",
     ))
@@ -112,7 +114,7 @@ def test_handle_turn_returns_turn_ids(
         turn_orchestrator=fake_orchestrator,
     )
 
-    result = service.handle_turn(ChatTurnRequest(
+    result = service.handle_turn(TurnInput(
         session_id="test-turn-ids",
         user_message="Hello",
     ))
@@ -136,10 +138,10 @@ def test_handle_turn_appends_to_history(
         turn_orchestrator=fake_orchestrator,
     )
 
-    service.handle_turn(ChatTurnRequest(session_id="sess-orch-1", user_message="Turn 1"))
+    service.handle_turn(TurnInput(session_id="sess-orch-1", user_message="Turn 1"))
 
     fake_orchestrator._text = "Answer 2"
-    service.handle_turn(ChatTurnRequest(session_id="sess-orch-1", user_message="Turn 2"))
+    service.handle_turn(TurnInput(session_id="sess-orch-1", user_message="Turn 2"))
 
     _, ui_json, _ = repo.load_session("sess-orch-1")
     ui_messages = json.loads(ui_json)
@@ -163,7 +165,7 @@ def test_handle_turn_passes_images_and_context(
     images = [{"mime_type": "image/png", "data": "abc123"}]
     context = ["/data/file.txt"]
 
-    service.handle_turn(ChatTurnRequest(
+    service.handle_turn(TurnInput(
         session_id="sess-orch-img",
         user_message="describe this",
         images=images,
@@ -199,7 +201,7 @@ def test_handle_turn_persists_tool_calls(
         turn_orchestrator=orchestrator,
     )
 
-    result = service.handle_turn(ChatTurnRequest(
+    result = service.handle_turn(TurnInput(
         session_id="sess-orch-tools",
         user_message="Read the file",
     ))
@@ -221,7 +223,7 @@ def test_handle_turn_logs_prompt(
         turn_orchestrator=fake_orchestrator,
     )
 
-    service.handle_turn(ChatTurnRequest(session_id="sess-orch-log", user_message="Log me"))
+    service.handle_turn(TurnInput(session_id="sess-orch-log", user_message="Log me"))
 
     assert mock_log.called
     _, kwargs = mock_log.call_args
@@ -241,7 +243,7 @@ def test_use_tools_false_forwarded_to_orchestrator(
         turn_orchestrator=orchestrator,
     )
 
-    service.handle_turn(ChatTurnRequest(
+    service.handle_turn(TurnInput(
         session_id="sess-no-tools",
         user_message="hello",
         use_tools=False,
@@ -277,7 +279,7 @@ def test_load_session_uses_saved_prompt_when_request_is_none(
     orchestrator = FakeOrchestrator()
     service = ChatService(session_repo=repo_for_priority, turn_orchestrator=orchestrator)
 
-    service.handle_turn(ChatTurnRequest(
+    service.handle_turn(TurnInput(
         session_id="sess-priority",
         user_message="hello",
         system_prompt=None,  # not provided
@@ -304,7 +306,7 @@ def test_load_session_uses_request_prompt_over_saved(
     orchestrator = FakeOrchestrator()
     service = ChatService(session_repo=repo_for_priority, turn_orchestrator=orchestrator)
 
-    service.handle_turn(ChatTurnRequest(
+    service.handle_turn(TurnInput(
         session_id="sess-priority-2",
         user_message="hello",
         system_prompt="Request override",
@@ -330,7 +332,7 @@ def test_load_session_empty_string_clears_saved(
     orchestrator = FakeOrchestrator()
     service = ChatService(session_repo=repo_for_priority, turn_orchestrator=orchestrator)
 
-    service.handle_turn(ChatTurnRequest(
+    service.handle_turn(TurnInput(
         session_id="sess-priority-3",
         user_message="hello",
         system_prompt="",  # explicitly clear
@@ -350,7 +352,7 @@ def test_load_session_none_when_no_saved(
     orchestrator = FakeOrchestrator()
     service = ChatService(session_repo=repo_for_priority, turn_orchestrator=orchestrator)
 
-    service.handle_turn(ChatTurnRequest(
+    service.handle_turn(TurnInput(
         session_id="sess-new",
         user_message="hello",
         system_prompt=None,
@@ -376,7 +378,7 @@ def test_provider_forwarded_to_turn_input(
         turn_orchestrator=fake_orchestrator,
     )
 
-    service.handle_turn(ChatTurnRequest(
+    service.handle_turn(TurnInput(
         session_id="sess-provider",
         user_message="hello",
         provider="anthropic",
@@ -398,7 +400,7 @@ def test_model_forwarded_to_turn_input(
         turn_orchestrator=fake_orchestrator,
     )
 
-    service.handle_turn(ChatTurnRequest(
+    service.handle_turn(TurnInput(
         session_id="sess-model",
         user_message="hello",
         provider="gemini",
@@ -422,7 +424,7 @@ def test_no_provider_uses_default(
         turn_orchestrator=fake_orchestrator,
     )
 
-    service.handle_turn(ChatTurnRequest(
+    service.handle_turn(TurnInput(
         session_id="sess-default",
         user_message="hello",
     ))
@@ -461,7 +463,7 @@ def test_response_includes_provider_and_model(
         return output
     orchestrator.run = patched_run
 
-    result = service.handle_turn(ChatTurnRequest(
+    result = service.handle_turn(TurnInput(
         session_id="sess-provider-resp",
         user_message="hello",
         provider="anthropic",
@@ -494,7 +496,7 @@ def test_ui_history_stores_provider_and_model(
         turn_orchestrator=orchestrator,
     )
 
-    service.handle_turn(ChatTurnRequest(
+    service.handle_turn(TurnInput(
         session_id="sess-ui-model",
         user_message="hello",
     ))
@@ -520,7 +522,7 @@ class TestStreamTurn:
         orchestrator = FakeOrchestrator(text="Hello!")
         service = ChatService(session_repo=repo, turn_orchestrator=orchestrator)
 
-        events = list(service.stream_turn(ChatTurnRequest(
+        events = list(service.stream_turn(TurnInput(
             session_id="stream-001",
             user_message="Hi",
         )))
@@ -535,7 +537,7 @@ class TestStreamTurn:
         orchestrator = FakeOrchestrator(text="Response.")
         service = ChatService(session_repo=repo, turn_orchestrator=orchestrator)
 
-        events = list(service.stream_turn(ChatTurnRequest(
+        events = list(service.stream_turn(TurnInput(
             session_id="stream-002",
             user_message="Hello",
         )))
@@ -550,7 +552,7 @@ class TestStreamTurn:
         orchestrator = FakeOrchestrator(text="Persisted.")
         service = ChatService(session_repo=repo, turn_orchestrator=orchestrator)
 
-        list(service.stream_turn(ChatTurnRequest(
+        list(service.stream_turn(TurnInput(
             session_id="stream-003",
             user_message="Save me",
         )))
@@ -581,7 +583,7 @@ class TestStreamTurn:
         )
         service = ChatService(session_repo=repo, turn_orchestrator=orchestrator)
 
-        list(service.stream_turn(ChatTurnRequest(
+        list(service.stream_turn(TurnInput(
             session_id="stream-tools",
             user_message="Read file",
         )))
@@ -606,7 +608,7 @@ class TestStreamTurn:
         orchestrator = FakeOrchestrator(text="Simple.", tool_details=[])
         service = ChatService(session_repo=repo, turn_orchestrator=orchestrator)
 
-        list(service.stream_turn(ChatTurnRequest(
+        list(service.stream_turn(TurnInput(
             session_id="stream-simple",
             user_message="Hello",
         )))
@@ -633,7 +635,7 @@ class TestTokenBreakdown:
         orchestrator = FakeOrchestrator(text="Response.")
         service = ChatService(session_repo=repo, turn_orchestrator=orchestrator)
 
-        result = service.handle_turn(ChatTurnRequest(
+        result = service.handle_turn(TurnInput(
             session_id="test-breakdown",
             user_message="Hello",
         ))
@@ -651,7 +653,7 @@ class TestTokenBreakdown:
         orchestrator = FakeOrchestrator(text="Hello back!")
         service = ChatService(session_repo=repo, turn_orchestrator=orchestrator)
 
-        result = service.handle_turn(ChatTurnRequest(
+        result = service.handle_turn(TurnInput(
             session_id="test-counts",
             user_message="Hello there",
         ))
@@ -666,7 +668,7 @@ class TestTokenBreakdown:
         orchestrator = FakeOrchestrator(text="Response.")
         service = ChatService(session_repo=repo, turn_orchestrator=orchestrator)
 
-        result = service.handle_turn(ChatTurnRequest(
+        result = service.handle_turn(TurnInput(
             session_id="test-ui-tokens",
             user_message="Hello",
         ))
@@ -687,14 +689,14 @@ class TestTokenBreakdown:
         service = ChatService(session_repo=repo, turn_orchestrator=orchestrator)
 
         # First turn
-        result1 = service.handle_turn(ChatTurnRequest(
+        result1 = service.handle_turn(TurnInput(
             session_id="test-accum",
             user_message="First",
         ))
         total1 = result1.token_breakdown["conversation_total"]
 
         # Second turn
-        result2 = service.handle_turn(ChatTurnRequest(
+        result2 = service.handle_turn(TurnInput(
             session_id="test-accum",
             user_message="Second",
         ))
@@ -709,7 +711,7 @@ class TestTokenBreakdown:
         orchestrator = FakeOrchestrator(text="Streamed.")
         service = ChatService(session_repo=repo, turn_orchestrator=orchestrator)
 
-        events = list(service.stream_turn(ChatTurnRequest(
+        events = list(service.stream_turn(TurnInput(
             session_id="test-stream-breakdown",
             user_message="Hello",
         )))

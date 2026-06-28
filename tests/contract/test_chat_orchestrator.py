@@ -23,7 +23,8 @@ from google.genai import types as genai_types
 from src.agent.context_assembler import ContextAssembler, ContextBudget
 from src.agent.tool_executor import ToolCall, ToolExecutor
 from src.agent.turn_orchestrator import TurnInput, TurnOrchestrator
-from src.chat_service import ChatService, ChatTurnRequest
+from src.chat_service import ChatService
+from src.agent.turn_orchestrator import TurnInput
 from src.providers.normalizer import ResponseNormalizer
 from src.repositories import SessionRepository
 
@@ -145,7 +146,7 @@ class TestChatServiceOrchestratorContract:
         """text_delta events from orchestrator are yielded as 'text' events."""
         service, repo = _make_chat_service()
 
-        request = ChatTurnRequest(
+        request = TurnInput(
             session_id="test-session",
             user_message="Hello",
             mode="default",
@@ -162,7 +163,7 @@ class TestChatServiceOrchestratorContract:
         """done event from orchestrator must reach the caller."""
         service, repo = _make_chat_service()
 
-        request = ChatTurnRequest(
+        request = TurnInput(
             session_id="test-session",
             user_message="Hello",
             mode="default",
@@ -179,7 +180,7 @@ class TestChatServiceOrchestratorContract:
         """After streaming, session must be saved to repository."""
         service, repo = _make_chat_service()
 
-        request = ChatTurnRequest(
+        request = TurnInput(
             session_id="test-session",
             user_message="Hello",
             mode="default",
@@ -194,7 +195,7 @@ class TestChatServiceOrchestratorContract:
         """Exceptions from orchestrator must be wrapped as error events."""
         service, repo = _make_chat_service(error=RuntimeError("LLM API error"))
 
-        request = ChatTurnRequest(
+        request = TurnInput(
             session_id="test-session",
             user_message="Hello",
             mode="default",

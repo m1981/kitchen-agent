@@ -553,10 +553,10 @@ class TestTurnOutput:
     def test_fields(self):
         output = TurnOutput(
             assistant_message="Answer.",
-            updated_api_history=[],
             user_turn_id="u1",
             assistant_turn_id="a1",
             tool_calls_made=[ToolCall(id="c1", name="read_file", arguments={})],
+            tool_details=[],
             tool_logs=[{"name": "read_file", "args": {}, "result": {}}],
             tokens_used={"input": 10, "output": 5, "total": 15},
             context_slots={ContextSlot.SYSTEM_PROMPT: 20},
@@ -831,7 +831,8 @@ class TestTokenBreakdown:
         assert output.token_breakdown.tool_calls_tokens > 0
         assert output.token_breakdown.tool_results_tokens > 0
 
-    def test_conversation_total_includes_history(self):
+    def test_conversation_total_not_set_by_orchestrator(self):
+        """conversation_total is now ChatService's responsibility — orchestrator leaves it at 0."""
         session = make_session(messages=[
             {"role": "user", "content": "Previous question", "token_count": 5},
             {"role": "assistant", "content": "Previous answer", "token_count": 4},
@@ -841,8 +842,10 @@ class TestTokenBreakdown:
             session=session,
             turn_input=TurnInput(user_message="New question"),
         )
-        # conversation_total should include history + new turn
-        assert output.token_breakdown.conversation_total > 9  # history(9) + new tokens
+        # Orchestrator returns raw facts — conversation_total is 0
+        assert output.token_breakdown.conversation_total == 0
+        # But turn_total is still calculated (this turn only)
+        assert output.token_breakdown.turn_total > 0
 
     def test_user_message_token_count_matches_counter(self):
         counter = FakeTokenCounter()
@@ -866,15 +869,15 @@ class TestTokenBreakdown:
         expected = counter.count("Hello back!")
         assert output.token_breakdown.assistant_tokens == expected
 
-    def test_updated_api_history_has_token_counts(self):
+    def test_tool_details_populated_from_orchestrator(self):
+        """TurnOutput.tool_details should be populated (raw facts for history building)."""
         orchestrator = make_orchestrator(text="Response.")
         output = orchestrator.run(
             session=make_session(),
             turn_input=TurnInput(user_message="Hello"),
         )
-        # Check that messages in updated_api_history have token_count
-        for msg in output.updated_api_history:
-            if isinstance(msg, dict):
-                assert "token_count" in msg
-                assert isinstance(msg["token_count"], int)
-                assert msg["token_count"] >= 0
+        # No tools used — tool_details should be empty
+        assert output.tool_details == []
+        # Token breakdown should still be populated
+        assert output.token_breakdown.user_message_tokens > 0
+        assert output.token_breakdown.assistant_tokens > 0

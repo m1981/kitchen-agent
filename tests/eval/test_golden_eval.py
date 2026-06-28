@@ -64,10 +64,10 @@ class FakeOrchestrator:
 
         return TurnOutput(
             assistant_message=self._response,
-            updated_api_history=[],
             user_turn_id="test-user-turn",
             assistant_turn_id="test-assistant-turn",
             tool_calls_made=tool_calls,
+            tool_details=list(self._tool_details),
             tool_logs=tool_logs,
             tokens_used={"input": 100, "output": 50, "total": 150},
             provider_name="test",

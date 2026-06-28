@@ -67,6 +67,7 @@ class TurnInput:
     """Describes one user turn — what the orchestrator needs to proceed."""
 
     user_message: str
+    session_id: str = ""              # session identifier (used by ChatService, ignored by orchestrator)
     mode: str = "default"
     system_prompt: str | None = None  # override system prompt (bypass PromptManager)
     note_ids: list[str] = field(default_factory=list)
@@ -109,12 +110,14 @@ class TurnOutput:
     """
     Everything produced by one complete turn execution.
     ChatService reads this — nothing else should need to.
+
+    Raw facts only — ChatService owns history building and persistence.
     """
     assistant_message: str
-    updated_api_history: list          # full history after turn, ready to persist
     user_turn_id: str                  # stable ID for the user message
     assistant_turn_id: str             # stable ID for the assistant message
     tool_calls_made: list[ToolCall]    # all tool calls in execution order
+    tool_details: list[ToolCallDetail] # raw tool call details for history building
     tool_logs: list[dict]              # serializable tool log for UI + PromptLogger
     tokens_used: dict                  # {input, output, total} from provider
     provider_name: str = ""            # actual provider used (e.g. "gemini", "anthropic")
@@ -390,28 +393,13 @@ class TurnOrchestrator:
                 message="Response has inline markers but missing ## Źródła section.",
             )
 
-    # ── run() ────────────────────────────────────────────────────────────
+    # ── Provider + context helpers ──────────────────────────────────────
 
-    def run(
+    def _resolve_provider(
         self,
-        session: dict,
         turn_input: TurnInput,
-    ) -> TurnOutput:
-        """
-        Execute one complete chat turn.
-
-        Args:
-            session:     Session-like dict with a ``messages`` key.
-            turn_input:  Describes the user's turn.
-
-        Returns:
-            TurnOutput with assistant message, tool calls made,
-            token usage, and context slot observability.
-
-        Raises:
-            MaxToolIterationsError: if the tool loop exceeds the cap.
-        """
-        # ── 1. Resolve provider for this turn ───────────────────────────
+    ) -> tuple[LLMProvider, str]:
+        """Resolve provider for this turn (override vs default)."""
         if turn_input.provider:
             from src.providers.base import get_provider
             provider = get_provider(
@@ -422,16 +410,15 @@ class TurnOrchestrator:
         else:
             provider = self._provider
             provider_name = self._provider_name
+        return provider, provider_name
 
-        actual_model = getattr(provider, "_model", "unknown")
-        self._log.info(
-            "orchestrator_provider_resolved",
-            provider=provider_name,
-            model=actual_model,
-            override_used=bool(turn_input.provider),
-        )
-
-        # ── 2. Assemble context ─────────────────────────────────────────
+    def _setup_context(
+        self,
+        session: dict,
+        turn_input: TurnInput,
+        provider_name: str,
+    ) -> AssembledContext:
+        """Assemble context window and inject tool schemas."""
         with log_timing(self._log, "orchestrator_context_assembled"):
             context = self._ctx.assemble(
                 session=session,
@@ -441,56 +428,80 @@ class TurnOrchestrator:
                 file_ids=turn_input.file_ids or None,
             )
 
-        # Override system prompt if provided in TurnInput
         if turn_input.system_prompt is not None:
             context.system_prompt = turn_input.system_prompt
 
-        # Propagate images and context_files from TurnInput to context
-        # so providers can access them via the LLMProvider interface.
         context.images = turn_input.images or []
         context.context_files = turn_input.context_files or []
 
-        # Inject tool schemas from registry
         if self._tool_registry is not None and turn_input.use_tools:
             context.tool_schemas = self._tool_registry.schemas_for_provider(
                 provider=provider_name,
             )
+
+        return context
+
+    # ── Unified turn execution ───────────────────────────────────────────
+
+    def _execute_turn(
+        self,
+        session: dict,
+        turn_input: TurnInput,
+        *,
+        streaming: bool = False,
+    ) -> Iterator[dict]:
+        """
+        Single implementation of the turn lifecycle.
+
+        A generator that yields events.  ``run()`` collects them;
+        ``stream()`` forwards them to the caller.
+
+        Events yielded:
+          - {"type": "text_delta", "content": "..."}  (streaming only)
+          - {"type": "tool_call", "name": "...", ...}
+          - {"type": "tool_result", "name": "...", ...}
+          - {"type": "__done__", "text": ..., "tool_details": ...}
+        """
+        # ── 1. Resolve provider + context ───────────────────────────────
+        provider, provider_name = self._resolve_provider(turn_input)
+        actual_model = getattr(provider, "_model", "unknown")
+        context = self._setup_context(session, turn_input, provider_name)
 
         self._log.info(
             "orchestrator_llm_call_start",
             provider=provider_name,
             model=actual_model,
             has_system_prompt=bool(context.system_prompt),
-            has_images=bool(context.images),
-            has_context_files=bool(context.context_files),
             tool_schemas_count=len(context.tool_schemas) if context.tool_schemas else 0,
             use_tools=turn_input.use_tools,
+            streaming=streaming,
         )
 
-        # ── 3. Call LLM ────────────────────────────────────────────────
-        with log_timing(self._log, "orchestrator_llm_call_complete") as timing:
-            raw_response = provider.complete(context)
-            normalized = self._normalizer.normalize(raw_response, provider_name)
-        timing["has_tool_calls"] = normalized.has_tool_calls
+        # ── 2. Initial LLM call ─────────────────────────────────────────
+        normalized: NormalizedResponse | None = None
 
-        # ── 4. Agentic tool loop ───────────────────────────────────────
-        tool_calls_made: list[str] = []
-        tool_details: list[ToolCallDetail] = []
-        iterations = 0
-        tool_tokens_used = 0
-        tool_budget_tokens = self._get_tool_budget_tokens()
+        if streaming:
+            for event in self._stream_and_collect(
+                provider, context, provider_name,
+            ):
+                if event["type"] == "__normalized__":
+                    normalized = event["response"]
+                else:
+                    yield event  # text_delta
+        else:
+            with log_timing(self._log, "orchestrator_llm_call_complete"):
+                raw_response = provider.complete(context)
+                normalized = self._normalizer.normalize(raw_response, provider_name)
 
-        # Edge case: LLM returned tool_calls but use_tools=False.
-        # This can happen when the model hallucinates tools (e.g. mimo).
-        # Do NOT execute tools — just log and return whatever text was produced.
+        assert normalized is not None, "LLM returned no response"
+
+        # ── 3. Guard: hallucinated tools when use_tools=False ───────────
         if normalized.has_tool_calls and not turn_input.use_tools:
             self._log.warning(
                 "orchestrator_unexpected_tool_calls",
                 tool_calls=[tc.name for tc in normalized.tool_calls],
-                message="use_tools=False but LLM returned tool_calls. "
-                        "Ignoring tool calls.",
+                message="use_tools=False but LLM returned tool_calls. Ignoring.",
             )
-            # Skip tool execution — return text-only response
             normalized = NormalizedResponse(
                 text=normalized.text,
                 has_tool_calls=False,
@@ -498,6 +509,13 @@ class TurnOrchestrator:
                 usage=normalized.usage,
                 raw=normalized.raw,
             )
+
+        # ── 4. Agentic tool loop ────────────────────────────────────────
+        tool_calls_made: list[str] = []
+        tool_details: list[ToolCallDetail] = []
+        iterations = 0
+        tool_tokens_used = 0
+        tool_budget_tokens = self._get_tool_budget_tokens()
 
         while normalized.has_tool_calls:
             iterations += 1
@@ -510,12 +528,11 @@ class TurnOrchestrator:
                 tool_calls=[tc.name for tc in normalized.tool_calls],
             )
 
-            # Execute tools and record details
-            with log_timing(self._log, "orchestrator_tools_executed") as timing:
+            # Execute tools
+            with log_timing(self._log, "orchestrator_tools_executed"):
                 calls, results = self._execute_tool_calls(normalized, tool_details)
-            timing["tools_count"] = len(results)
 
-            # ── Token budget enforcement ──────────────────────────────
+            # Token budget enforcement
             was_truncated = False
             if tool_budget_tokens is not None:
                 results, tool_tokens_used, was_truncated = (
@@ -523,159 +540,296 @@ class TurnOrchestrator:
                         results, tool_tokens_used, tool_budget_tokens,
                     )
                 )
-                # Update tool_details with possibly truncated content
                 for detail, tr in zip(tool_details[-len(results):], results):
                     detail.result_content = tr.content
 
-                self._log.info(
-                    "orchestrator_tool_budget",
-                    tool_tokens_used=tool_tokens_used,
-                    tool_budget_tokens=tool_budget_tokens,
-                    was_truncated=was_truncated,
-                )
+            # Yield tool events
+            for tc, tr in zip(calls, results):
+                tool_calls_made.append(tc.name)
+                yield {
+                    "type": "tool_call",
+                    "name": tc.name,
+                    "args": tc.arguments,
+                    "id": tc.id,
+                }
+                yield {
+                    "type": "tool_result",
+                    "name": tc.name,
+                    "args": tc.arguments,
+                    "result": {"content": tr.content} if not tr.is_error else {"error": tr.content},
+                    "id": tc.id,
+                }
 
-            tool_calls_made.extend(
-                tc.name for tc in normalized.tool_calls
-            )
-
-            # If budget exceeded, stop the tool loop
+            # Feed results back to LLM
             if was_truncated:
                 self._log.warning(
                     "orchestrator_tool_budget_exceeded",
                     tool_tokens_used=tool_tokens_used,
                     tool_budget_tokens=tool_budget_tokens,
-                    message="Tool results exceeded budget. Stopping tool loop.",
                 )
-                # Force LLM to produce a text response from partial results
-                raw_response = provider.complete_with_tools(
-                    context, calls, results,
+                normalized = self._force_text_response(
+                    provider, context, calls, results,
+                    provider_name, tool_details, streaming,
                 )
-                normalized = self._normalizer.normalize(raw_response, provider_name)
-                
-                # If LLM returned tool calls instead of text, force a synthetic response
-                if normalized.has_tool_calls or not normalized.text.strip():
-                    self._log.warning(
-                        "orchestrator_forcing_text_response",
-                        had_tool_calls=normalized.has_tool_calls,
-                        had_text=bool(normalized.text.strip()),
-                    )
-                    # Build a summary from the tool results we have
-                    result_summary = self._build_truncation_summary(tool_details)
-                    normalized = NormalizedResponse(
-                        text=result_summary,
-                        has_tool_calls=False,
-                        tool_calls=[],
-                        usage=normalized.usage,
-                        raw=normalized.raw,
-                    )
-                else:
-                    # LLM returned text — use it, but don't allow more tool calls
-                    normalized = NormalizedResponse(
-                        text=normalized.text,
-                        has_tool_calls=False,
-                        tool_calls=[],
-                        usage=normalized.usage,
-                        raw=normalized.raw,
-                    )
             else:
-                # Feed results back to LLM normally
                 self._log.info("orchestrator_feeding_tool_results_to_llm")
-                raw_response = provider.complete_with_tools(
-                    context, calls, results,
-                )
-                normalized = self._normalizer.normalize(raw_response, provider_name)
+                normalized = None
+                if streaming:
+                    for event in self._stream_and_collect_with_tools(
+                        provider, context, calls, results, provider_name,
+                    ):
+                        if event["type"] == "__normalized__":
+                            normalized = event["response"]
+                        else:
+                            yield event
+                else:
+                    raw = provider.complete_with_tools(context, calls, results)
+                    normalized = self._normalizer.normalize(raw, provider_name)
 
-        # 4. Build output
-        tool_calls_made_objects, tool_logs = self._build_output_from_details(tool_details)
+        # ── 5. Citation compliance check ────────────────────────────────
+        if tool_details:
+            self._check_citation_compliance(normalized.text, tool_details)
 
-        # Build updated_api_history from session messages + new turns
-        # Using provider-agnostic common format
-        updated_api_history: list = list(session.get("messages", []))
-        
-        # User message
-        user_tokens = self._token_counter.count(turn_input.user_message) if self._token_counter else 0
-        updated_api_history.append({"role": "user", "content": turn_input.user_message, "token_count": user_tokens})
-        
-        # Tool call/response pairs
-        tool_calls_tokens = 0
-        tool_results_tokens = 0
-        for detail in tool_details:
-            tool_calls_tokens += detail.call_tokens
-            tool_results_tokens += detail.result_tokens
-            # Assistant tool call message
-            updated_api_history.append({
-                "role": "assistant",
-                "content": "",
-                "tool_calls": [{
-                    "id": detail.id,
-                    "name": detail.name,
-                    "arguments": detail.arguments,
-                }],
-                "token_count": detail.call_tokens,
-            })
-            # Tool response message
-            updated_api_history.append({
-                "role": "tool",
-                "tool_call_id": detail.id,
-                "content": detail.result_content,
-                "token_count": detail.result_tokens,
-            })
-        
-        # Assistant response
-        assistant_tokens = self._token_counter.count(normalized.text) if self._token_counter else 0
-        updated_api_history.append({
-            "role": "assistant",
-            "content": normalized.text,
-            "token_count": assistant_tokens,
-        })
-
-        # Generate stable turn IDs
-        user_turn_id = str(uuid.uuid4())
-        assistant_turn_id = str(uuid.uuid4())
-
-        # Capture actual model used — provider._model holds the resolved value.
-        actual_model = getattr(provider, "_model", "") or ""
-
-        # Record tool token usage for observability
+        # ── 6. Record tool token usage for observability ────────────────
         if tool_budget_tokens is not None:
             from src.agent.context_assembler import ContextSlot
             context.slots_used[ContextSlot.TOOL_RESULTS] = tool_tokens_used
 
-        # ── 5. Citation compliance check ───────────────────────────────
-        if tool_details:
-            self._check_citation_compliance(normalized.text, tool_details)
-
-        # ── 6. Calculate token breakdown ───────────────────────────────
-        turn_total = user_tokens + tool_calls_tokens + tool_results_tokens + assistant_tokens
-
-        # Calculate conversation total (sum of all message token_counts)
-        conversation_total = 0
-        for msg in updated_api_history:
-            if isinstance(msg, dict):
-                conversation_total += msg.get("token_count", 0)
+        # ── 7. Token breakdown ──────────────────────────────────────────
+        user_tokens = self._token_counter.count(turn_input.user_message) if self._token_counter else 0
+        tool_calls_tokens = sum(d.call_tokens for d in tool_details)
+        tool_results_tokens = sum(d.result_tokens for d in tool_details)
+        assistant_tokens = self._token_counter.count(normalized.text) if self._token_counter else 0
 
         token_breakdown = TokenBreakdown(
             user_message_tokens=user_tokens,
             tool_calls_tokens=tool_calls_tokens,
             tool_results_tokens=tool_results_tokens,
             assistant_tokens=assistant_tokens,
-            turn_total=turn_total,
-            conversation_total=conversation_total,
+            turn_total=user_tokens + tool_calls_tokens + tool_results_tokens + assistant_tokens,
+        )
+
+        # ── 8. Yield done signal ────────────────────────────────────────
+        yield {
+            "type": "__done__",
+            "text": normalized.text,
+            "usage": normalized.usage,
+            "tool_calls_made": tool_calls_made,
+            "tool_details": tool_details,
+            "token_breakdown": token_breakdown,
+            "context_slots": context.slots_used,
+            "provider_name": provider_name,
+            "model_name": getattr(provider, "_model", "") or "",
+        }
+
+    def _force_text_response(
+        self,
+        provider: LLMProvider,
+        context: AssembledContext,
+        calls: list[ToolCall],
+        results: list[ToolResult],
+        provider_name: str,
+        tool_details: list[ToolCallDetail],
+        streaming: bool,
+    ) -> NormalizedResponse:
+        """Force LLM to produce text after budget truncation."""
+        normalized: NormalizedResponse | None = None
+
+        if streaming:
+            for event in self._stream_and_collect_with_tools(
+                provider, context, calls, results, provider_name,
+            ):
+                if event["type"] == "__normalized__":
+                    normalized = event["response"]
+                # text_delta events are silently consumed here
+        else:
+            raw = provider.complete_with_tools(context, calls, results)
+            normalized = self._normalizer.normalize(raw, provider_name)
+
+        if normalized and normalized.has_tool_calls:
+            self._log.warning(
+                "orchestrator_forcing_text_response",
+                had_tool_calls=True,
+            )
+
+        if normalized and normalized.text.strip() and not normalized.has_tool_calls:
+            return NormalizedResponse(
+                text=normalized.text,
+                has_tool_calls=False,
+                tool_calls=[],
+                usage=normalized.usage,
+                raw=normalized.raw,
+            )
+
+        # LLM returned no usable text — build synthetic summary
+        result_summary = self._build_truncation_summary(tool_details)
+        return NormalizedResponse(
+            text=result_summary,
+            has_tool_calls=False,
+            tool_calls=[],
+            usage=normalized.usage if normalized else {},
+            raw=normalized,
+        )
+
+    # ── Public API: run() and stream() ───────────────────────────────────
+
+    def run(
+        self,
+        session: dict,
+        turn_input: TurnInput,
+    ) -> TurnOutput:
+        """
+        Execute one complete chat turn (non-streaming).
+
+        Thin wrapper over ``_execute_turn`` that collects all events
+        and builds a ``TurnOutput``.
+
+        Raises:
+            MaxToolIterationsError: if the tool loop exceeds the cap.
+        """
+        user_turn_id = str(uuid.uuid4())
+        assistant_turn_id = str(uuid.uuid4())
+
+        result: dict | None = None
+        for event in self._execute_turn(session, turn_input, streaming=False):
+            if event["type"] == "__done__":
+                result = event
+
+        assert result is not None, "Turn execution completed without __done__ event"
+
+        tool_calls_made_objects, tool_logs = self._build_output_from_details(
+            result["tool_details"]
         )
 
         return TurnOutput(
-            assistant_message=normalized.text,
-            updated_api_history=updated_api_history,
+            assistant_message=result["text"],
             user_turn_id=user_turn_id,
             assistant_turn_id=assistant_turn_id,
             tool_calls_made=tool_calls_made_objects,
+            tool_details=result["tool_details"],
             tool_logs=tool_logs,
-            tokens_used=normalized.usage,
-            provider_name=provider_name,
-            model_name=actual_model,
-            context_slots=context.slots_used,
-            token_breakdown=token_breakdown,
+            tokens_used=result["usage"],
+            provider_name=result["provider_name"],
+            model_name=result["model_name"],
+            context_slots=result["context_slots"],
+            token_breakdown=result["token_breakdown"],
         )
+
+    def stream(
+        self,
+        session: dict,
+        turn_input: TurnInput,
+    ) -> Iterator[dict]:
+        """
+        Stream one complete chat turn.
+
+        Thin wrapper over ``_execute_turn`` that forwards events
+        as SSE-compatible dicts.
+
+        Yields:
+          - {"type": "text_delta", "content": "..."}
+          - {"type": "tool_call", "name": "...", "args": {...}, "id": "..."}
+          - {"type": "tool_result", "name": "...", "result": {...}, "id": "..."}
+          - {"type": "done", "provider": "...", "model": "...", ...}
+        """
+        user_turn_id = str(uuid.uuid4())
+        assistant_turn_id = str(uuid.uuid4())
+
+        for event in self._execute_turn(session, turn_input, streaming=True):
+            if event["type"] == "__done__":
+                tool_calls_made_names = event["tool_calls_made"]
+                yield {
+                    "type": "done",
+                    "provider": event["provider_name"],
+                    "model": event["model_name"],
+                    "user_turn_id": user_turn_id,
+                    "assistant_turn_id": assistant_turn_id,
+                    "tool_calls_made": tool_calls_made_names,
+                    "tool_details": event["tool_details"],
+                    "token_breakdown": {
+                        "user_message_tokens": event["token_breakdown"].user_message_tokens,
+                        "tool_calls_tokens": event["token_breakdown"].tool_calls_tokens,
+                        "tool_results_tokens": event["token_breakdown"].tool_results_tokens,
+                        "assistant_tokens": event["token_breakdown"].assistant_tokens,
+                        "turn_total": event["token_breakdown"].turn_total,
+                    },
+                }
+            else:
+                yield event
+
+    # ── Streaming internals ─────────────────────────────────────────────
+
+    def _stream_and_collect(
+        self,
+        provider: LLMProvider,
+        context: AssembledContext,
+        provider_name: str,
+    ) -> Iterator[dict]:
+        """
+        Stream a single LLM call, yielding text_delta events.
+
+        Yields:
+            {"type": "text_delta", "content": "..."} for each chunk.
+            {"type": "__normalized__", "response": NormalizedResponse} at the end.
+        """
+        final_message: Any = None
+        last_raw_chunk: Any = None
+        accumulated_text = ""
+
+        for chunk in provider.stream(context):
+            if isinstance(chunk, dict) and chunk.get("type") == "__final_message__":
+                final_message = chunk["message"]
+                continue
+
+            last_raw_chunk = chunk
+            text_delta = self._normalizer.normalize_chunk(chunk, provider_name)
+            if text_delta:
+                accumulated_text += text_delta
+                yield {"type": "text_delta", "content": text_delta}
+
+        message_to_normalize = final_message if final_message is not None else last_raw_chunk
+        if message_to_normalize is not None:
+            normalized = self._normalizer.normalize(message_to_normalize, provider_name)
+            if accumulated_text:
+                normalized.text = accumulated_text
+            yield {"type": "__normalized__", "response": normalized}
+
+    def _stream_and_collect_with_tools(
+        self,
+        provider: LLMProvider,
+        context: AssembledContext,
+        tool_calls: list[ToolCall],
+        tool_results: list[ToolResult],
+        provider_name: str,
+    ) -> Iterator[dict]:
+        """
+        Stream an LLM call after tool execution.
+
+        Yields:
+            {"type": "text_delta", "content": "..."} for each chunk.
+            {"type": "__normalized__", "response": NormalizedResponse} at the end.
+        """
+        final_message: Any = None
+        last_raw_chunk: Any = None
+        accumulated_text = ""
+
+        for chunk in provider.stream_with_tools(context, tool_calls, tool_results):
+            if isinstance(chunk, dict) and chunk.get("type") == "__final_message__":
+                final_message = chunk["message"]
+                continue
+
+            last_raw_chunk = chunk
+            text_delta = self._normalizer.normalize_chunk(chunk, provider_name)
+            if text_delta:
+                accumulated_text += text_delta
+                yield {"type": "text_delta", "content": text_delta}
+
+        message_to_normalize = final_message if final_message is not None else last_raw_chunk
+        if message_to_normalize is not None:
+            normalized = self._normalizer.normalize(message_to_normalize, provider_name)
+            if accumulated_text:
+                normalized.text = accumulated_text
+            yield {"type": "__normalized__", "response": normalized}
 
     def stream(
         self,

@@ -45,7 +45,8 @@ from src import config
 from src.main import app
 from src.dependencies import get_session_repo, get_chat_service
 from src.repositories import SQLiteConnection, SQLiteSessionRepository
-from src.chat_service import ChatService, ChatTurnRequest
+from src.chat_service import ChatService
+from src.agent.turn_orchestrator import TurnInput
 from tests.helpers import FakeOrchestrator
 
 
@@ -106,7 +107,7 @@ class TestChatServiceContextFilesOnUiMessage:
         When handle_turn is called with context_files, the user entry in
         ui_messages must contain a 'context_files' key with the basenames.
         """
-        service.handle_turn(ChatTurnRequest(
+        service.handle_turn(TurnInput(
             session_id="sess-1", user_message="What materials?", context_files=["/abs/path/data/materials.md"]
         ))
 
@@ -120,7 +121,7 @@ class TestChatServiceContextFilesOnUiMessage:
         self, service: ChatService, repo: SQLiteSessionRepository
     ) -> None:
         """Stored values must be basenames, not full paths."""
-        service.handle_turn(ChatTurnRequest(
+        service.handle_turn(TurnInput(
             session_id="sess-2", user_message="Help", context_files=[
         "/long/path/to/data/kuchnia-kroki.md",
         "/long/path/to/data/materials.md",
@@ -136,7 +137,7 @@ class TestChatServiceContextFilesOnUiMessage:
         self, service: ChatService, repo: SQLiteSessionRepository
     ) -> None:
         """All files in the list must be stored, not just the first."""
-        service.handle_turn(ChatTurnRequest(
+        service.handle_turn(TurnInput(
             session_id="sess-3", user_message="Help", context_files=["/data/a.md", "/data/b.md", "/data/c.md"]
         ))
 
@@ -150,7 +151,7 @@ class TestChatServiceContextFilesOnUiMessage:
         self, service: ChatService, repo: SQLiteSessionRepository
     ) -> None:
         """When no context_files are passed the key must NOT appear on ui_message."""
-        service.handle_turn(ChatTurnRequest(
+        service.handle_turn(TurnInput(
             session_id="sess-4", user_message="Hello", context_files=None
         ))
 
@@ -163,7 +164,7 @@ class TestChatServiceContextFilesOnUiMessage:
         self, service: ChatService, repo: SQLiteSessionRepository
     ) -> None:
         """Empty list behaves the same as None — key absent on ui_message."""
-        service.handle_turn(ChatTurnRequest(
+        service.handle_turn(TurnInput(
             session_id="sess-5", user_message="Hello", context_files=[]
         ))
 
@@ -176,7 +177,7 @@ class TestChatServiceContextFilesOnUiMessage:
         self, service: ChatService, repo: SQLiteSessionRepository
     ) -> None:
         """The assistant ui_message must never have a context_files key."""
-        service.handle_turn(ChatTurnRequest(
+        service.handle_turn(TurnInput(
             session_id="sess-6", user_message="Help", context_files=["/data/materials.md"]
         ))
 
@@ -192,10 +193,10 @@ class TestChatServiceContextFilesOnUiMessage:
         After a second turn without context_files, the first turn's
         context_files entry must still be present in ui_messages.
         """
-        service.handle_turn(ChatTurnRequest(
+        service.handle_turn(TurnInput(
             session_id="sess-7", user_message="Turn 1", context_files=["/data/materials.md"]
         ))
-        service.handle_turn(ChatTurnRequest(
+        service.handle_turn(TurnInput(
             session_id="sess-7", user_message="Turn 2", context_files=None
         ))
 
@@ -215,7 +216,7 @@ class TestChatServiceContextFilesOnUiMessage:
         Even if the path is already just 'materials.md' (no dir component),
         the stored value must be 'materials.md'.
         """
-        service.handle_turn(ChatTurnRequest(
+        service.handle_turn(TurnInput(
             session_id="sess-8", user_message="Help", context_files=["materials.md"]
         ))
 
