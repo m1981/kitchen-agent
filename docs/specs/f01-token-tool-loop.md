@@ -303,6 +303,8 @@ Budget comes from `ContextBudget.tokens_for(ContextSlot.TOOL_RESULTS)`:
 ```python
 # context_assembler.py
 ContextSlot.TOOL_RESULTS: 0.05,  # 5% of total context
+# NOTE: re-tuned to 0.20 after this spec was written — see
+# ContextBudget.allocations, which is the live source of truth.
 ```
 
 At 128K context = **6,400 tokens** for tool results.

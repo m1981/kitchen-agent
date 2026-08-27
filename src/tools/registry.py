@@ -127,8 +127,9 @@ def _build_search_entry(
             "Searches all markdown files for lines matching a regex pattern. "
             "Use this when you need to find specific terms, part numbers, or dimensions. "
             "QUERY FORMAT: This tool uses regex. Use pipe (|) for OR logic. "
-            "Examples: 'Blum|Antaro|Merivobox' finds all three terms. "
-            "'zawiasy|prowadnice|podnośniki' finds all hardware types. "
+            "Examples: 'alpha|beta|gamma' finds any of the three terms. "
+            "Group the synonyms and product names the user might have used — one "
+            "query with several alternatives beats several narrow queries. "
             "IMPORTANT: the knowledge base may contain contradicting notes across files — "
             "use context_lines=3 or higher for ambiguous queries so you can see surrounding "
             "text and detect conflicts before answering. "
@@ -143,7 +144,8 @@ def _build_search_entry(
                     description=(
                         "A regex pattern to search for. Use pipe (|) for OR logic. "
                         "Matching is case-insensitive. "
-                        "Examples: 'Blum|Antaro|Merivobox', 'prowadnice|szuflady', 'ZC7S\\w+SA'."
+                        "Examples: 'alpha|beta|gamma' for alternatives, "
+                        "'\\d{3,}\\s?mm' for dimensions, 'ZC7S\\w+SA' for part numbers."
                     ),
                 ),
                 "context_lines": types.Schema(

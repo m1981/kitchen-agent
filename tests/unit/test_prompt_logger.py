@@ -582,7 +582,9 @@ class TestDefaultLogPath:
         tmp_path without needing a property setter.
         """
         from src import prompt_logger
-        monkeypatch.setattr(prompt_logger.settings, "data_dir", tmp_path)
+        # prompt_log_path resolves beside data_dir, so point data_dir at a
+        # subdirectory and expect the log one level up.
+        monkeypatch.setattr(prompt_logger.settings, "data_dir", tmp_path / "kb")
         log_turn("Default path test")
         expected = tmp_path / "prompt_log.md"
         assert expected.exists()

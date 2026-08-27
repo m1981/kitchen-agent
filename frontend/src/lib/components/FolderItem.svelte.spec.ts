@@ -61,20 +61,21 @@ describe("FolderItem — active session highlighting", () => {
     await expect.element(page.getByText("Second Session")).toBeInTheDocument();
   });
 
+  // The highlight lives on the session row, not on the title button — asserting
+  // it on the button passed for the inactive cases no matter what the component
+  // did, and could never pass for the active ones.
   it("highlights session when activeId matches", async () => {
     render(FolderItem, { folderId: "f1", activeId: "s1", onloadsession });
 
-    // The active session button should have the accent-soft background
-    const activeBtn = page.getByRole("button", { name: "First Session" });
-    await expect.element(activeBtn).toHaveClass(/bg-accent-soft/);
+    const activeRow = page.getByTestId("session-row-s1");
+    await expect.element(activeRow).toHaveClass(/bg-accent-soft/);
   });
 
   it("does not highlight session when activeId does not match", async () => {
     render(FolderItem, { folderId: "f1", activeId: "s2", onloadsession });
 
-    // First Session is NOT active — should NOT have accent-soft
-    const inactiveBtn = page.getByRole("button", { name: "First Session" });
-    await expect.element(inactiveBtn).not.toHaveClass(/bg-accent-soft/);
+    const inactiveRow = page.getByTestId("session-row-s1");
+    await expect.element(inactiveRow).not.toHaveClass(/bg-accent-soft/);
   });
 
   it("applies font-semibold to active session title", async () => {
@@ -96,11 +97,8 @@ describe("FolderItem — active session highlighting", () => {
   it("no highlighting when activeId is null", async () => {
     render(FolderItem, { folderId: "f1", activeId: null, onloadsession });
 
-    const btn1 = page.getByRole("button", { name: "First Session" });
-    const btn2 = page.getByRole("button", { name: "Second Session" });
-
-    await expect.element(btn1).not.toHaveClass(/bg-accent-soft/);
-    await expect.element(btn2).not.toHaveClass(/bg-accent-soft/);
+    await expect.element(page.getByTestId("session-row-s1")).not.toHaveClass(/bg-accent-soft/);
+    await expect.element(page.getByTestId("session-row-s2")).not.toHaveClass(/bg-accent-soft/);
   });
 
   it("calls onloadsession when session button is clicked", async () => {
@@ -115,10 +113,7 @@ describe("FolderItem — active session highlighting", () => {
   it("highlights second session when activeId is s2", async () => {
     render(FolderItem, { folderId: "f1", activeId: "s2", onloadsession });
 
-    const activeBtn = page.getByRole("button", { name: "Second Session" });
-    await expect.element(activeBtn).toHaveClass(/bg-accent-soft/);
-
-    const inactiveBtn = page.getByRole("button", { name: "First Session" });
-    await expect.element(inactiveBtn).not.toHaveClass(/bg-accent-soft/);
+    await expect.element(page.getByTestId("session-row-s2")).toHaveClass(/bg-accent-soft/);
+    await expect.element(page.getByTestId("session-row-s1")).not.toHaveClass(/bg-accent-soft/);
   });
 });

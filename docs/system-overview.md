@@ -48,7 +48,7 @@ The search tool is the primary knowledge retrieval mechanism. It:
 - Supports `context_lines` parameter to show surrounding text
 - Routes through `SearchCoordinator` (extensible to BM25, embeddings in the future)
 
-The tool loop is **budget-enforced**: tool results consume tokens from a dedicated `TOOL_RESULTS` slot (5% of total context). When the budget is exceeded, results are truncated and the LLM is forced to answer from partial content.
+The tool loop is **budget-enforced**: tool results consume tokens from a dedicated `TOOL_RESULTS` slot (20% of total context). When the budget is exceeded, results are truncated and the LLM is forced to answer from partial content.
 
 ### 3. Respond from Training Data, Narrowed by KB
 
@@ -203,7 +203,7 @@ This is NOT a ReAct agent, a chain-of-thought planner, or an autonomous system. 
 - Self-reflection or retry strategies
 - Complex reasoning chains
 
-The loop is bounded (max 10 iterations) and budget-enforced (5% of context for tool results). This makes behavior **predictable and debuggable**.
+The loop is bounded (max 10 iterations) and budget-enforced (20% of context for tool results). This makes behavior **predictable and debuggable**.
 
 ### Why Protocol-Based Interfaces?
 
@@ -242,7 +242,7 @@ Without budget enforcement, a single tool call (e.g., `get_repo_map` returning 1
 2. LLM produces confused or empty responses
 3. Subsequent tool calls fail
 
-The budget system allocates 5% of total context to tool results. When exceeded:
+The budget system allocates 20% of total context to tool results (`ContextBudget.allocations` in `agent/context_assembler.py` is the single source of truth). When exceeded:
 
 1. Current result is truncated with a warning
 2. Remaining results in the batch are zeroed out

@@ -489,18 +489,29 @@ class TestRealKBIntegration:
             return CitationVerifier(data_dir=data_dir)
         return None
 
-    def test_real_file_szuflady(self, real_verifier: CitationVerifier | None):
-        """Verify citation to real Szuflady_Blum_Kompendium.md file."""
+    def test_real_file_citation_resolves(self, real_verifier: CitationVerifier | None):
+        """A citation pointing at a file that really exists must verify.
+
+        Discovered rather than hardcoded: the knowledge base belongs to the
+        user and gets reorganised, and a renamed document must not read as a
+        broken citation verifier.
+        """
         if real_verifier is None:
             pytest.skip("Real KB not available")
 
-        response = """
+        data_dir = Path(__file__).parent.parent.parent / "data"
+        md_files = [p for p in sorted(data_dir.rglob("*.md")) if p.stat().st_size > 0]
+        if not md_files:
+            pytest.skip("No .md files in the knowledge base")
+
+        relative = md_files[0].relative_to(data_dir).as_posix()
+        response = f"""
 ## Źródła
 
-1. `data/04_Okucia_i_Akcesoria/Szuflady_Blum_Kompendium.md` (linie 1-20)
+1. `data/{relative}` (linie 1-20)
 """
         report = real_verifier.verify(response)
-        assert report.valid_citations == 1
+        assert report.valid_citations == 1, report.invalid_citations
 
     def test_real_file_strategia(self, real_verifier: CitationVerifier | None):
         """Verify citation to real strategic document."""

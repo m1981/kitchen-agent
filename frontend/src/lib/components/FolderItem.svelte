@@ -351,6 +351,7 @@
               sourceFolderId={folderId}
             >
               <div
+                data-testid="session-row-{session.id}"
                 class="group flex w-full items-center gap-1 rounded-md px-1.5 py-1
 									transition
 									{isActive ? 'bg-accent-soft shadow-[inset_3px_0_0_var(--color-accent)]' : 'hover:bg-surface'}

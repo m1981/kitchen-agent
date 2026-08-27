@@ -20,10 +20,10 @@ def test_db_path_derived_from_data_dir() -> None:
     assert s.db_path == Path("my_data/chats.db")
 
 
-def test_prompt_log_path_derived_from_data_dir() -> None:
-    """prompt_log_path must be data_dir / 'prompt_log.md'."""
-    s = Settings(data_dir=Path("my_data"))
-    assert s.prompt_log_path == Path("my_data/prompt_log.md")
+def test_prompt_log_path_sits_beside_data_dir() -> None:
+    """prompt_log_path must sit beside data_dir, not inside it."""
+    s = Settings(data_dir=Path("workspace/my_data"))
+    assert s.prompt_log_path == Path("workspace/prompt_log.md")
 
 
 def test_parse_origins_from_comma_string() -> None:

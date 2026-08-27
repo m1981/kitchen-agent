@@ -250,12 +250,13 @@ class TestTruncationWhenOverBudget:
         When a single tool result exceeds the budget, it should be
         truncated and a warning appended.
         """
-        # Budget: 128K * 5% = 6,400 tokens
-        # FakeTokenCounter: 1 token per 4 chars
-        # So 6,400 tokens = 25,600 chars
-        # Make a result that's 10,000 tokens (40,000 chars) — way over budget
+        # Size the fixture from the live allocation instead of a hardcoded
+        # constant — the TOOL_RESULTS share has been re-tuned before and a
+        # baked-in number turns a passing budget into a silently skipped test.
+        budget = ContextBudget(total=128_000)
+        tool_budget_tokens = budget.tokens_for(ContextSlot.TOOL_RESULTS)
 
-        big_content = _make_large_content(10_000)  # 40,000 chars = 10,000 tokens
+        big_content = _make_large_content(tool_budget_tokens * 2)
         registry = FakeRegistry(handlers={
             "search": lambda query, **kw: {"content": big_content},
         })
@@ -347,7 +348,10 @@ class TestWarningMessageOnTruncation:
         the LLM because it's part of the tool result passed to
         complete_with_tools().
         """
-        big_content = _make_large_content(10_000)
+        budget = ContextBudget(total=128_000)
+        big_content = _make_large_content(
+            budget.tokens_for(ContextSlot.TOOL_RESULTS) * 2
+        )
         registry = FakeRegistry(handlers={
             "search": lambda query, **kw: {"content": big_content},
         })
@@ -398,7 +402,10 @@ class TestLoopTerminationOnBudget:
         After a large tool result exceeds budget, the loop should stop
         and the LLM should produce a text response from what it has.
         """
-        big_content = _make_large_content(10_000)  # Over budget
+        budget = ContextBudget(total=128_000)
+        big_content = _make_large_content(
+            budget.tokens_for(ContextSlot.TOOL_RESULTS) * 2
+        )  # Over budget
         registry = FakeRegistry(handlers={
             "search": lambda query, **kw: {"content": big_content},
         })

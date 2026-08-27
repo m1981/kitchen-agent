@@ -76,7 +76,10 @@ class Settings(BaseSettings):
 
     @property
     def prompt_log_path(self) -> Path:
-        return self.data_dir / "prompt_log.md"
+        # Beside the knowledge base, never inside it: get_repo_map and
+        # search_knowledge_base scan data/**/*.md, so a log kept there would be
+        # indexed and cited as if it were a source document.
+        return self.data_dir.parent / "prompt_log.md"
 
     # ── Gemini ───────────────────────────────────────────────────────────────
     gemini_model: str = GEMINI_DEFAULT_MODEL
