@@ -63,8 +63,6 @@ a
    c) Uszkodzeń powierzchni (np. wybłyszczenia frontów matowych, zarysowania) wynikających z używania niewłaściwych środków chemicznych lub szorstkich gąbek, niezgodnie z przekazaną Instrukcją Użytkowania.  
    d) Naturalnego zużycia materiałów.  
         
- <br>
- 
 ### § 7. Prawa Autorskie i Portfolio  
 1. Projekt zabudowy meblowej (Załącznik nr 1) stanowi utwór w rozumieniu prawa autorskiego i pozostaje własnością intelektualną Wykonawcy. Zamawiający nie ma prawa przekazywać projektu osobom trzecim (np. innym wykonawcom) w celu jego realizacji bez pisemnej zgody Wykonawcy.        
 2. **[Zgoda na Portfolio]** Zamawiający wyraża zgodę na wykonanie przez Wykonawcę dokumentacji fotograficznej i wideo zamontowanych mebli po zakończeniu prac.   
@@ -82,6 +80,8 @@ a
    b) **Załącznik nr 2:** Karta Pielęgnacji i Użytkowania Zabudowy Kuchennej.
 2. Zamawiający oświadcza, że przed podpisaniem niniejszej umowy otrzymał wszystkie wyżej wymienione załączniki, zapoznał się z ich treścią i w pełni je akceptuje, co potwierdza złożeniem na nich swojej parafy.
   
-| **ZAMAWIAJĄCY** | **WYKONAWCA** |  
-| :--- | :--- |  
-| <br><br>_________________________________________<br>*(czytelny podpis)* | <br><br>_________________________________________<br>*(czytelny podpis)* |  
+**ZAMAWIAJĄCY** 
+(Czytelny podpis) ___________________________
+
+**WYKONAWCA** 
+(Czytelny podpis)  ___________________________
