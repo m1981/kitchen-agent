@@ -46,7 +46,7 @@ a
    * a) Braku gotowości pomieszczenia po stronie Zamawiającego (zgodnie z § 2 pkt 2).  
    * b) Opóźnień w dostawach materiałów od producentów lub hurtowni (np. braki magazynowe wybranego dekoru płyty, opóźnienia centrum CNC), o czym Wykonawca niezwłocznie poinformuje Zamawiającego.  
    * c) Wystąpienia siły wyższej (zdarzeń losowych niezależnych od stron).  
-3. W przypadku, gdy Wykonawca zgłosi gotowość do montażu, a Zamawiający nie może udostępnić lokalu w ustalonym terminie (np. z powodu przedłużającego się remontu), Wykonawca ma prawo zmagazynować gotowe meble i obciążyć Zamawiającego zryczałtowanym kossem magazynowania w wysokości **50 zł za każdy dzień zwłoki**.  
+3. W przypadku, gdy Wykonawca zgłosi gotowość do montażu, a Zamawiający nie może udostępnić lokalu w ustalonym terminie (np. z powodu przedłużającego się remontu), Wykonawca ma prawo zmagazynować gotowe meble i obciążyć Zamawiającego zryczałtowanym kosztem magazynowania w wysokości **50 zł za każdy dzień zwłoki**.  
 4. W sytuacji opisanej w § 4 pkt 3, Wykonawca ma prawo zażądać zapłaty Transzy II (zgodnie z § 3 pkt 2 lit. b) w dniu zgłoszenia gotowości do montażu, pomimo że meble fizycznie pozostają w magazynie Wykonawcy. 
 
 <br><br><br>
