@@ -255,6 +255,20 @@
                 <td><input type="text" placeholder="Pion: +/- mm"></td>
             </tr>
             <tr>
+                <td><strong>Ściana Boczna C (dla układu U)</strong></td>
+                <td><input type="text" placeholder="mm"></td>
+                <td><input type="text" placeholder="mm"></td>
+                <td><input type="text" placeholder="mm"></td>
+                <td><strong><input type="text" placeholder="MIN mm"></strong></td>
+                <td><input type="text" placeholder="Pion: +/- mm"></td>
+            </tr>
+            <tr>
+                <td><strong>Podciąg / Uskok sufitu</strong></td>
+                <td colspan="3"><input type="text" placeholder="Wymiary (Szer x Wys x Głęb) mm"></td>
+                <td><strong><input type="text" placeholder="MIN mm"></strong></td>
+                <td><input type="text" placeholder="Odległość od lewej"></td>
+            </tr>
+            <tr>
                 <td><strong>Wysokość Pomieszczenia H</strong></td>
                 <td>Lewo: <input type="text" style="width:70%" placeholder="mm"></td>
                 <td>Środek: <input type="text" style="width:70%" placeholder="mm"></td>
@@ -313,14 +327,19 @@
         </div>
     </div>
     <div class="grid-3" style="margin-top:6px; margin-bottom: 10px;">
-        <div class="checkbox-group">
+        <div class="checkbox-group" style="flex-direction: column; align-items: flex-start; gap: 4px;">
             <label class="checkbox-item"><input type="checkbox"> <strong style="color:#dc2626;">Kolizja baterii z oknem!</strong></label>
-        </div>
-        <div class="checkbox-group">
             <label class="checkbox-item"><input type="checkbox"> Grzejnik (Odstaje na: <input type="text" style="width:40px; padding:2px;" placeholder="mm"> )</label>
-        </div>
-        <div class="checkbox-group">
             <label class="checkbox-item"><input type="checkbox"> Listwy przypodłogowe (do demontażu)</label>
+        </div>
+        <div class="checkbox-group" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+            <label class="checkbox-item"><input type="checkbox"> <strong style="color:#ea580c;">Drzwiczki rewizyjne (Wodomierze)</strong></label>
+            <label class="checkbox-item"><input type="checkbox"> Włącznik światła (Kolizja ze słupkiem)</label>
+            <label class="checkbox-item"><input type="checkbox"> Domofon / Termostat na ścianie</label>
+        </div>
+        <div class="checkbox-group" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+            <label class="checkbox-item"><input type="checkbox"> Wystający szacht kominowy</label>
+            <label class="checkbox-item"><input type="checkbox"> Wnęka w ścianie (Głębokość: <input type="text" style="width:40px; padding:2px;" placeholder="mm"> )</label>
         </div>
     </div>
 
@@ -465,6 +484,20 @@
                 <td>Wieniec górny / Blenda rewizyjna</td>
                 <td>Zapewnić swobodny dostęp i chłodzenie</td>
             </tr>
+        <tr>
+                <td><strong>Kabel oświetleniowy (LED 230V)</strong></td>
+                <td><input type="text" placeholder="X = mm"></td>
+                <td><input type="text" placeholder="Y = mm"></td>
+                <td>Szafki wiszące</td>
+                <td>Gdzie wyprowadzony ze ściany?</td>
+            </tr>
+            <tr>
+                <td><strong>Wodomierze / Filtry wody</strong></td>
+                <td><input type="text" placeholder="X = mm"></td>
+                <td><input type="text" placeholder="Y = mm"></td>
+                <td>Szafka zlewozmywakowa</td>
+                <td>Ile zajmują miejsca (kolizja z koszem)?</td>
+            </tr>
         </tbody>
     </table>
 
@@ -499,7 +532,7 @@
 
     <!-- 5B. LOGISTYKA -->
     <div class="section-title">5b. Logistyka i Transport (Krytyczne dla blatów HPL)</div>
-    <div class="grid-3">
+    <div class="grid-4">
         <div class="form-group">
             <label>Winda (Szer x Gł x Wys):</label>
             <input type="text" placeholder="Przekątna max = ... mm">
@@ -511,6 +544,14 @@
         <div class="form-group">
             <label>Parking / Rozładunek:</label>
             <input type="text" placeholder="Gdzie stajemy busem?">
+        </div>
+        <div class="form-group">
+            <label>Ochrona posadzki:</label>
+            <select>
+                <option>Nie wymagana</option>
+                <option>Wymagana (Tektura falista)</option>
+                <option>Wymagana (Płyty HDF)</option>
+            </select>
         </div>
     </div>
 
