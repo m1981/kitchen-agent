@@ -36,10 +36,10 @@ WZORZEC_ZMIENNEJ = re.compile(r"\{\{\s*([A-Z0-9_]+)\s*\}\}")
 # ============================================================================
 
 DANE_FIRMY = {
-    "FIRMA_NAZWA": "Stolarnia Premium Sp. z o.o.",
-    "FIRMA_ADRES": "ul. Stolarska 10, 50-123 Wrocław",
-    "FIRMA_NIP": "899-123-45-67",
-    "FIRMA_REPREZENTANT": "Jan Kowalski",
+    "FIRMA_NAZWA": "DuoDraft",
+    "FIRMA_ADRES": "ul. Inowroclawska 19/10, 53-653 Wrocław",
+    "FIRMA_NIP": "967-108-45-72",
+    "FIRMA_REPREZENTANT": "Michał Nakiewicz",
 }
 
 # Parametry umowne wspólne dla wszystkich dokumentów
