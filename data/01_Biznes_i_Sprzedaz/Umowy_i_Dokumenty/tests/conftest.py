@@ -2,6 +2,7 @@
 pracują na kopii w tmp_path, a BAZA generatora jest tam przekierowana."""
 
 import datetime
+import json
 import shutil
 import sys
 from decimal import Decimal
@@ -25,6 +26,25 @@ NBSP = "\u00a0"
 DZIEN_TESTOWY = datetime.date(2026, 8, 27)
 KWOTA_TESTOWA = Decimal("30000")
 
+# Dane klienta żyją poza kodem produkcyjnym, więc testy trzymają własny
+# komplet. PESEL ma poprawną sumę kontrolną — walidator go sprawdza.
+DANE_TESTOWE = {
+    "IMIE_NAZWISKO": "Anna Nowak",
+    "ADRES": "ul. Kwiatowa 15/2, 50-001 Wrocław",
+    "PESEL_NIP": "90010112349",
+    "TELEFON": "500 600 700",
+    "EMAIL": "anna.nowak@example.com",
+    "MIEJSCOWOSC": "Wrocław",
+    "ADRES_MONTAZU": "ul. Kwiatowa 15/2, 50-001 Wrocław",
+    "KWOTA_CALKOWITA": "30000",
+    "TERMIN_TYGODNIE": "6",
+}
+
+
+def dane_testowe(**nadpisania):
+    """Kopia danych wejściowych z punktowymi zmianami."""
+    return {**DANE_TESTOWE, **nadpisania}
+
 
 @pytest.fixture
 def dzien():
@@ -47,8 +67,24 @@ def szablony(tmp_path, monkeypatch):
 
 
 @pytest.fixture
-def zmienne(dzien, kwota):
-    return g.zbuduj_zmienne(dict(g.DANE_KLIENTA), kwota, dzien)
+def dane():
+    return g.zwaliduj_dane(DANE_TESTOWE, DZIEN_TESTOWY)
+
+
+@pytest.fixture
+def zmienne(dane):
+    return g.zbuduj_zmienne(dane)
+
+
+@pytest.fixture
+def plik_danych(tmp_path):
+    """Ścieżka do pliku JSON z danymi — buduje go z podanego słownika."""
+    def zbuduj(dane=None, nazwa="klient.json"):
+        sciezka = tmp_path / nazwa
+        sciezka.write_text(json.dumps(dane if dane is not None else DANE_TESTOWE,
+                                      ensure_ascii=False), encoding="utf-8")
+        return str(sciezka)
+    return zbuduj
 
 
 @pytest.fixture

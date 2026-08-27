@@ -37,6 +37,8 @@ Zastosowane w Państwa kuchni systemy zawiasów i szuflad to rozwiązania najwy�
 W razie pytań lub konieczności zgłoszenia usterki prosimy o kontakt:
 **{{FIRMA_NAZWA}}**, {{FIRMA_ADRES}}
 Osoba kontaktowa: {{FIRMA_REPREZENTANT}}
+Telefon: {{FIRMA_TELEFON}}
+E-mail: {{FIRMA_EMAIL}}
 
 ---
 

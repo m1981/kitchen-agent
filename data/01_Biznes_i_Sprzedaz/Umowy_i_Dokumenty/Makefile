@@ -10,17 +10,18 @@ STAMP := $(VENV)/.installed
 PYTHON ?= auto
 KANDYDACI := python3 python3.13 python3.12 python3.11
 DANE ?=
+PLIK ?=
 
 .DEFAULT_GOAL := help
-.PHONY: help init install test gen clean
+.PHONY: help init install test gen nowy clean
 
 help:
-	@echo "make test            - uruchamia testy (sam robi init + install)"
-	@echo "make gen             - generuje umowę z danych w generator.py"
-	@echo "make gen DANE=x.json - generuje umowę z pliku JSON"
-	@echo "make init            - tworzy .venv"
-	@echo "make install         - instaluje zależności"
-	@echo "make clean           - usuwa .venv, cache i wygenerowane dokumenty"
+	@echo "make test              - uruchamia testy (sam robi init + install)"
+	@echo "make nowy PLIK=x.json  - tworzy pusty formularz danych klienta"
+	@echo "make gen DANE=x.json   - generuje komplet dokumentów z pliku JSON"
+	@echo "make init              - tworzy .venv"
+	@echo "make install           - instaluje zależności"
+	@echo "make clean             - usuwa .venv, cache i wygenerowane dokumenty"
 
 # --- środowisko ------------------------------------------------------------
 # test i gen mają init/install jako prerekwizyty, więc świeży klon działa
@@ -58,8 +59,14 @@ $(STAMP): pyproject.toml | $(PY)
 test: install
 	$(PY) -m pytest
 
+# Dane klienta zawsze z zewnątrz — bez pliku nie ma co generować.
 gen: install
+	@test -n "$(DANE)" || { echo "Podaj plik z danymi: make gen DANE=klient.json"; exit 1; }
 	$(PY) generator.py $(DANE)
+
+nowy: install
+	@test -n "$(PLIK)" || { echo "Podaj nazwę pliku: make nowy PLIK=jan_kowalski.json"; exit 1; }
+	$(PY) generator.py --szablon $(PLIK)
 
 clean:
 	rm -rf $(VENV) .pytest_cache __pycache__ tests/__pycache__ *.egg-info wygenerowane

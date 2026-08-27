@@ -9,6 +9,8 @@ import datetime
 
 import pytest
 
+from conftest import dane_testowe
+
 import generator as g
 
 DZIEN = datetime.date(2026, 8, 27)
@@ -53,11 +55,10 @@ def test_format_rok_miesiac_inicjaly():
     assert numer == "2027/01/AN"
 
 
-def test_numer_z_danych_wejsciowych_ma_pierwszenstwo(dzien, kwota):
+def test_numer_z_danych_wejsciowych_ma_pierwszenstwo(dzien):
     """Pozwala wpiąć własną numerację księgową bez zmiany kodu."""
-    dane = dict(g.DANE_KLIENTA, NUMER_UMOWY="12/2026")
-    zmienne = g.zbuduj_zmienne(dane, kwota, dzien)
-    assert zmienne["NUMER_UMOWY"] == "12/2026"
+    dane = g.zwaliduj_dane(dane_testowe(NUMER_UMOWY="12/2026"), dzien)
+    assert g.zbuduj_zmienne(dane)["NUMER_UMOWY"] == "12/2026"
 
 
 def test_numer_generowany_gdy_brak_w_danych(zmienne):

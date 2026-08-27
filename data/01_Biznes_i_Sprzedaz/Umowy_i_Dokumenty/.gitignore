@@ -4,3 +4,8 @@ __pycache__/
 .venv/
 *.egg-info/
 .pytest_cache/
+
+# Wypełnione formularze klientów zawierają PESEL i adres — jak wygenerowane umowy,
+# nie trafiają do repozytorium. Wyjątkiem jest plik przykładowy z danymi fikcyjnymi.
+*.json
+!klient_przyklad.json

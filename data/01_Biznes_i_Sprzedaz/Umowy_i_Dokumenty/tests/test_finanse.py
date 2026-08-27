@@ -11,7 +11,7 @@ from decimal import Decimal
 import pytest
 
 import generator as g
-from conftest import NBSP
+from conftest import NBSP, DANE_TESTOWE
 
 pytestmark = pytest.mark.finanse
 
@@ -109,13 +109,13 @@ def test_procenty_bez_zbednych_zer(zmienne):
     assert zmienne["PROCENT_TRANSZA_3"] == "10"
 
 
-def test_procenty_ulamkowe_zachowuja_precyzje(monkeypatch, dzien, kwota):
+def test_procenty_ulamkowe_zachowuja_precyzje(monkeypatch, dzien):
     monkeypatch.setattr(g, "PODZIAL_TRANSZ", {
         "ZADATEK": Decimal("0.335"),
         "TRANSZA_2": Decimal("0.335"),
         "TRANSZA_3": Decimal("0.33"),
     })
-    zmienne = g.zbuduj_zmienne(dict(g.DANE_KLIENTA), kwota, dzien)
+    zmienne = g.zbuduj_zmienne(g.zwaliduj_dane(DANE_TESTOWE, dzien))
     assert zmienne["PROCENT_ZADATEK"] == "33.5"
     assert zmienne["PROCENT_TRANSZA_3"] == "33"
 

@@ -9,7 +9,7 @@ import json
 
 import pytest
 
-from conftest import KATALOG_PROJEKTU, podmien_w_szablonie
+from conftest import DZIEN_TESTOWY, KATALOG_PROJEKTU, dane_testowe, podmien_w_szablonie
 
 import generator as g
 from conftest import NBSP
@@ -49,22 +49,23 @@ def test_umowa_i_protokol_maja_miejsce_na_pelne_podpisy(dokument):
 
 # --- zapis pliku ------------------------------------------------------------
 
-def test_main_zapisuje_plik(szablony, monkeypatch):
-    assert g.main(["generator.py"]) == 0
+def test_main_zapisuje_plik(szablony, plik_danych):
+    assert g.main(["generator.py", plik_danych()]) == 0
     pliki = list((szablony / "wygenerowane").glob("*.md"))
     assert len(pliki) == 1
-    assert pliki[0].name == "Umowa_2026-08-AN_Anna_Nowak.md"
+    assert pliki[0].name.startswith("Umowa_")
+    assert pliki[0].name.endswith("_Anna_Nowak.md")
 
 
-def test_nazwa_pliku_bez_polskich_znakow(szablony, monkeypatch):
-    monkeypatch.setattr(g, "DANE_KLIENTA", dict(g.DANE_KLIENTA, IMIE_NAZWISKO="Łucja Żółć"))
-    assert g.main(["generator.py"]) == 0
+def test_nazwa_pliku_bez_polskich_znakow(szablony, plik_danych):
+    dane = dane_testowe(IMIE_NAZWISKO="Łucja Żółć", DATA_UMOWY="27.08.2026")
+    assert g.main(["generator.py", plik_danych(dane)]) == 0
     pliki = list((szablony / "wygenerowane").glob("*.md"))
     assert pliki[0].name == "Umowa_2026-08-LZ_Lucja_Zolc.md"
 
 
-def test_zapis_w_utf8_z_koncami_linii_lf(szablony):
-    g.main(["generator.py"])
+def test_zapis_w_utf8_z_koncami_linii_lf(szablony, plik_danych):
+    g.main(["generator.py", plik_danych()])
     plik = next((szablony / "wygenerowane").glob("*.md"))
     surowe = plik.read_bytes()
     assert b"\r\n" not in surowe
@@ -75,33 +76,29 @@ def test_zapis_w_utf8_z_koncami_linii_lf(szablony):
     ("instrukcja_template.md", None),
     ("umowa_template.md", ("{{TELEFON}}", "{{NIE_ISTNIEJE}}")),
 ])
-def test_blad_nie_zostawia_zadnego_pliku(szablony, plik, podmiana):
+def test_blad_nie_zostawia_zadnego_pliku(szablony, plik_danych, plik, podmiana):
     """Najważniejszy niezmiennik: albo komplet, albo nic."""
     if podmiana is None:
         (szablony / plik).unlink()
     else:
         podmien_w_szablonie(szablony, plik, *podmiana)
-    assert g.main(["generator.py"]) == 1
+    assert g.main(["generator.py", plik_danych()]) == 1
     katalog = szablony / "wygenerowane"
     assert not katalog.exists() or not list(katalog.glob("*.md"))
 
 
 # --- wejście JSON -----------------------------------------------------------
 
-def test_dane_z_pliku_json(szablony, tmp_path):
-    dane = {
-        "IMIE_NAZWISKO": "Łukasz Śliwiński",
-        "ADRES": "ul. Krzywoustego 8/3, 51-165 Wrocław",
-        "PESEL_NIP": "85030512345",
-        "MIEJSCOWOSC": "Wrocław",
-        "ADRES_MONTAZU": "ul. Krzywoustego 8/3, 51-165 Wrocław",
-        "TERMIN_TYGODNIE": "8",
-        "KWOTA_CALKOWITA": "47500",
-    }
-    plik_json = tmp_path / "klient.json"
-    plik_json.write_text(json.dumps(dane, ensure_ascii=False), encoding="utf-8")
-
-    assert g.main(["generator.py", str(plik_json)]) == 0
+def test_dane_z_pliku_json(szablony, plik_danych):
+    dane = dane_testowe(
+        IMIE_NAZWISKO="Łukasz Śliwiński",
+        ADRES="ul. Krzywoustego 8/3, 51-165 Wrocław",
+        PESEL_NIP="85030512345",
+        ADRES_MONTAZU="ul. Krzywoustego 8/3, 51-165 Wrocław",
+        TERMIN_TYGODNIE="8",
+        KWOTA_CALKOWITA="47500",
+    )
+    assert g.main(["generator.py", plik_danych(dane)]) == 0
     wynik = next((szablony / "wygenerowane").glob("*.md")).read_text(encoding="utf-8")
     assert "Łukasz Śliwiński" in wynik
     assert f"47{NBSP}500" in wynik
@@ -114,6 +111,37 @@ def test_brak_pliku_json(szablony, tmp_path, capsys):
     assert "nie znaleziono pliku" in capsys.readouterr().err.lower()
 
 
+def test_bez_argumentu_pokazuje_uzycie(szablony, capsys):
+    """Dane muszą przyjść z zewnątrz — samo uruchomienie nic nie generuje."""
+    assert g.main(["generator.py"]) == 1
+    assert "DANE.json" in capsys.readouterr().err
+
+
+def test_pomoc_konczy_sie_sukcesem(capsys):
+    assert g.main(["generator.py", "--help"]) == 0
+    assert "--szablon" in capsys.readouterr().out
+
+
+def test_szablon_tworzy_formularz(tmp_path):
+    docelowy = tmp_path / "nowy_klient.json"
+    assert g.main(["generator.py", "--szablon", str(docelowy)]) == 0
+    formularz = json.loads(docelowy.read_text(encoding="utf-8"))
+    assert "IMIE_NAZWISKO" in formularz
+    assert formularz["IMIE_NAZWISKO"] == ""
+
+
+def test_szablon_nie_nadpisuje_istniejacego(tmp_path, capsys):
+    istniejacy = tmp_path / "jest.json"
+    istniejacy.write_text("{}", encoding="utf-8")
+    assert g.main(["generator.py", "--szablon", str(istniejacy)]) == 1
+    assert "już istnieje" in capsys.readouterr().err
+    assert istniejacy.read_text(encoding="utf-8") == "{}"
+
+
+def test_szablon_bez_nazwy_pliku(capsys):
+    assert g.main(["generator.py", "--szablon"]) == 1
+
+
 def test_uszkodzony_json(szablony, tmp_path, capsys):
     plik_json = tmp_path / "zly.json"
     plik_json.write_text("{ to nie jest json", encoding="utf-8")
@@ -121,13 +149,19 @@ def test_uszkodzony_json(szablony, tmp_path, capsys):
     assert "json" in capsys.readouterr().err.lower()
 
 
-def test_puste_dane_w_json(szablony, tmp_path):
-    plik_json = tmp_path / "puste.json"
-    plik_json.write_text(json.dumps({"IMIE_NAZWISKO": "", "ADRES": ""}), encoding="utf-8")
-    assert g.main(["generator.py", str(plik_json)]) == 1
+def test_puste_dane_w_json(szablony, plik_danych):
+    assert g.main(["generator.py", plik_danych({"IMIE_NAZWISKO": "", "ADRES": ""})]) == 1
 
 
-def test_przyklad_json_w_repo_jest_poprawny():
+def test_literowka_w_json_nie_generuje_umowy(szablony, plik_danych, capsys):
+    dane = dane_testowe()
+    dane["ADRES_MONTARZU"] = dane.pop("ADRES_MONTAZU")
+    assert g.main(["generator.py", plik_danych(dane)]) == 1
+    assert "czy chodziło o 'ADRES_MONTAZU'" in capsys.readouterr().err
+    assert not list((szablony / "wygenerowane").glob("*.md")) if (szablony / "wygenerowane").exists() else True
+
+
+def test_przyklad_json_w_repo_przechodzi_walidacje():
+    """Plik przykładowy musi być gotowy do skopiowania i uruchomienia."""
     dane = json.loads((KATALOG_PROJEKTU / "klient_przyklad.json").read_text(encoding="utf-8"))
-    for klucz in ("IMIE_NAZWISKO", "ADRES", "PESEL_NIP", "MIEJSCOWOSC", "ADRES_MONTAZU"):
-        assert dane[klucz]
+    g.zwaliduj_dane(dane, DZIEN_TESTOWY)

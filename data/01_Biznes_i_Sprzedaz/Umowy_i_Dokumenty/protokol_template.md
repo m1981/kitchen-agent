@@ -8,6 +8,7 @@
 | **Miejsce montażu** | {{ADRES_MONTAZU}} |
 | **Zamawiający** | {{IMIE_NAZWISKO}}, {{ADRES}} |
 | **Wykonawca** | {{FIRMA_NAZWA}}, NIP {{FIRMA_NIP}}, reprezentowany przez {{FIRMA_REPREZENTANT}} |
+| **Kontakt serwisowy** | {{FIRMA_TELEFON}}, {{FIRMA_EMAIL}} |
 
 ### 1. OŚWIADCZENIE O ODBIORZE
 Zamawiający oświadcza, że w dniu dzisiejszym odebrał przedmiot {{UMOWA_D}} nr {{NUMER_UMOWY}} (zabudowę meblową). Prace montażowe zostały zakończone. **Podpisanie niniejszego {{PROTOKOL_D}} rozpoczyna bieg {{OKRES_GWARANCJI_MIESIACE}}-miesięcznej gwarancji.**

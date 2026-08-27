@@ -16,6 +16,8 @@ a
 * {{FIRMA_NAZWA}} reprezentowana przez: {{FIRMA_REPREZENTANT}}
 * **Adres:** {{FIRMA_ADRES}}
 * **NIP:** {{FIRMA_NIP}}
+* **Telefon:** {{FIRMA_TELEFON}}
+* **E-mail:** {{FIRMA_EMAIL}}
 
 ### § 1. Przedmiot Umowy
 1. Zamawiający zleca, a Wykonawca zobowiązuje się do **zaprojektowania, wykonania, dostarczenia i montażu** zabudowy meblowej (zwanej dalej „Dziełem”) w lokalu pod adresem: {{ADRES_MONTAZU}}
@@ -70,7 +72,7 @@ a
 3. Wykonawca ma prawo wykorzystać wykonane materiały fotograficzne i wideo w swoim portfolio, na stronie internetowej oraz w mediach społecznościowych w celach marketingowych, gwarantując jednocześnie pełną anonimowość Zamawiającego (brak publikacji adresu, danych osobowych oraz wizerunku Zamawiającego).
 
 ### § 8. Ochrona Danych Osobowych (RODO)
-1. Administratorem danych osobowych Zamawiającego jest {{FIRMA_NAZWA}}, {{FIRMA_ADRES}}, NIP {{FIRMA_NIP}}.
+1. Administratorem danych osobowych Zamawiającego jest {{FIRMA_NAZWA}}, {{FIRMA_ADRES}}, NIP {{FIRMA_NIP}}, kontakt: {{FIRMA_EMAIL}}, tel. {{FIRMA_TELEFON}}.
 2. Dane osobowe (imię i nazwisko, adres, PESEL/NIP, telefon, e-mail) przetwarzane są wyłącznie w celu zawarcia i wykonania niniejszej umowy (art. 6 ust. 1 lit. b RODO) oraz wypełnienia obowiązków podatkowo-księgowych (art. 6 ust. 1 lit. c RODO).
 3. Dane przechowywane są przez okres wymagany przepisami prawa podatkowego oraz przez czas trwania gwarancji. Zamawiającemu przysługuje prawo dostępu do danych, ich sprostowania, usunięcia lub ograniczenia przetwarzania.
 

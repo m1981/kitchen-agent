@@ -8,7 +8,7 @@ więc wyłączenie gwarancji odsyłało w próżnię. NAZWY_DOKUMENTOW to jedyne
 
 import pytest
 
-from conftest import KATALOG_PROJEKTU, podmien_w_szablonie
+from conftest import DANE_TESTOWE, KATALOG_PROJEKTU, podmien_w_szablonie
 
 import generator as g
 
@@ -112,7 +112,7 @@ def test_szablony_w_repo_przechodza_detektor(zmienne):
 
 # --- propagacja zmiany nazwy ------------------------------------------------
 
-def test_zmiana_nazwy_propaguje_sie_na_wszystkie_dokumenty(szablony, monkeypatch, dzien, kwota):
+def test_zmiana_nazwy_propaguje_sie_na_wszystkie_dokumenty(szablony, monkeypatch, dzien):
     """Sedno refaktoru: jedna zmiana w configu, spójny wynik w 4 dokumentach."""
     nowa = "Instrukcja Pielęgnacji i Konserwacji Mebli"
     stara = g.NAZWY_DOKUMENTOW["ZAL_2"]["TYTUL"]
@@ -120,7 +120,7 @@ def test_zmiana_nazwy_propaguje_sie_na_wszystkie_dokumenty(szablony, monkeypatch
     podmieniony["ZAL_2"]["TYTUL"] = nowa
     monkeypatch.setattr(g, "NAZWY_DOKUMENTOW", podmieniony)
 
-    dokument = g.generuj_dokument(g.zbuduj_zmienne(dict(g.DANE_KLIENTA), kwota, dzien))
+    dokument = g.generuj_dokument(g.zbuduj_zmienne(g.zwaliduj_dane(DANE_TESTOWE, dzien)))
 
     assert stara not in dokument, "stara nazwa przetrwała gdzieś w dokumencie"
     assert dokument.count(nowa) >= 5
@@ -132,14 +132,14 @@ def test_zmiana_nazwy_propaguje_sie_na_wszystkie_dokumenty(szablony, monkeypatch
     assert nowa in czesci[3], "protokół nie odsyła do nowej nazwy"
 
 
-def test_zmiana_numeru_zalacznika_propaguje_odmiane(szablony, monkeypatch, dzien, kwota):
+def test_zmiana_numeru_zalacznika_propaguje_odmiane(szablony, monkeypatch, dzien):
     podmieniony = {k: dict(v) for k, v in g.NAZWY_DOKUMENTOW.items()}
     podmieniony["ZAL_1"].update({
         "M": "Załącznik nr 1A", "D": "Załącznika nr 1A", "C": "Załącznikowi nr 1A",
         "B": "Załącznik nr 1A", "N": "Załącznikiem nr 1A", "MS": "Załączniku nr 1A",
     })
     monkeypatch.setattr(g, "NAZWY_DOKUMENTOW", podmieniony)
-    dokument = g.generuj_dokument(g.zbuduj_zmienne(dict(g.DANE_KLIENTA), kwota, dzien))
+    dokument = g.generuj_dokument(g.zbuduj_zmienne(g.zwaliduj_dane(DANE_TESTOWE, dzien)))
     assert "Załącznika nr 1A" in dokument
     assert "Załącznik nr 1 " not in dokument
 

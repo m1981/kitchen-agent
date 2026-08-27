@@ -10,18 +10,21 @@ Skleja 4 szablony Markdown w jeden plik wynikowy gotowy do eksportu do PDF:
     4. protokol_template.md    -> Protokół odbioru    (ZAMYKAJĄCY, numer umowy: TAK)
 
 Użycie:
-    python generator.py                    # dane z DANE_KLIENTA poniżej
-    python generator.py klient.json        # dane z pliku JSON (nadpisują domyślne)
+    python generator.py klient.json        # generuje komplet dokumentów
+    python generator.py --szablon nowy.json  # tworzy pusty formularz do wypełnienia
+
+Dane klienta zawsze pochodzą z pliku JSON — nigdy z kodu.
 """
 
 from __future__ import annotations
 
 import datetime
+import difflib
 import json
 import re
 import sys
 import unicodedata
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from pathlib import Path
 
 # --- Ścieżki liczone względem pliku skryptu, nie względem cwd ----------------
@@ -32,7 +35,7 @@ ZNACZNIK_STRONY = "<div style='page-break-after: always;'></div>"
 WZORZEC_ZMIENNEJ = re.compile(r"\{\{\s*([A-Z0-9_]+)\s*\}\}")
 
 # ============================================================================
-# 1. DANE WEJŚCIOWE
+# 1. DANE WYKONAWCY I PARAMETRY UMOWNE
 # ============================================================================
 
 DANE_FIRMY = {
@@ -40,6 +43,8 @@ DANE_FIRMY = {
     "FIRMA_ADRES": "ul. Inowroclawska 19/10, 53-653 Wrocław",
     "FIRMA_NIP": "967-108-45-72",
     "FIRMA_REPREZENTANT": "Michał Nakiewicz",
+    "FIRMA_TELEFON": "519 687 702",
+    "FIRMA_EMAIL": "biuro@duodraft.pl",
 }
 
 # Parametry umowne wspólne dla wszystkich dokumentów
@@ -96,18 +101,9 @@ NAZWY_DOKUMENTOW = {
     },
 }
 
-DANE_KLIENTA = {
-    "IMIE_NAZWISKO": "Anna Nowak",
-    "ADRES": "ul. Kwiatowa 15/2, 50-001 Wrocław",
-    "PESEL_NIP": "90010112345",
-    "TELEFON": "500 600 700",
-    "EMAIL": "anna.nowak@email.com",
-    "MIEJSCOWOSC": "Wrocław",
-    "ADRES_MONTAZU": "ul. Kwiatowa 15/2, 50-001 Wrocław",
-    "TERMIN_TYGODNIE": "6",
-}
-
-KWOTA_CALKOWITA = Decimal("30000")
+# Dane klienta i kwota NIE MOGĄ mieszkać w kodzie — każda umowa dotyczy innej
+# osoby, a PESEL w repozytorium to wyciek danych osobowych. Wchodzą wyłącznie
+# plikiem JSON i przechodzą walidację (patrz SCHEMAT_DANYCH).
 
 # Proporcje transz. Suma musi wynosić dokładnie 1.
 PODZIAL_TRANSZ = {
@@ -117,7 +113,187 @@ PODZIAL_TRANSZ = {
 }
 
 # ============================================================================
-# 2. REGUŁY PRAWNE (hierarchia dokumentów)
+# 2. SCHEMAT I WALIDACJA DANYCH WEJŚCIOWYCH
+# ============================================================================
+
+
+class Pole:
+    """Jedno pole formularza klienta wraz z regułą poprawności."""
+
+    def __init__(self, opis: str, przyklad: str, walidator=None, wymagane: bool = True):
+        self.opis = opis
+        self.przyklad = przyklad
+        self.walidator = walidator
+        self.wymagane = wymagane
+
+
+def _same_cyfry(wartosc: str) -> str:
+    return re.sub(r"\D", "", wartosc)
+
+
+def waliduj_imie_nazwisko(wartosc: str) -> None:
+    czlony = [c for c in re.split(r"[\s\-]+", wartosc.strip()) if c]
+    if len(czlony) < 2:
+        raise ValueError("podaj imię i nazwisko (min. dwa człony)")
+    if not all(re.fullmatch(r"[^\W\d_]{2,}", c, re.UNICODE) for c in czlony):
+        raise ValueError("dopuszczalne są wyłącznie litery")
+
+
+def waliduj_pesel_lub_nip(wartosc: str) -> None:
+    """PESEL (11 cyfr) albo NIP (10 cyfr) — obie sumy kontrolne łapią
+    przestawione i przekręcone cyfry, czyli najczęstszą literówkę."""
+    cyfry = _same_cyfry(wartosc)
+    if len(cyfry) == 11:
+        wagi = (1, 3, 7, 9, 1, 3, 7, 9, 1, 3)
+        suma = sum(int(c) * w for c, w in zip(cyfry, wagi))
+        if (10 - suma % 10) % 10 != int(cyfry[10]):
+            raise ValueError("niepoprawna suma kontrolna PESEL")
+    elif len(cyfry) == 10:
+        wagi = (6, 5, 7, 2, 3, 4, 5, 6, 7)
+        suma = sum(int(c) * w for c, w in zip(cyfry, wagi))
+        if suma % 11 != int(cyfry[9]):
+            raise ValueError("niepoprawna suma kontrolna NIP")
+    else:
+        raise ValueError(f"oczekiwano 11 cyfr (PESEL) lub 10 cyfr (NIP), jest {len(cyfry)}")
+
+
+def waliduj_email(wartosc: str) -> None:
+    if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[A-Za-z]{2,}", wartosc.strip()):
+        raise ValueError("to nie wygląda na adres e-mail")
+
+
+def waliduj_telefon(wartosc: str) -> None:
+    cyfry = _same_cyfry(wartosc)
+    if cyfry.startswith("48") and len(cyfry) == 11:
+        cyfry = cyfry[2:]
+    if len(cyfry) != 9:
+        raise ValueError(f"polski numer ma 9 cyfr, podano {len(cyfry)}")
+
+
+def waliduj_adres(wartosc: str) -> None:
+    if len(wartosc.strip()) < 10:
+        raise ValueError("adres wygląda na niekompletny")
+    if not any(z.isdigit() for z in wartosc):
+        raise ValueError("brak numeru budynku/lokalu")
+
+
+def waliduj_miejscowosc(wartosc: str) -> None:
+    if not re.fullmatch(r"[^\W\d_][^\d_]{1,}", wartosc.strip(), re.UNICODE):
+        raise ValueError("nazwa miejscowości nie może zawierać cyfr")
+
+
+def waliduj_kwote(wartosc) -> None:
+    try:
+        kwota = Decimal(str(wartosc).replace(" ", "").replace("\u00a0", "").replace(",", "."))
+    except InvalidOperation:
+        raise ValueError("to nie jest liczba") from None
+    if kwota <= 0:
+        raise ValueError("kwota musi być dodatnia")
+    if kwota != kwota.quantize(GROSZ, rounding=ROUND_HALF_UP):
+        raise ValueError("maksymalna dokładność to grosze (2 miejsca po przecinku)")
+    if kwota > Decimal("10000000"):
+        raise ValueError("kwota wygląda na pomyłkę (powyżej 10 mln zł)")
+
+
+def waliduj_tygodnie(wartosc) -> None:
+    try:
+        tygodnie = int(str(wartosc).strip())
+    except ValueError:
+        raise ValueError("podaj liczbę całkowitą tygodni") from None
+    if not 1 <= tygodnie <= 104:
+        raise ValueError("termin poza rozsądnym zakresem 1-104 tygodni")
+
+
+def waliduj_date(wartosc: str) -> None:
+    try:
+        datetime.datetime.strptime(str(wartosc).strip(), "%d.%m.%Y")
+    except ValueError:
+        raise ValueError("oczekiwany format DD.MM.RRRR") from None
+
+
+SCHEMAT_DANYCH = {
+    "IMIE_NAZWISKO": Pole("Imię i nazwisko Zamawiającego", "Anna Nowak", waliduj_imie_nazwisko),
+    "ADRES": Pole("Adres zamieszkania", "ul. Kwiatowa 15/2, 50-001 Wrocław", waliduj_adres),
+    "PESEL_NIP": Pole("PESEL lub NIP Zamawiającego", "90010112349", waliduj_pesel_lub_nip),
+    "TELEFON": Pole("Telefon kontaktowy", "500 600 700", waliduj_telefon),
+    "EMAIL": Pole("Adres e-mail", "anna.nowak@example.com", waliduj_email),
+    "MIEJSCOWOSC": Pole("Miejscowość zawarcia umowy", "Wrocław", waliduj_miejscowosc),
+    "ADRES_MONTAZU": Pole("Adres montażu zabudowy", "ul. Kwiatowa 15/2, 50-001 Wrocław", waliduj_adres),
+    "KWOTA_CALKOWITA": Pole("Wynagrodzenie brutto w zł", "30000", waliduj_kwote),
+    "TERMIN_TYGODNIE": Pole("Termin realizacji w tygodniach", "6", waliduj_tygodnie),
+    "DATA_UMOWY": Pole("Data zawarcia umowy (domyślnie dzisiaj)", "27.08.2026",
+                       waliduj_date, wymagane=False),
+    "NUMER_UMOWY": Pole("Własna numeracja (domyślnie RRRR/MM/INICJAŁY)", "12/2026",
+                        None, wymagane=False),
+}
+
+
+class DaneUmowy:
+    """Zwalidowany komplet danych jednej umowy."""
+
+    def __init__(self, pola: dict, kwota: Decimal, dzien: datetime.date):
+        self.pola = pola
+        self.kwota = kwota
+        self.dzien = dzien
+
+
+def zwaliduj_dane(surowe: dict, dzien_domyslny: datetime.date) -> DaneUmowy:
+    """
+    Sprawdza komplet danych i zbiera WSZYSTKIE błędy naraz — poprawianie
+    formularza po jednym błędzie na uruchomienie byłoby udręką.
+    Klucze zaczynające się od "_" traktujemy jak komentarze w pliku JSON.
+    """
+    if not isinstance(surowe, dict):
+        raise BladGeneratora("Plik z danymi musi zawierać obiekt JSON (klucz: wartość).")
+
+    dane = {k: v for k, v in surowe.items() if not k.startswith("_")}
+    bledy: list[str] = []
+
+    # Literówka w nazwie pola jest groźniejsza niż brak pola: dane po cichu
+    # wypadłyby z umowy. Podpowiadamy najbliższy poprawny klucz.
+    for klucz in dane:
+        if klucz not in SCHEMAT_DANYCH:
+            podpowiedzi = difflib.get_close_matches(klucz, SCHEMAT_DANYCH, n=1, cutoff=0.6)
+            wskazowka = f" — czy chodziło o '{podpowiedzi[0]}'?" if podpowiedzi else ""
+            bledy.append(f"  {klucz}: nieznane pole{wskazowka}")
+
+    for klucz, pole in SCHEMAT_DANYCH.items():
+        wartosc = dane.get(klucz)
+        pusta = wartosc is None or not str(wartosc).strip()
+        if pusta:
+            if pole.wymagane:
+                bledy.append(f"  {klucz}: brak wartości ({pole.opis}, np. {pole.przyklad})")
+            continue
+        if pole.walidator:
+            try:
+                pole.walidator(wartosc)
+            except ValueError as exc:
+                bledy.append(f"  {klucz}: {exc} (podano: {str(wartosc).strip()!r})")
+
+    if bledy:
+        raise BladGeneratora("Dane wejściowe zawierają błędy:\n" + "\n".join(sorted(bledy)))
+
+    pola = {k: str(v).strip() for k, v in dane.items() if str(v).strip()}
+    kwota = Decimal(pola.pop("KWOTA_CALKOWITA").replace(" ", "").replace("\u00a0", "").replace(",", "."))
+    if "DATA_UMOWY" in pola:
+        dzien = datetime.datetime.strptime(pola.pop("DATA_UMOWY"), "%d.%m.%Y").date()
+    else:
+        dzien = dzien_domyslny
+    return DaneUmowy(pola, kwota, dzien)
+
+
+def pusty_formularz() -> dict:
+    """Szkielet pliku JSON do wypełnienia."""
+    formularz = {"_opis": "Dane jednej umowy. Pola opcjonalne można usunąć."}
+    for klucz, pole in SCHEMAT_DANYCH.items():
+        etykieta = pole.opis if pole.wymagane else f"{pole.opis} [opcjonalne]"
+        formularz[f"_{klucz}"] = f"{etykieta}, np. {pole.przyklad}"
+        formularz[klucz] = ""
+    return formularz
+
+
+# ============================================================================
+# 3. REGUŁY PRAWNE (hierarchia dokumentów)
 # ============================================================================
 
 
@@ -177,7 +353,7 @@ class BladGeneratora(Exception):
 
 
 # ============================================================================
-# 3. FINANSE
+# 4. FINANSE
 # ============================================================================
 
 GROSZ = Decimal("0.01")
@@ -217,7 +393,7 @@ def podziel_na_transze(calosc: Decimal) -> dict[str, Decimal]:
 
 
 # ============================================================================
-# 4. KWOTA SŁOWNIE (polskie liczebniki + odmiana "złoty")
+# 5. KWOTA SŁOWNIE (polskie liczebniki + odmiana "złoty")
 # ============================================================================
 
 _JEDNOSCI = ["", "jeden", "dwa", "trzy", "cztery", "pięć", "sześć", "siedem", "osiem", "dziewięć"]
@@ -290,7 +466,7 @@ def kwota_slownie(kwota: Decimal) -> str:
 
 
 # ============================================================================
-# 5. NUMER UMOWY
+# 6. NUMER UMOWY
 # ============================================================================
 
 
@@ -313,17 +489,14 @@ def generuj_numer_umowy(imie_nazwisko: str, dzien: datetime.date) -> str:
 
 
 # ============================================================================
-# 6. BUDOWA SŁOWNIKA ZMIENNYCH
+# 7. BUDOWA SŁOWNIKA ZMIENNYCH
 # ============================================================================
 
 
-def zbuduj_zmienne(dane_klienta: dict, kwota: Decimal, dzien: datetime.date) -> dict[str, str]:
-    braki = [k for k in ("IMIE_NAZWISKO", "ADRES", "PESEL_NIP", "MIEJSCOWOSC", "ADRES_MONTAZU")
-             if not str(dane_klienta.get(k, "")).strip()]
-    if braki:
-        raise BladGeneratora("Brak wymaganych danych klienta: " + ", ".join(braki))
-
-    transze = podziel_na_transze(kwota)
+def zbuduj_zmienne(dane: DaneUmowy) -> dict[str, str]:
+    """Składa słownik podstawień z danych wykonawcy, parametrów umownych,
+    nazw dokumentów i zwalidowanych danych klienta."""
+    transze = podziel_na_transze(dane.kwota)
 
     sprawdz_kompletnosc_nazw()
 
@@ -331,15 +504,15 @@ def zbuduj_zmienne(dane_klienta: dict, kwota: Decimal, dzien: datetime.date) -> 
     zmienne.update(DANE_FIRMY)
     zmienne.update(PARAMETRY_UMOWY)
     zmienne.update(rozwin_nazwy_dokumentow())
-    zmienne.update({k: str(v) for k, v in dane_klienta.items()})
+    zmienne.update(dane.pola)
 
-    zmienne["DATA_UMOWY"] = f"{dzien:%d.%m.%Y}"
-    zmienne["NUMER_UMOWY"] = dane_klienta.get("NUMER_UMOWY") or generuj_numer_umowy(
-        dane_klienta["IMIE_NAZWISKO"], dzien
+    zmienne["DATA_UMOWY"] = f"{dane.dzien:%d.%m.%Y}"
+    zmienne["NUMER_UMOWY"] = dane.pola.get("NUMER_UMOWY") or generuj_numer_umowy(
+        dane.pola["IMIE_NAZWISKO"], dane.dzien
     )
 
-    zmienne["KWOTA_BRUTTO"] = formatuj_kwote(kwota)
-    zmienne["KWOTA_SLOWNIE"] = kwota_slownie(kwota)
+    zmienne["KWOTA_BRUTTO"] = formatuj_kwote(dane.kwota)
+    zmienne["KWOTA_SLOWNIE"] = kwota_slownie(dane.kwota)
     for nazwa, wartosc in transze.items():
         zmienne[nazwa] = formatuj_kwote(wartosc)
         zmienne[f"{nazwa}_SLOWNIE"] = kwota_slownie(wartosc)
@@ -354,7 +527,7 @@ def zbuduj_zmienne(dane_klienta: dict, kwota: Decimal, dzien: datetime.date) -> 
 
 
 # ============================================================================
-# 7. RENDEROWANIE I WALIDACJA
+# 8. RENDEROWANIE I WALIDACJA
 # ============================================================================
 
 
@@ -475,31 +648,61 @@ def bezpieczna_nazwa(tekst: str) -> str:
 
 
 # ============================================================================
-# 8. URUCHOMIENIE
+# 9. URUCHOMIENIE
 # ============================================================================
 
 
-def main(argv: list[str]) -> int:
-    dane_klienta = dict(DANE_KLIENTA)
-    kwota = KWOTA_CALKOWITA
+UZYCIE = """Użycie:
+  python generator.py DANE.json            generuje komplet dokumentów
+  python generator.py --szablon NOWY.json  tworzy pusty formularz do wypełnienia
 
-    if len(argv) > 1:
-        sciezka_json = Path(argv[1]).expanduser().resolve()
-        try:
-            wczytane = json.loads(sciezka_json.read_text(encoding="utf-8"))
-        except FileNotFoundError:
-            print(f"BŁĄD: nie znaleziono pliku danych: {sciezka_json}", file=sys.stderr)
+Dane klienta zawsze pochodzą z pliku JSON — nigdy z kodu."""
+
+
+def wczytaj_json(sciezka: Path) -> dict:
+    try:
+        return json.loads(sciezka.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        raise BladGeneratora(f"Nie znaleziono pliku z danymi: {sciezka}") from None
+    except UnicodeDecodeError as exc:
+        raise BladGeneratora(f"Plik {sciezka.name} nie jest w UTF-8: {exc}") from None
+    except json.JSONDecodeError as exc:
+        raise BladGeneratora(
+            f"Niepoprawny JSON w {sciezka.name}, linia {exc.lineno}: {exc.msg}"
+        ) from None
+
+
+def zapisz_szablon(sciezka: Path) -> int:
+    if sciezka.exists():
+        print(f"BŁĄD: plik {sciezka} już istnieje — nie nadpisuję.", file=sys.stderr)
+        return 1
+    sciezka.parent.mkdir(parents=True, exist_ok=True)
+    sciezka.write_text(
+        json.dumps(pusty_formularz(), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8", newline="\n",
+    )
+    print(f"Formularz do wypełnienia: {sciezka}")
+    print("Pola opisowe zaczynają się od '_' i są ignorowane przy generowaniu.")
+    return 0
+
+
+def main(argv: list[str]) -> int:
+    argumenty = argv[1:]
+
+    if not argumenty or argumenty[0] in ("-h", "--help"):
+        print(UZYCIE, file=sys.stderr if not argumenty else sys.stdout)
+        return 1 if not argumenty else 0
+
+    if argumenty[0] == "--szablon":
+        if len(argumenty) < 2:
+            print("BŁĄD: podaj nazwę pliku, np. --szablon jan_kowalski.json", file=sys.stderr)
             return 1
-        except json.JSONDecodeError as exc:
-            print(f"BŁĄD: niepoprawny JSON w {sciezka_json}: {exc}", file=sys.stderr)
-            return 1
-        if "KWOTA_CALKOWITA" in wczytane:
-            kwota = Decimal(str(wczytane.pop("KWOTA_CALKOWITA")))
-        dane_klienta.update(wczytane)
+        return zapisz_szablon(Path(argumenty[1]).expanduser())
 
     try:
-        dzien = datetime.date.today()
-        zmienne = zbuduj_zmienne(dane_klienta, kwota, dzien)
+        sciezka = Path(argumenty[0]).expanduser().resolve()
+        dane = zwaliduj_dane(wczytaj_json(sciezka), datetime.date.today())
+        zmienne = zbuduj_zmienne(dane)
 
         print(f"Umowa nr {zmienne['NUMER_UMOWY']} | {zmienne['IMIE_NAZWISKO']} | {zmienne['KWOTA_BRUTTO']} zł")
         dokument = generuj_dokument(zmienne)
@@ -509,8 +712,8 @@ def main(argv: list[str]) -> int:
         plik = KATALOG_WYNIKOWY / nazwa
         plik.write_text(dokument, encoding="utf-8", newline="\n")
     except BladGeneratora as exc:
-        print(f"\nBŁĄD KRYTYCZNY: {exc}", file=sys.stderr)
-        print("Nie wygenerowano żadnego pliku.", file=sys.stderr)
+        print(f"\nBŁĄD: {exc}", file=sys.stderr)
+        print("\nNie wygenerowano żadnego pliku.", file=sys.stderr)
         return 1
 
     print(f"\nGotowe: {plik}")

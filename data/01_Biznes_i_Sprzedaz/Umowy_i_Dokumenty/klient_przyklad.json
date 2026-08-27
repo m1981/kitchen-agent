@@ -1,11 +1,12 @@
 {
-  "IMIE_NAZWISKO": "Łukasz Śliwiński",
-  "ADRES": "ul. Krzywoustego 8/3, 51-165 Wrocław",
-  "PESEL_NIP": "85030512345",
-  "TELEFON": "601 202 303",
-  "EMAIL": "l.sliwinski@example.com",
+  "_opis": "Przykładowe dane. Skopiuj plik pod nazwę klienta i wypełnij.",
+  "IMIE_NAZWISKO": "Anna Nowak",
+  "ADRES": "ul. Kwiatowa 15/2, 50-001 Wrocław",
+  "PESEL_NIP": "90010112349",
+  "TELEFON": "500 600 700",
+  "EMAIL": "anna.nowak@example.com",
   "MIEJSCOWOSC": "Wrocław",
-  "ADRES_MONTAZU": "ul. Krzywoustego 8/3, 51-165 Wrocław",
-  "TERMIN_TYGODNIE": "8",
-  "KWOTA_CALKOWITA": "47500"
+  "ADRES_MONTAZU": "ul. Kwiatowa 15/2, 50-001 Wrocław",
+  "KWOTA_CALKOWITA": "30000",
+  "TERMIN_TYGODNIE": "6"
 }
