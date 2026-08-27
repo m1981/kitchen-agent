@@ -1,23 +1,23 @@
- **UMOWA O DZIEŁO NR ..... / ..... / 202...**    
+ **UMOWA O DZIEŁO NR __. / __. / 202_.**    
 *(Projekt, Wykonanie i Montaż Zabudowy Meblowej)*    
     
-Zawarta w dniu ........................................ w ........................................ pomiędzy:    
+Zawarta w dniu ____________________ w ____________________ pomiędzy:    
     
 **ZAMAWIAJĄCYM:**    
-Imię i Nazwisko: ........................................................................................................    
-Adres zamieszkania: .................................................................................................    
-PESEL / NIP: ..............................................................................................................    
-Telefon: ........................................ E-mail: ..............................................................    
+Imię i Nazwisko: ____________________________________________________    
+Adres zamieszkania: ________________________________________________.    
+PESEL / NIP: _______________________________________________________    
+Telefon: ____________________ E-mail: _______________________________    
     
 a    
     
 **WYKONAWCĄ:**    
-[Twoja Nazwa Firmy / Imię i Nazwisko] .................................................................    
-Adres: ........................................................................................................................    
-NIP: ............................................................................................................................    
+[Twoja Nazwa Firmy / Imię i Nazwisko] ________________________________.    
+Adres: ____________________________________________________________    
+NIP: ______________________________________________________________    
     
 ### § 1. Przedmiot Umowy    
-1. Zamawiający zleca, a Wykonawca zobowiązuje się do **zaprojektowania, wykonania, dostarczenia i montażu** zabudowy meblowej (zwanej dalej "Dziełem") w lokalu pod adresem: ........................................................................................................................    
+1. Zamawiający zleca, a Wykonawca zobowiązuje się do **zaprojektowania, wykonania, dostarczenia i montażu** zabudowy meblowej (zwanej dalej "Dziełem") w lokalu pod adresem: ____________________________________________________________    
 2. Szczegółowy zakres prac, układ funkcjonalny, wymiary oraz specyfikację materiałową (rodzaj płyt, blatów, okuć, systemów) określa **Załącznik nr 1 (Projekt i Specyfikacja)**, który po akceptacji przez Zamawiającego stanowi integralną część niniejszej umowy.    
 3. **[Klauzula Wizualizacyjna]** Zamawiający przyjmuje do wiadomości, że przedstawione mu wizualizacje komputerowe (3D) mają charakter wyłącznie poglądowy. Rzeczywisty odcień materiałów, układ słojów drewna oraz detale mogą nieznacznie odbiegać od wizualizacji ze względu na ograniczenia technologiczne programów graficznych, indywidualne ustawienia monitora oraz naturalne właściwości materiałów.    
 4. **[Wyłączenia]** Wykonawca oświadcza, że Dzieło zostanie wykonane zgodnie z zasadami sztuki stolarskiej. Niniejsza umowa **nie obejmuje** jednak prac ogólnobudowlanych, w szczególności: kucia ścian, przeróbek instalacji wodno-kanalizacyjnej, elektrycznej, gazowej, wentylacyjnej oraz podłączania sprzętu AGD do sieci gazowej i trójfazowej (tzw. siły).    
@@ -29,17 +29,17 @@ NIP: ...........................................................................
 4. **[Klauzula Decyzyjności]** Zamawiający ponosi odpowiedzialność za opóźnienia wynikające z jego braku decyzyjności. Termin realizacji Dzieła ulega automatycznemu przedłużeniu o czas opóźnień wynikających z braku akceptacji projektu, opóźnień w wyborze materiałów lub niedostarczenia na czas specyfikacji sprzętu AGD przez Zamawiającego.    
     
 ### § 3. Wynagrodzenie i Warunki Płatności    
-1. Całkowite wynagrodzenie za wykonanie przedmiotu umowy (projekt, materiały, produkcja, transport i montaż) ustala się na kwotę: **........................................ zł brutto** (słownie: ........................................................................................................).    
+1. Całkowite wynagrodzenie za wykonanie przedmiotu umowy (projekt, materiały, produkcja, transport i montaż) ustala się na kwotę: **____________________ zł brutto** (słownie: ____________________________________________________).    
 2. Płatność zostanie zrealizowana w trzech transzach, w następujący sposób:    
-   a) **Transza I (ZADATEK):** w wysokości **................. zł** (słownie: ........................................), co stanowi .....% wartości umowy, płatny w dniu podpisania umowy. Zadatek przeznaczony jest na rezerwację terminu, zakup materiałów i uruchomienie produkcji w centrum CNC.    
-   b) **Transza II:** w wysokości **................. zł**, płatna najpóźniej w dniu dostarczenia paczek z meblami (korpusów/frontów) do lokalu Zamawiającego, a przed rozpoczęciem właściwego montażu.    
-   c) **Transza III (Końcowa):** w wysokości **................. zł**, płatna w dniu zakończenia montażu i podpisania Protokołu Zdawczo-Odbiorczego.    
+   a) **Transza I (ZADATEK):** w wysokości **________. zł** (słownie: ____________________), co stanowi __.% wartości umowy, płatny w dniu podpisania umowy. Zadatek przeznaczony jest na rezerwację terminu, zakup materiałów i uruchomienie produkcji w centrum CNC.    
+   b) **Transza II:** w wysokości **________. zł**, płatna najpóźniej w dniu dostarczenia paczek z meblami (korpusów/frontów) do lokalu Zamawiającego, a przed rozpoczęciem właściwego montażu.    
+   c) **Transza III (Końcowa):** w wysokości **________. zł**, płatna w dniu zakończenia montażu i podpisania Protokołu Zdawczo-Odbiorczego.    
 3. **[Ochrona Zadatku]** Zgodnie z art. 394 Kodeksu Cywilnego, w przypadku odstąpienia od umowy przez Zamawiającego z przyczyn leżących po jego stronie, **Zadatek przepada w całości na rzecz Wykonawcy**.    
 4. **[Zamrożenie Projektu]** Po wpłacie Zadatku i ostatecznej akceptacji Załącznika nr 1, projekt zostaje skierowany do produkcji. Jakiekolwiek zmiany w projekcie zgłoszone przez Zamawiającego po tym terminie (np. zmiana dekoru, domówienie szuflad) wymagają formy pisemnej (Aneksu), wiążą się z dodatkowymi kosztami i automatycznie wydłużają termin realizacji.    
 5. W razie zwłoki w płatności którejkolwiek z transz, Wykonawca ma prawo wstrzymać się z realizacją kolejnych etapów prac (w tym montażu) do czasu uregulowania należności, bez ponoszenia odpowiedzialności za opóźnienie całego projektu.    
     
 ### § 4. Termin Realizacji i Logistyka    
-1. Wykonawca zobowiązuje się do wykonania i montażu Dzieła w terminie **do ....... tygodni**, licząc od dnia łącznego spełnienia dwóch warunków: wpłaty Zadatku oraz ostatecznej akceptacji Załącznika nr 1 (Projektu) przez Zamawiającego.    
+1. Wykonawca zobowiązuje się do wykonania i montażu Dzieła w terminie **do ___. tygodni**, licząc od dnia łącznego spełnienia dwóch warunków: wpłaty Zadatku oraz ostatecznej akceptacji Załącznika nr 1 (Projektu) przez Zamawiającego.    
 2. Termin realizacji może ulec wydłużeniu w przypadku:    
    a) Braku gotowości pomieszczenia po stronie Zamawiającego (zgodnie z §2 pkt 2).    
    b) Opóźnień w dostawach materiałów od producentów lub hurtowni (np. braki magazynowe wybranego dekoru płyty, opóźnienia centrum CNC), o czym Wykonawca niezwłocznie poinformuje Zamawiającego.    
@@ -73,5 +73,5 @@ NIP: ...........................................................................
 3. Ewentualne spory wynikające z niniejszej umowy strony będą starały się rozwiązać polubownie. W przypadku braku porozumienia, sądem właściwym do rozstrzygania sporów będzie sąd właściwy dla siedziby Wykonawcy.    
 4. Umowę sporządzono w dwóch jednobrzmiących egzemplarzach, po jednym dla każdej ze stron.    
     
-**ZAMAWIAJĄCY** (Czytelny podpis) ........................................................    
-**WYKONAWCA** (Czytelny podpis) ........................................................
+**ZAMAWIAJĄCY** (Czytelny podpis) ____________________________    
+**WYKONAWCA** (Czytelny podpis) ____________________________
