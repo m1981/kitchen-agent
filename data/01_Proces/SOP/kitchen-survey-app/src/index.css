@@ -1,0 +1,64 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-500: #2563eb;
+  --color-brand-600: #1d4ed8;
+  --color-brand-900: #1a365d;
+}
+
+:root {
+  color-scheme: light;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+/* iOS: nie zoomuj przy focusie w input — 16px to próg Safari. */
+input,
+select,
+textarea,
+button {
+  font-size: 16px;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-page {
+    box-shadow: none !important;
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .print-avoid-break {
+    break-inside: avoid;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+}
