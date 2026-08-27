@@ -32,14 +32,84 @@ from pathlib import Path
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-def _read_path(filepath: str) -> tuple[Path, dict | None]:
+# The knowledge base root every agent path is resolved against.  Overridden per
+# call by the registry, which injects ``settings.data_dir``.
+DEFAULT_KB_ROOT = Path("data")
+
+# Extensions that get_repo_map / search_knowledge_base index and the UI lists.
+INDEXED_SUFFIXES = (".md",)
+
+
+def _resolve_kb_path(filepath: str, base_dir: str | Path | None) -> tuple[Path, str, dict | None]:
+    """
+    Resolve an agent-supplied path *inside* the knowledge base.
+
+    Returns ``(path, kb_relative_posix, error_dict | None)``.
+
+    With ``base_dir=None`` the path is returned untouched — that is the internal
+    contract used by the REST layer and by context-file injection.
+
+    Two things the agent cannot be trusted with are handled here:
+
+    * **Convention.**  ``get_repo_map`` hands the model paths like
+      ``data/01_Proces/x.md`` while the REST layer speaks ``01_Proces/x.md``.
+      Both are accepted — a leading root segment is stripped — so the model
+      cannot land a file outside the KB by dropping or adding the prefix.
+    * **Escape.**  Absolute paths and ``..`` traversal are refused instead of
+      silently writing wherever the server process happens to be running.
+    """
+    if base_dir is None:
+        # Legacy / internal callers (context-file injection, REST layer, tests)
+        # pass paths that are already resolved against their own root.  The jail
+        # applies to agent-supplied paths, which arrive with base_dir bound by
+        # the tool registry.
+        legacy = Path(filepath)
+        return legacy, legacy.as_posix(), None
+
+    root = Path(base_dir)
+    root_resolved = root.resolve()
+    raw = (filepath or "").strip()
+
+    if not raw:
+        return root, "", {"error": "filepath is empty."}
+
+    candidate = Path(raw)
+    if candidate.is_absolute():
+        return root, "", {
+            "error": (
+                f"Absolute paths are not allowed: {raw!r}. "
+                f"Use a path relative to the knowledge base root ({root.as_posix()}/), "
+                "e.g. '01_Proces/notes.md'."
+            )
+        }
+
+    # Tolerate the 'data/' prefix the discovery tools emit.
+    parts = candidate.parts
+    if parts and parts[0] == root.name:
+        candidate = Path(*parts[1:]) if len(parts) > 1 else Path()
+
+    target = (root / candidate).resolve()
+    if target != root_resolved and root_resolved not in target.parents:
+        return root, "", {
+            "error": (
+                f"Path escapes the knowledge base: {raw!r}. "
+                f"Everything must stay under {root.as_posix()}/."
+            )
+        }
+
+    return target, target.relative_to(root_resolved).as_posix(), None
+
+
+def _read_path(filepath: str, base_dir: str | Path | None = None) -> tuple[Path, dict | None]:
     """
     Returns (resolved_path, None) on success, or (path, error_dict) when the
     file does not exist.  Callers return the error_dict immediately.
     """
-    p = Path(filepath)
+    p, kb_rel, err = _resolve_kb_path(filepath, base_dir)
+    if err:
+        return p, err
     if not p.exists():
-        return p, {"error": f"File not found: {filepath}"}
+        return p, {"error": f"File not found: {kb_rel or filepath}"}
     return p, None
 
 
@@ -142,9 +212,9 @@ def revert_backup(revert_id: str, backup_dir: Path) -> dict:
 # Public tool functions
 # ---------------------------------------------------------------------------
 
-def read_file(filepath: str) -> dict:
+def read_file(filepath: str, base_dir: str | Path | None = None) -> dict:
     """Reads a file and returns its content or an error message."""
-    p, err = _read_path(filepath)
+    p, err = _read_path(filepath, base_dir)
     if err:
         return err
     try:
@@ -158,6 +228,7 @@ def edit_file(
     search_text: str,
     replace_text: str,
     backup_dir: Path | None = None,
+    base_dir: str | Path | None = None,
 ) -> dict:
     """
     Safely edits a file using exact search-and-replace.
@@ -169,9 +240,11 @@ def edit_file(
     response includes a ``revert_id`` key that the frontend can use to undo
     the change.
     """
-    p, err = _read_path(filepath)
+    p, kb_rel, err = _resolve_kb_path(filepath, base_dir)
     if err:
         return err
+    if not p.exists():
+        return {"error": f"File not found: {kb_rel}"}
     try:
         content = p.read_text(encoding="utf-8")
     except OSError as exc:
@@ -190,9 +263,22 @@ def edit_file(
     if backup_dir is not None:
         revert_id = _create_backup(target_path=p, backup_dir=backup_dir)
 
+    occurrences = content.count(search_text)
     p.write_text(content.replace(search_text, replace_text), encoding="utf-8")
 
-    result: dict = {"success": f"Successfully updated {filepath}."}
+    # Report the resolved path, never the model's own input: a confirmation
+    # that echoes a wrong path is what makes a lost edit look like a done one.
+    result: dict = {
+        "success": (
+            f"Updated {kb_rel} — replaced {occurrences} occurrence(s), "
+            f"file is now {p.stat().st_size} bytes."
+        )
+    }
+    if occurrences > 1:
+        result["warning"] = (
+            f"search_text matched {occurrences} times and every match was replaced. "
+            "Use a longer, unique excerpt if you meant to change only one."
+        )
     if revert_id is not None:
         result["revert_id"] = revert_id
     return result
@@ -202,6 +288,7 @@ def create_file(
     filepath: str,
     content: str,
     backup_dir: Path | None = None,
+    base_dir: str | Path | None = None,
 ) -> dict:
     """
     Creates a new file with the given content.
@@ -212,9 +299,13 @@ def create_file(
     When *backup_dir* is provided a snapshot is taken (recording that the
     file did not exist) so the creation can be reverted by deleting the file.
     """
-    p = Path(filepath)
+    p, kb_rel, err = _resolve_kb_path(filepath, base_dir)
+    if err:
+        return err
     if p.exists():
-        return {"error": f"File already exists at {filepath}. Use edit_file instead."}
+        return {"error": f"File already exists at {kb_rel}. Use edit_file instead."}
+
+    root = Path(base_dir) if base_dir is not None else DEFAULT_KB_ROOT
 
     # Snapshot BEFORE creating (records existed=False)
     revert_id: str | None = None
@@ -227,7 +318,32 @@ def create_file(
     except OSError as exc:
         return {"error": str(exc)}
 
-    result: dict = {"success": f"Successfully created {filepath}."}
+    result: dict = {
+        "success": f"Created {kb_rel} ({len(content.encode('utf-8'))} bytes)."
+    }
+
+    # A copy of the same document elsewhere is the usual cause of "the model
+    # says it wrote the file and I cannot find it" — say so straight away.
+    duplicates = [
+        other.relative_to(root.resolve()).as_posix()
+        for other in root.resolve().rglob(p.name)
+        if other != p
+    ]
+    if duplicates:
+        result["warning"] = (
+            f"A file named {p.name} already exists at: {', '.join(duplicates[:5])}. "
+            "Check whether you meant to edit one of those instead."
+        )
+
+    if p.suffix.lower() not in INDEXED_SUFFIXES:
+        result["note"] = (
+            f"{p.suffix or 'This file type'} is NOT indexed: get_repo_map and "
+            "search_knowledge_base only scan "
+            f"{', '.join(INDEXED_SUFFIXES)} files, and the app's file list shows "
+            "the same. Tell the user the file exists on disk but will not appear "
+            "in the knowledge base browser or in future searches."
+        )
+
     if revert_id is not None:
         result["revert_id"] = revert_id
     return result

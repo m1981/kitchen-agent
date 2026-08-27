@@ -63,7 +63,7 @@ def test_edit_file_success(tmp_path: Path) -> None:
     f.write_text("We use standard hinges.", encoding="utf-8")
     result = edit_file(str(f), "standard hinges", "Blum soft-close hinges")
     assert "error" not in result
-    assert "Successfully updated" in result["success"]
+    assert "Updated" in result["success"]
     assert f.read_text(encoding="utf-8") == "We use Blum soft-close hinges."
 
 
@@ -100,7 +100,7 @@ def test_create_file_success(tmp_path: Path) -> None:
     new_file = tmp_path / "03_Finishes" / "paint.md"
     result = create_file(str(new_file), "# Paint\nWe use water-based polyurethane.")
     assert "error" not in result
-    assert "Successfully created" in result["success"]
+    assert "Created" in result["success"]
     assert new_file.exists()
     assert new_file.read_text(encoding="utf-8") == "# Paint\nWe use water-based polyurethane."
 
@@ -209,3 +209,88 @@ def test_search_skips_unreadable_file(tmp_path: Path) -> None:
     # Only the good file's match should appear
     assert "good.md" in result["content"]
     assert "bad.md" not in result["content"]
+
+
+# ---------------------------------------------------------------------------
+# Knowledge-base path jail (agent-supplied paths)
+# ---------------------------------------------------------------------------
+
+class TestKnowledgeBasePathJail:
+    """
+    Agent paths resolve against the KB root. Anything else silently wrote to the
+    server's working directory, where nothing in the app can see it.
+    """
+
+    def test_relative_path_lands_in_the_kb(self, tmp_path):
+        result = create_file("01_Proces/notes.md", "hi", base_dir=tmp_path)
+
+        assert "error" not in result
+        assert (tmp_path / "01_Proces" / "notes.md").read_text() == "hi"
+        assert "01_Proces/notes.md" in result["success"]
+
+    def test_data_prefix_is_accepted(self, tmp_path):
+        """get_repo_map reports 'data/x.md'; the model echoes it back."""
+        root = tmp_path / "data"
+        root.mkdir()
+
+        result = create_file("data/01_Proces/notes.md", "hi", base_dir=root)
+
+        assert "error" not in result
+        assert (root / "01_Proces" / "notes.md").exists()
+        assert not (root / "data").exists(), "the prefix must not be doubled"
+
+    def test_traversal_is_refused(self, tmp_path):
+        result = create_file("../escaped.md", "hi", base_dir=tmp_path)
+
+        assert "error" in result
+        assert not (tmp_path.parent / "escaped.md").exists()
+
+    def test_absolute_path_is_refused(self, tmp_path):
+        result = create_file(str(tmp_path.parent / "escaped.md"), "hi", base_dir=tmp_path)
+
+        assert "error" in result
+        assert not (tmp_path.parent / "escaped.md").exists()
+
+    def test_read_and_edit_use_the_same_root(self, tmp_path):
+        (tmp_path / "notes.md").write_text("old value")
+
+        assert read_file("notes.md", base_dir=tmp_path)["content"] == "old value"
+        result = edit_file("notes.md", "old", "new", base_dir=tmp_path)
+
+        assert "error" not in result
+        assert (tmp_path / "notes.md").read_text() == "new value"
+
+
+class TestWriteResultsAreSelfExplanatory:
+    """The result is what the model repeats to the user — it must be true."""
+
+    def test_create_reports_the_resolved_path_not_the_requested_one(self, tmp_path):
+        root = tmp_path / "data"
+        root.mkdir()
+
+        result = create_file("data/x/y.md", "hi", base_dir=root)
+
+        assert result["success"].startswith("Created x/y.md")
+
+    def test_duplicate_basename_elsewhere_is_flagged(self, tmp_path):
+        (tmp_path / "07_SOP").mkdir()
+        (tmp_path / "07_SOP" / "karta.md").write_text("first copy")
+
+        result = create_file("01_Proces/karta.md", "second copy", base_dir=tmp_path)
+
+        assert "error" not in result
+        assert "07_SOP/karta.md" in result["warning"]
+
+    def test_unindexed_extension_is_flagged(self, tmp_path):
+        result = create_file("01_Proces/karta.html", "<html></html>", base_dir=tmp_path)
+
+        assert "error" not in result
+        assert "not indexed" in result["note"].lower()
+
+    def test_edit_reports_how_many_occurrences_changed(self, tmp_path):
+        (tmp_path / "notes.md").write_text("blum blum blum")
+
+        result = edit_file("notes.md", "blum", "BLUM", base_dir=tmp_path)
+
+        assert "3 occurrence(s)" in result["success"]
+        assert "warning" in result, "replacing every match must be called out"

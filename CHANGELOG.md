@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Agent file writes could land outside the knowledge base** — `read_file`,
+  `edit_file` and `create_file` resolved the model's path with bare
+  `Path(filepath)`, i.e. relative to the server's working directory and with no
+  jail, while the REST layer resolves against `data_dir`. A path without the
+  `data/` prefix silently wrote to the repo root, where nothing in the app can
+  see it. The registry now binds `settings.data_dir` (as it already did for
+  search), both conventions are accepted, and absolute paths and `..` are
+  refused.
+- **Write results echoed the requested path, not the resolved one** — a wrong
+  path came back as a confident "Successfully created". `create_file` now
+  reports the canonical KB-relative path and byte count, `edit_file` reports
+  how many occurrences it replaced and warns when that is more than one.
+- **Agent edits are now revertible** — the registry passes `backup_dir`, which
+  only the REST endpoints did before.
+
+### Added
+
+- `create_file` flags a same-named file elsewhere in the knowledge base, and
+  flags an extension that `get_repo_map` / `search_knowledge_base` do not index
+  (only `.md`), so the model can tell the user the file will not show up in the
+  browser or in later searches.
+
 - **`400 INVALID_ARGUMENT: Function call is missing a thought_signature`** —
   `complete_with_tools()` / `stream_with_tools()` rebuilt the model's
   function-call turn from `ToolCall` and appended it *again*, after

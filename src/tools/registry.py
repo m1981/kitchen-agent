@@ -205,13 +205,19 @@ _read_file_entry = ToolEntry(
             properties={
                 "filepath": types.Schema(
                     type=types.Type.STRING,
-                    description="Exact path to the file, e.g., 'data/notes.md'",
+                    description=(
+                        "Path relative to the knowledge base root, exactly as "
+                        "get_repo_map or search_knowledge_base reported it, "
+                        "e.g. '01_Proces/notes.md'. A leading 'data/' is accepted. "
+                        "Absolute paths and '..' are rejected."
+                    ),
                 ),
             },
             required=["filepath"],
         ),
     ),
-    fn=read_file,
+    # base_dir is fixed to settings.data_dir — never exposed to the LLM.
+    fn=lambda filepath: read_file(filepath, base_dir=str(settings.data_dir)),
     category=ToolCategory.FILE_OPERATIONS,
 )
 
@@ -230,7 +236,11 @@ _edit_file_entry = ToolEntry(
             properties={
                 "filepath": types.Schema(
                     type=types.Type.STRING,
-                    description="Path to the file, e.g., 'data/notes.md'",
+                    description=(
+                        "Path of the file to edit, relative to the knowledge base "
+                        "root, e.g. '01_Proces/notes.md'. A leading 'data/' is "
+                        "accepted. Absolute paths and '..' are rejected."
+                    ),
                 ),
                 "search_text": types.Schema(
                     type=types.Type.STRING,
@@ -248,7 +258,11 @@ _edit_file_entry = ToolEntry(
             required=["filepath", "search_text", "replace_text"],
         ),
     ),
-    fn=edit_file,
+    fn=lambda filepath, search_text, replace_text: edit_file(
+        filepath, search_text, replace_text,
+        backup_dir=settings.data_dir,
+        base_dir=str(settings.data_dir),
+    ),
     category=ToolCategory.FILE_OPERATIONS,
 )
 
@@ -256,9 +270,13 @@ _create_file_entry = ToolEntry(
     declaration=types.FunctionDeclaration(
         name="create_file",
         description=(
-            "Creates a brand new markdown file. "
+            "Creates a brand new markdown file in the knowledge base. "
             "Use this when starting a new topic that does not fit in existing files. "
-            "DO NOT use this to update existing files (use edit_file for that)."
+            "DO NOT use this to update existing files (use edit_file for that). "
+            "Call get_repo_map or search_knowledge_base first when you are not sure "
+            "the topic already has a file — the result reports any same-named file "
+            "found elsewhere. Report the path from the result back to the user, not "
+            "the path you asked for."
         ),
         parameters=types.Schema(
             type=types.Type.OBJECT,
@@ -266,8 +284,12 @@ _create_file_entry = ToolEntry(
                 "filepath": types.Schema(
                     type=types.Type.STRING,
                     description=(
-                        "Path to the new file. You may specify nested directories "
-                        "(e.g., 'data/new-topic/file.md') and they will be created automatically."
+                        "Path for the new file, relative to the knowledge base root "
+                        "(e.g. '02_Projektowanie_i_Style/new-topic.md'). Nested "
+                        "directories are created automatically. A leading 'data/' is "
+                        "accepted; absolute paths and '..' are rejected. Use the .md "
+                        "extension — other extensions are written to disk but are not "
+                        "indexed by search and do not appear in the file browser."
                     ),
                 ),
                 "content": types.Schema(
@@ -278,7 +300,11 @@ _create_file_entry = ToolEntry(
             required=["filepath", "content"],
         ),
     ),
-    fn=create_file,
+    fn=lambda filepath, content: create_file(
+        filepath, content,
+        backup_dir=settings.data_dir,
+        base_dir=str(settings.data_dir),
+    ),
     category=ToolCategory.FILE_OPERATIONS,
 )
 

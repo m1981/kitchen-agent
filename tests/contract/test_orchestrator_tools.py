@@ -34,13 +34,15 @@ class TestToolExecutorWithRealRegistry:
         registry = build_default_registry(search_coordinator=None)
         return ToolExecutor(registry=registry)
 
-    def test_read_file_returns_content(self, executor, tmp_path):
+    def test_read_file_returns_content(self, executor, tmp_path, monkeypatch):
         """read_file handler must return dict with 'content' key."""
-        test_file = tmp_path / "test.txt"
-        test_file.write_text("Hello from file!")
+        # The tool resolves paths against the knowledge base root, so the root
+        # is what moves for the test — not the path handed to the tool.
+        monkeypatch.setattr("src.config.settings.data_dir", tmp_path)
+        (tmp_path / "test.txt").write_text("Hello from file!")
 
         results = executor.execute_all([
-            ToolCall(id="1", name="read_file", arguments={"filepath": str(test_file)})
+            ToolCall(id="1", name="read_file", arguments={"filepath": "test.txt"})
         ])
 
         assert len(results) == 1
@@ -89,16 +91,15 @@ class TestToolExecutorWithRealRegistry:
 
         assert results[0].name == "read_file"
 
-    def test_multiple_tools_executed(self, executor, tmp_path):
+    def test_multiple_tools_executed(self, executor, tmp_path, monkeypatch):
         """Multiple tool calls → all executed independently."""
-        file_a = tmp_path / "a.txt"
-        file_a.write_text("content A")
-        file_b = tmp_path / "b.txt"
-        file_b.write_text("content B")
+        monkeypatch.setattr("src.config.settings.data_dir", tmp_path)
+        (tmp_path / "a.txt").write_text("content A")
+        (tmp_path / "b.txt").write_text("content B")
 
         results = executor.execute_all([
-            ToolCall(id="1", name="read_file", arguments={"filepath": str(file_a)}),
-            ToolCall(id="2", name="read_file", arguments={"filepath": str(file_b)}),
+            ToolCall(id="1", name="read_file", arguments={"filepath": "a.txt"}),
+            ToolCall(id="2", name="read_file", arguments={"filepath": "b.txt"}),
         ])
 
         assert len(results) == 2
