@@ -91,6 +91,7 @@ def _make_gemini_provider(text: str = "Hello!", tool_calls: list | None = None):
         provider = GeminiProvider.__new__(GeminiProvider)
         provider._client = MagicMock()
         provider._model = "gemini-2.5-flash"
+        provider._temperature = 0.2
         provider._normalizer = ResponseNormalizer()
         provider._registry = MagicMock()
         provider._tool_executor = MagicMock()

@@ -32,6 +32,7 @@ export const PROVIDERS: ProviderInfo[] = [
     models: [
       { id: "gemini-3.1-pro-preview", label: "Gemini 3.1 Pro", context_k: 1000 },
       { id: "gemini-3.5-flash", label: "Gemini 3.5 Flash", context_k: 1000 },
+      { id: "gemini-3.7-flash", label: "Gemini 3.7 Flash", context_k: 1000 },
     ],
   },
   {

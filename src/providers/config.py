@@ -41,6 +41,30 @@ ANTHROPIC_DEFAULT_MODEL: str = "claude-sonnet-4-6"
 MIMO_DEFAULT_MODEL: str = "mimo-v2.5-pro"
 
 
+# ── Per-model temperature overrides (SINGLE SOURCE OF TRUTH) ────────────────
+#
+# Temperature is normally a *provider*-level knob (``settings.<provider>_temperature``).
+# Some models are meant to run at a fixed sampling temperature regardless of that
+# default — e.g. deterministic tool-calling models.  Add the model id here and
+# every provider instance created for that model picks the value up automatically.
+#
+#   gemini-3.7-flash → 0.0  (deterministic: KB search/edit must not drift)
+
+MODEL_TEMPERATURES: dict[str, float] = {
+    "gemini-3.7-flash": 0.0,
+}
+
+
+def resolve_temperature(model: str, default: float) -> float:
+    """
+    Return the temperature to use for ``model``.
+
+    Looks up ``MODEL_TEMPERATURES`` first; falls back to ``default``
+    (the provider-level value from Settings / the provider config).
+    """
+    return MODEL_TEMPERATURES.get(model, default)
+
+
 # ── Provider config dataclasses ─────────────────────────────────────────────
 
 @dataclass(frozen=True)

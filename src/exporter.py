@@ -131,6 +131,9 @@ def build_config_block(
     # These imports are fast (already-imported modules, no I/O).
     from google.genai import types
     from src.config import settings
+    from src.providers.config import resolve_temperature
+
+    temperature = resolve_temperature(settings.gemini_model, settings.gemini_temperature)
 
     if tool_declarations is not None:
         gemini_tools = types.Tool(function_declarations=tool_declarations)
@@ -141,7 +144,7 @@ def build_config_block(
         gemini_tools = types.Tool(function_declarations=schemas)
     config = types.GenerateContentConfig(
         tools=[gemini_tools],
-        temperature=settings.gemini_temperature,
+        temperature=temperature,
         system_instruction=system_instruction,
     )
 
@@ -154,7 +157,7 @@ def build_config_block(
     # inject it explicitly for completeness.
     return {
         "model": settings.gemini_model,
-        "temperature": raw.get("temperature", settings.gemini_temperature),
+        "temperature": raw.get("temperature", temperature),
         # Always include system_instruction key — None makes the absence explicit.
         "system_instruction": raw.get("system_instruction", None),
         "tools": raw.get("tools", []),

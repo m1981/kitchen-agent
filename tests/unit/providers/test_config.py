@@ -11,7 +11,13 @@ Covers:
 """
 import pytest
 
-from src.providers.config import AnthropicConfig, GeminiConfig, MimoConfig
+from src.providers.config import (
+    AnthropicConfig,
+    GeminiConfig,
+    MODEL_TEMPERATURES,
+    MimoConfig,
+    resolve_temperature,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -147,3 +153,17 @@ class TestConfigInjection:
         config_param = sig.parameters.get("config")
         assert config_param is not None
         assert config_param.default is None
+
+
+# ---------------------------------------------------------------------------
+# Per-model temperature overrides
+# ---------------------------------------------------------------------------
+
+class TestResolveTemperature:
+    def test_gemini_37_flash_is_deterministic(self):
+        assert MODEL_TEMPERATURES["gemini-3.7-flash"] == 0.0
+        assert resolve_temperature("gemini-3.7-flash", 0.2) == 0.0
+
+    def test_unlisted_model_falls_back_to_default(self):
+        assert resolve_temperature("gemini-3.1-pro-preview", 0.2) == 0.2
+        assert resolve_temperature("claude-sonnet-4-6", 0.7) == 0.7

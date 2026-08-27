@@ -28,7 +28,6 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-from src.config import settings
 from src.logger import log_timing
 from src.agent.tool_executor import ToolCall, ToolExecutor, ToolResult
 from src.providers.normalizer import ResponseNormalizer
@@ -203,13 +202,18 @@ class GeminiProvider:
         model_override: str | None = None,
         config: "GeminiConfig | None" = None,
     ) -> None:
-        from src.providers.config import GeminiConfig
+        from src.providers.config import GeminiConfig, resolve_temperature
 
         self._config = config or GeminiConfig()
         self._client = genai.Client()
         # Resolved at construction so it is stable for the lifetime of this
         # instance and visible to tests via provider._model.
         self._model: str = model_override or self._config.model
+        # Per-model override (e.g. gemini-3.7-flash → 0.0) wins over the
+        # provider-level temperature from Settings.
+        self._temperature: float = resolve_temperature(
+            self._model, self._config.temperature
+        )
         self._normalizer = ResponseNormalizer()
         self._registry = _build_default_registry()
         self._tool_executor = ToolExecutor(registry=self._registry)
@@ -273,12 +277,12 @@ class GeminiProvider:
             config_kwargs["system_instruction"] = context.system_prompt
         if gemini_tools is not None:
             config_kwargs["tools"] = [gemini_tools]
-        config_kwargs["temperature"] = settings.gemini_temperature
+        config_kwargs["temperature"] = self._temperature
 
         log.info(
             "gemini_complete_start",
             model=self._model,
-            temperature=settings.gemini_temperature,
+            temperature=self._temperature,
             messages_count=len(self._conversation_state),
             has_system_prompt=bool(context.system_prompt),
             tool_declarations_count=len(declarations),
@@ -400,7 +404,7 @@ class GeminiProvider:
             config_kwargs["system_instruction"] = context.system_prompt
         if gemini_tools is not None:
             config_kwargs["tools"] = [gemini_tools]
-        config_kwargs["temperature"] = settings.gemini_temperature
+        config_kwargs["temperature"] = self._temperature
 
         with log_timing(log, "gemini_complete_with_tools_end") as timing:
             response = self._client.models.generate_content(
@@ -477,7 +481,7 @@ class GeminiProvider:
             config_kwargs["system_instruction"] = context.system_prompt
         if gemini_tools is not None:
             config_kwargs["tools"] = [gemini_tools]
-        config_kwargs["temperature"] = settings.gemini_temperature
+        config_kwargs["temperature"] = self._temperature
 
         log.info(
             "gemini_stream_start",
@@ -608,7 +612,7 @@ class GeminiProvider:
             config_kwargs["system_instruction"] = context.system_prompt
         if gemini_tools is not None:
             config_kwargs["tools"] = [gemini_tools]
-        config_kwargs["temperature"] = settings.gemini_temperature
+        config_kwargs["temperature"] = self._temperature
 
         # Use generate_content_stream for streaming
         accumulated_content = None

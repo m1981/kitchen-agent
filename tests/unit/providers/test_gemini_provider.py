@@ -181,3 +181,49 @@ def test_complete_with_tools_continues_conversation(provider: GeminiProvider) ->
     assert response.text == "final answer"
     # Verify conversation state has tool call and result
     assert len(provider._conversation_state) >= 3  # user + model(tool_call) + user(tool_result)
+
+
+# ---------------------------------------------------------------------------
+# Temperature resolution (per-model override)
+# ---------------------------------------------------------------------------
+
+def test_temperature_falls_back_to_provider_config() -> None:
+    """Without a per-model override the provider uses its config temperature."""
+    from src.providers.config import GeminiConfig
+
+    with patch("src.providers.gemini.genai.Client"):
+        p = GeminiProvider(config=GeminiConfig(model="gemini-3.1-pro-preview", temperature=0.2))
+
+    assert p._temperature == 0.2
+
+
+def test_gemini_37_flash_forces_temperature_zero() -> None:
+    """gemini-3.7-flash is pinned to temperature 0 regardless of settings."""
+    from src.providers.config import GeminiConfig
+
+    with patch("src.providers.gemini.genai.Client"):
+        p = GeminiProvider(
+            model_override="gemini-3.7-flash",
+            config=GeminiConfig(model="gemini-3.1-pro-preview", temperature=0.9),
+        )
+
+    assert p._model == "gemini-3.7-flash"
+    assert p._temperature == 0.0
+
+
+def test_resolved_temperature_is_sent_to_the_api() -> None:
+    """The resolved temperature lands in GenerateContentConfig."""
+    from src.providers.config import GeminiConfig
+
+    with patch("src.providers.gemini.genai.Client") as mock_client_cls:
+        p = GeminiProvider(
+            model_override="gemini-3.7-flash",
+            config=GeminiConfig(temperature=0.9),
+        )
+        p._client = mock_client_cls.return_value
+
+    p._client.models.generate_content.return_value = _make_text_response("ok")
+    p.complete(_make_context())
+
+    sent_config = p._client.models.generate_content.call_args[1]["config"]
+    assert sent_config.temperature == 0.0
