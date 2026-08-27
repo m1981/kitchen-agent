@@ -425,6 +425,71 @@ class TestGeminiStreamingChunk:
 
         assert result == ""
 
+    def test_text_after_a_non_text_part_is_not_dropped(self):
+        """Reading only parts[0] lost the answer whenever it was not first."""
+        from google.genai import types
+
+        chunk = MagicMock()
+        chunk.candidates = [
+            MagicMock(content=types.Content(role="model", parts=[
+                types.Part(function_call=types.FunctionCall(name="search", args={})),
+                types.Part(text="visible answer"),
+            ]))
+        ]
+
+        result = ResponseNormalizer().normalize_chunk(chunk, provider="gemini")
+
+        assert result == "visible answer"
+
+    def test_thought_parts_are_not_streamed_to_the_user(self):
+        from google.genai import types
+
+        thought = types.Part(text="let me think...")
+        thought.thought = True
+        chunk = MagicMock()
+        chunk.candidates = [
+            MagicMock(content=types.Content(role="model", parts=[thought, types.Part(text="answer")]))
+        ]
+
+        result = ResponseNormalizer().normalize_chunk(chunk, provider="gemini")
+
+        assert result == "answer"
+
+    def test_malformed_chunk_returns_empty_string(self):
+        """Chunk extraction must never raise, whatever shape arrives."""
+        assert ResponseNormalizer().normalize_chunk({"type": "stop"}, provider="gemini") == ""
+
+
+class TestGeminiThoughtParts:
+    def test_thought_text_is_excluded_from_the_answer(self):
+        from google.genai import types
+
+        thought = types.Part(text="internal reasoning")
+        thought.thought = True
+        raw = MagicMock()
+        raw.candidates = [
+            MagicMock(content=types.Content(role="model", parts=[thought, types.Part(text="final")]))
+        ]
+        raw.usage_metadata = None
+
+        result = ResponseNormalizer().normalize(raw, provider="gemini")
+
+        assert result.text == "final"
+
+    def test_thought_only_response_normalizes_to_empty(self):
+        from google.genai import types
+
+        thought = types.Part(text="internal reasoning")
+        thought.thought = True
+        raw = MagicMock()
+        raw.candidates = [MagicMock(content=types.Content(role="model", parts=[thought]))]
+        raw.usage_metadata = None
+
+        result = ResponseNormalizer().normalize(raw, provider="gemini")
+
+        assert result.text == ""
+        assert result.has_tool_calls is False
+
 
 class TestAnthropicStreamingChunk:
     def test_returns_text_delta(self):

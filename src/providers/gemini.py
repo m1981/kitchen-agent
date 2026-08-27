@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import base64
 import json
+from types import SimpleNamespace
 from typing import Any, Iterator
 
 import structlog
@@ -28,7 +29,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-from src.logger import log_timing
+from src.logger import LOG_LLM_TRACE, log_timing
 from src.agent.tool_executor import ToolCall, ToolExecutor, ToolResult
 from src.providers.normalizer import ResponseNormalizer
 from src.tools.file_ops import read_file
@@ -42,6 +43,133 @@ def _build_default_registry():
     """Lazy-load the default ToolRegistry."""
     from src.tools.registry import build_default_registry
     return build_default_registry()
+
+
+# ---------------------------------------------------------------------------
+# Diagnostics — why did the model not answer / not call a tool?
+# ---------------------------------------------------------------------------
+#
+# Gemini can return HTTP 200 with nothing usable: only thought parts, a
+# finish_reason of MAX_TOKENS/SAFETY, or a prompt blocked by a filter.  The
+# helpers below turn a raw response (or one stream chunk) into flat key-value
+# pairs so the logs answer three questions without a debugger:
+#
+#   1. did the request carry the tool declarations?   → tool_declaration_names
+#   2. what did the model actually emit?              → part_kinds / function_calls
+#   3. why did it stop?                               → finish_reason / block_reason
+#
+# Set LOG_LLM_TRACE=1 to additionally dump every raw chunk as JSON.
+
+
+def _part_kind(part: Any) -> str:
+    """Classify one Gemini ``Part`` for tracing."""
+    if getattr(part, "thought", None):
+        return "thought"
+    if getattr(part, "function_call", None):
+        return "function_call"
+    if getattr(part, "function_response", None):
+        return "function_response"
+    if getattr(part, "inline_data", None):
+        return "inline_data"
+    if getattr(part, "executable_code", None):
+        return "executable_code"
+    if getattr(part, "code_execution_result", None):
+        return "code_execution_result"
+    text = getattr(part, "text", None)
+    if isinstance(text, str) and text:
+        return "text"
+    return "empty"
+
+
+def _describe_parts(parts: Any) -> dict:
+    """Summarise a list of Parts: counts per kind, text size, tool names."""
+    kinds: dict[str, int] = {}
+    text_len = 0
+    thought_len = 0
+    function_calls: list[str] = []
+
+    for part in parts or []:
+        kind = _part_kind(part)
+        kinds[kind] = kinds.get(kind, 0) + 1
+        if kind == "text":
+            text_len += len(part.text)
+        elif kind == "thought":
+            thought_len += len(getattr(part, "text", "") or "")
+        elif kind == "function_call":
+            function_calls.append(part.function_call.name)
+
+    return {
+        "part_kinds": kinds or None,
+        "text_len": text_len,
+        "thought_len": thought_len or None,
+        "function_calls": function_calls or None,
+    }
+
+
+def _describe_usage(usage: Any) -> dict:
+    """Flatten ``usage_metadata`` (thought tokens included — they are billed)."""
+    if usage is None:
+        return {}
+    return {
+        "input_tokens": getattr(usage, "prompt_token_count", None),
+        "output_tokens": getattr(usage, "candidates_token_count", None),
+        "thought_tokens": getattr(usage, "thoughts_token_count", None),
+        "total_tokens": getattr(usage, "total_token_count", None),
+    }
+
+
+def _describe_response(response: Any) -> dict:
+    """Flat, log-friendly summary of a Gemini response or a single chunk."""
+    info: dict = {}
+
+    candidates = getattr(response, "candidates", None) or []
+    info["candidates"] = len(candidates)
+
+    if candidates:
+        candidate = candidates[0]
+        finish_reason = getattr(candidate, "finish_reason", None)
+        if finish_reason:
+            info["finish_reason"] = str(finish_reason)
+        info["finish_message"] = getattr(candidate, "finish_message", None)
+
+        blocked = [
+            f"{getattr(r, 'category', '?')}:{getattr(r, 'probability', '?')}"
+            for r in (getattr(candidate, "safety_ratings", None) or [])
+            if getattr(r, "blocked", False)
+        ]
+        if blocked:
+            info["safety_blocked"] = blocked
+
+        content = getattr(candidate, "content", None)
+        info.update(_describe_parts(getattr(content, "parts", None)))
+
+    feedback = getattr(response, "prompt_feedback", None)
+    block_reason = getattr(feedback, "block_reason", None) if feedback else None
+    if block_reason:
+        info["prompt_block_reason"] = str(block_reason)
+
+    info.update(_describe_usage(getattr(response, "usage_metadata", None)))
+    return {k: v for k, v in info.items() if v is not None}
+
+
+def _declaration_names(declarations: Any) -> list[str]:
+    """Tool names actually put on the wire — proves the request carried them."""
+    names: list[str] = []
+    for decl in declarations or []:
+        name = decl.get("name") if isinstance(decl, dict) else getattr(decl, "name", None)
+        if name:
+            names.append(name)
+    return names
+
+
+def _raw_dump(obj: Any) -> str | None:
+    """Full JSON of a response/chunk — only when LOG_LLM_TRACE is enabled."""
+    if not LOG_LLM_TRACE:
+        return None
+    try:
+        return obj.model_dump_json(exclude_none=True)[:8000]
+    except Exception:  # noqa: BLE001 — tracing must never break a turn
+        return repr(obj)[:8000]
 
 
 # ---------------------------------------------------------------------------
@@ -286,6 +414,7 @@ class GeminiProvider:
             messages_count=len(self._conversation_state),
             has_system_prompt=bool(context.system_prompt),
             tool_declarations_count=len(declarations),
+            tool_declaration_names=_declaration_names(declarations),
             has_images=bool(context.images),
             has_context_files=bool(context.context_files),
         )
@@ -318,15 +447,24 @@ class GeminiProvider:
         if tool_call_names:
             timing["tool_calls"] = tool_call_names
 
-        log.debug(
-            "gemini_complete_result",
-            text_length=sum(
-                len(p.text)
-                for p in (response.candidates[0].content.parts if response.candidates and response.candidates[0].content else [])
-                if hasattr(p, "text") and p.text
-            ),
-            tool_calls_count=len(tool_call_names),
-        )
+        summary = _describe_response(response)
+        log.info("gemini_complete_result", model=self._model, **summary)
+        raw = _raw_dump(response)
+        if raw:
+            log.info("gemini_complete_raw", model=self._model, raw=raw)
+
+        if not summary.get("text_len") and not summary.get("function_calls"):
+            log.warning(
+                "gemini_empty_response",
+                where="complete",
+                model=self._model,
+                temperature=self._temperature,
+                hint=(
+                    "no text and no tool call — check finish_reason, "
+                    "prompt_block_reason and part_kinds above"
+                ),
+                **summary,
+            )
 
         # Store response in conversation state for tool loop continuity
         if response.candidates and response.candidates[0].content:
@@ -349,8 +487,11 @@ class GeminiProvider:
         log.debug(
             "gemini_complete_with_tools_start",
             model=self._model,
+            temperature=self._temperature,
             tool_calls_count=len(tool_calls),
+            tool_call_names=[tc.name for tc in tool_calls],
             tool_results_count=len(tool_results),
+            tool_results_errors=[tr.name for tr in tool_results if tr.is_error],
         )
 
         # Build tool call message (assistant Content with function_call parts)
@@ -418,11 +559,140 @@ class GeminiProvider:
             timing["output_tokens"] = response.usage_metadata.candidates_token_count
             timing["total_tokens"] = response.usage_metadata.total_token_count
 
+        summary = _describe_response(response)
+        log.info("gemini_complete_with_tools_result", model=self._model, **summary)
+        raw = _raw_dump(response)
+        if raw:
+            log.info("gemini_complete_with_tools_raw", model=self._model, raw=raw)
+
+        if not summary.get("text_len") and not summary.get("function_calls"):
+            log.warning(
+                "gemini_empty_response",
+                where="complete_with_tools",
+                model=self._model,
+                temperature=self._temperature,
+                hint="model produced nothing after tool results were fed back",
+                **summary,
+            )
+
         # Store response in conversation state for next iteration
         if response.candidates and response.candidates[0].content:
             self._conversation_state.append(response.candidates[0].content)
 
         return response
+
+    def _consume_stream(self, chunks: Iterator[Any], where: str) -> Iterator[Any]:
+        """
+        Yield raw chunks, trace each one, then yield a merged
+        ``{"type": "__final_message__"}`` carrying every accumulated part.
+
+        Gemini splits one logical response across many chunks and a
+        ``function_call`` does not have to arrive in the last one.  Without a
+        merged final message the orchestrator normalizes whichever chunk came
+        last — which is usually the empty usage-only chunk — and silently
+        reports ``tool_calls=0``.  Anthropic and MiMo already emit
+        ``__final_message__``; this brings Gemini in line.
+        """
+        parts: list[Any] = []
+        chunk_count = 0
+        last_usage: Any = None
+        finish_reason: str | None = None
+        prompt_block_reason: str | None = None
+
+        for chunk in chunks:
+            chunk_count += 1
+            log.debug(
+                "gemini_stream_chunk",
+                where=where,
+                index=chunk_count,
+                **_describe_response(chunk),
+            )
+            raw = _raw_dump(chunk)
+            if raw:
+                log.info("gemini_stream_chunk_raw", where=where, index=chunk_count, raw=raw)
+
+            candidates = getattr(chunk, "candidates", None) or []
+            if candidates:
+                candidate = candidates[0]
+                if getattr(candidate, "finish_reason", None):
+                    finish_reason = str(candidate.finish_reason)
+                content = getattr(candidate, "content", None)
+                for part in (getattr(content, "parts", None) or []):
+                    parts.append(part)
+                    if getattr(part, "function_call", None):
+                        log.info(
+                            "gemini_stream_tool_call",
+                            where=where,
+                            chunk_index=chunk_count,
+                            tool_name=part.function_call.name,
+                            tool_call_id=getattr(part.function_call, "id", None),
+                            args_keys=(
+                                list(part.function_call.args.keys())
+                                if part.function_call.args else []
+                            ),
+                        )
+
+            feedback = getattr(chunk, "prompt_feedback", None)
+            if feedback is not None and getattr(feedback, "block_reason", None):
+                prompt_block_reason = str(feedback.block_reason)
+            if getattr(chunk, "usage_metadata", None):
+                last_usage = chunk.usage_metadata
+
+            yield chunk
+
+        summary = _describe_parts(parts)
+        log.info(
+            "gemini_stream_end",
+            where=where,
+            model=self._model,
+            chunks_received=chunk_count,
+            finish_reason=finish_reason,
+            prompt_block_reason=prompt_block_reason,
+            **summary,
+            **_describe_usage(last_usage),
+        )
+
+        if not summary["text_len"] and not summary["function_calls"]:
+            # The turn produced nothing the user can see and no tool call.
+            # Everything needed to tell why is on this one line.
+            log.warning(
+                "gemini_empty_response",
+                where=where,
+                model=self._model,
+                temperature=self._temperature,
+                chunks_received=chunk_count,
+                finish_reason=finish_reason,
+                prompt_block_reason=prompt_block_reason,
+                part_kinds=summary["part_kinds"],
+                thought_len=summary["thought_len"],
+                hint=(
+                    "thought-only output → raise the thinking budget or lower it "
+                    "so the model gets to the answer; MAX_TOKENS → response cut "
+                    "short; SAFETY/block_reason → filtered; no parts at all → "
+                    "model id may not support this request shape"
+                ),
+                **_describe_usage(last_usage),
+            )
+
+        # model_construct: the parts are SDK objects already — skip re-validation
+        accumulated_content = (
+            types.Content.model_construct(role="model", parts=parts) if parts else None
+        )
+        if accumulated_content:
+            self._conversation_state.append(accumulated_content)
+
+        yield {
+            "type": "__final_message__",
+            "message": SimpleNamespace(
+                candidates=[
+                    SimpleNamespace(
+                        content=accumulated_content or SimpleNamespace(parts=[]),
+                        finish_reason=finish_reason,
+                    )
+                ],
+                usage_metadata=last_usage,
+            ),
+        }
 
     def stream(self, context: "AssembledContext") -> Iterator[Any]:
         """
@@ -486,60 +756,24 @@ class GeminiProvider:
         log.info(
             "gemini_stream_start",
             model=self._model,
+            temperature=self._temperature,
             messages_count=len(self._conversation_state),
             has_system_prompt=bool(context.system_prompt),
+            system_prompt_len=len(context.system_prompt or ""),
             tool_declarations_count=len(declarations),
+            tool_declaration_names=_declaration_names(declarations),
             has_images=bool(context.images),
             has_context_files=bool(context.context_files),
         )
 
-        # Use generate_content_stream for streaming
-        accumulated_content = None
-        chunk_count = 0
-        for chunk in self._client.models.generate_content_stream(
-            model=self._model,
-            contents=self._conversation_state,
-            config=types.GenerateContentConfig(**config_kwargs),
-        ):
-            chunk_count += 1
-            # Accumulate content for conversation state
-            if chunk.candidates and chunk.candidates[0].content:
-                content = chunk.candidates[0].content
-                if accumulated_content is None:
-                    accumulated_content = content
-                else:
-                    # Append parts to accumulated content
-                    if content.parts:
-                        accumulated_content.parts.extend(content.parts)
-
-                # Log tool calls as they stream in
-                for part in content.parts or []:
-                    if part.function_call:
-                        log.debug(
-                            "gemini_stream_tool_call",
-                            tool_name=part.function_call.name,
-                            tool_call_id=getattr(part.function_call, "id", None),
-                        )
-            yield chunk
-
-        # Log stream completion
-        tool_calls_found = []
-        if accumulated_content and accumulated_content.parts:
-            tool_calls_found = [
-                p.function_call.name
-                for p in accumulated_content.parts
-                if p.function_call
-            ]
-        log.debug(
-            "gemini_stream_end",
-            chunks_received=chunk_count,
-            tool_calls_count=len(tool_calls_found),
-            tool_names=tool_calls_found if tool_calls_found else None,
+        yield from self._consume_stream(
+            self._client.models.generate_content_stream(
+                model=self._model,
+                contents=self._conversation_state,
+                config=types.GenerateContentConfig(**config_kwargs),
+            ),
+            where="stream",
         )
-
-        # Store accumulated content in conversation state
-        if accumulated_content:
-            self._conversation_state.append(accumulated_content)
 
     def stream_with_tools(
         self,
@@ -556,8 +790,11 @@ class GeminiProvider:
         log.debug(
             "gemini_stream_with_tools_start",
             model=self._model,
+            temperature=self._temperature,
             tool_calls_count=len(tool_calls),
+            tool_call_names=[tc.name for tc in tool_calls],
             tool_results_count=len(tool_results),
+            tool_results_errors=[tr.name for tr in tool_results if tr.is_error],
         )
 
         # Build tool call message (assistant Content with function_call parts)
@@ -614,23 +851,11 @@ class GeminiProvider:
             config_kwargs["tools"] = [gemini_tools]
         config_kwargs["temperature"] = self._temperature
 
-        # Use generate_content_stream for streaming
-        accumulated_content = None
-        for chunk in self._client.models.generate_content_stream(
-            model=self._model,
-            contents=self._conversation_state,
-            config=types.GenerateContentConfig(**config_kwargs),
-        ):
-            # Accumulate content for conversation state
-            if chunk.candidates and chunk.candidates[0].content:
-                content = chunk.candidates[0].content
-                if accumulated_content is None:
-                    accumulated_content = content
-                else:
-                    if content.parts:
-                        accumulated_content.parts.extend(content.parts)
-            yield chunk
-
-        # Store accumulated content in conversation state
-        if accumulated_content:
-            self._conversation_state.append(accumulated_content)
+        yield from self._consume_stream(
+            self._client.models.generate_content_stream(
+                model=self._model,
+                contents=self._conversation_state,
+                config=types.GenerateContentConfig(**config_kwargs),
+            ),
+            where="stream_with_tools",
+        )

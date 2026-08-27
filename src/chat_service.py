@@ -395,11 +395,20 @@ class ChatService:
         Stream one complete chat turn.
         Yields event dicts for SSE serialization.
         """
+        # Bind BEFORE the first log line: the context is thread-local and a
+        # reused worker thread would otherwise stamp the previous request's
+        # provider/model onto this turn's logs.
+        bind_request_context(
+            provider=request.provider or "(default)",
+            model=request.model or "(default)",
+        )
         self._log.info(
             "stream_turn_started",
             user_message_preview=request.user_message[:60],
             mode=request.mode,
             use_tools=request.use_tools,
+            requested_provider=request.provider or "(default)",
+            requested_model=request.model or "(default)",
         )
 
         # ── 1. Load session + build input (shared) ────────────────────
@@ -411,11 +420,6 @@ class ChatService:
             "messages": api_history,
             "system_prompt": system_prompt,
         }
-
-        bind_request_context(
-            provider=request.provider or "(default)",
-            model=request.model or "(default)",
-        )
 
         # ── 2. Stream from orchestrator ───────────────────────────────
         full_text = ""

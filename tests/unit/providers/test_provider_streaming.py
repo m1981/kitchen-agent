@@ -92,9 +92,45 @@ class TestGeminiProviderStream:
         )
         
         chunks = list(provider.stream(context))
-        assert len(chunks) == 2
+        # Raw chunks pass through untouched, then the merged final message —
+        # same contract as the Anthropic and MiMo providers.
         assert chunks[0] is chunk1
         assert chunks[1] is chunk2
+        assert chunks[2]["type"] == "__final_message__"
+        assert len(chunks) == 3
+
+    def test_stream_emits_final_message_with_tool_calls_from_any_chunk(self):
+        """
+        A function_call that arrives in an early chunk must survive into
+        __final_message__ — the orchestrator reads tool calls from there.
+        """
+        provider = self._make_provider()
+
+        fc_part = MagicMock(text=None, thought=None)
+        fc_part.function_call = MagicMock(name_="search", args={"pattern": "x"})
+        fc_part.function_call.name = "search_knowledge_base"
+        tool_chunk = MagicMock(
+            candidates=[MagicMock(content=MagicMock(parts=[fc_part]))],
+        )
+        # ...followed by a usage-only chunk, which is what Gemini sends last.
+        tail_chunk = MagicMock(candidates=[])
+
+        provider._client.models.generate_content_stream = MagicMock(
+            return_value=iter([tool_chunk, tail_chunk])
+        )
+        context = MagicMock(
+            system_prompt="test",
+            messages=[{"role": "user", "content": "hi"}],
+            images=[],
+            context_files=[],
+            tool_schemas=[],
+        )
+
+        final = list(provider.stream(context))[-1]
+
+        assert final["type"] == "__final_message__"
+        parts = final["message"].candidates[0].content.parts
+        assert [p.function_call.name for p in parts] == ["search_knowledge_base"]
 
     def test_stream_with_tools_method_exists(self):
         """GeminiProvider must have a stream_with_tools() method."""

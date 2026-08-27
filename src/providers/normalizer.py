@@ -128,16 +128,39 @@ class ResponseNormalizer:
             response.candidates[0].content.parts → text or function_call
             response.usage_metadata → token counts
         """
-        candidate = raw.candidates[0]
-        parts = candidate.content.parts if candidate.content and candidate.content.parts else []
+        candidates = getattr(raw, "candidates", None) or []
+        if not candidates:
+            log.warning(
+                "gemini_no_candidates",
+                finish_reason=None,
+                raw_type=type(raw).__name__,
+            )
+            return NormalizedResponse(
+                text="", has_tool_calls=False, tool_calls=[],
+                usage={"input": 0, "output": 0, "total": 0}, raw=raw,
+            )
 
-        if not parts and candidate.content:
-            log.warning("gemini_empty_parts", has_content=bool(candidate.content), has_parts=bool(getattr(candidate.content, 'parts', None)))
+        candidate = candidates[0]
+        parts = candidate.content.parts if candidate.content and candidate.content.parts else []
+        finish_reason = getattr(candidate, "finish_reason", None)
+
+        if not parts:
+            log.warning(
+                "gemini_empty_parts",
+                has_content=bool(candidate.content),
+                finish_reason=str(finish_reason) if finish_reason else None,
+            )
 
         text_parts: list[str] = []
+        thought_parts = 0
         tool_calls: list[ToolCall] = []
 
         for part in parts:
+            # Reasoning parts carry .text too — they must never leak into the
+            # answer, but their presence explains an otherwise "empty" turn.
+            if getattr(part, "thought", None):
+                thought_parts += 1
+                continue
             if hasattr(part, "text") and isinstance(part.text, str) and part.text:
                 text_parts.append(part.text)
             elif hasattr(part, "function_call") and part.function_call:
@@ -160,8 +183,18 @@ class ResponseNormalizer:
                 "total": getattr(um, "total_token_count", 0) or 0,
             }
 
+        text = "".join(text_parts)
+        if not text and not tool_calls:
+            log.warning(
+                "gemini_nothing_extracted",
+                parts_seen=len(parts),
+                thought_parts=thought_parts,
+                finish_reason=str(finish_reason) if finish_reason else None,
+                output_tokens=usage.get("output"),
+            )
+
         return NormalizedResponse(
-            text="".join(text_parts),
+            text=text,
             has_tool_calls=bool(tool_calls),
             tool_calls=tool_calls,
             usage=usage,
@@ -169,10 +202,28 @@ class ResponseNormalizer:
         )
 
     def _gemini_chunk_text(self, chunk: Any) -> str:
+        """
+        Text delta of one streaming chunk.
+
+        Scans **every** part: a chunk can carry a thought part (or a
+        function_call) ahead of the visible text, and reading only
+        ``parts[0].text`` dropped that text on the floor.
+        """
+        deltas: list[str] = []
         try:
-            return chunk.candidates[0].content.parts[0].text or ""
-        except (IndexError, AttributeError):
+            candidates = getattr(chunk, "candidates", None) or []
+            if not candidates:
+                return ""
+            content = getattr(candidates[0], "content", None)
+            for part in (getattr(content, "parts", None) or []):
+                if getattr(part, "thought", None):
+                    continue  # reasoning trace — not user-visible
+                text = getattr(part, "text", None)
+                if isinstance(text, str) and text:
+                    deltas.append(text)
+        except (TypeError, AttributeError, IndexError):
             return ""
+        return "".join(deltas)
 
     # ── Anthropic ─────────────────────────────────────────────────────
 

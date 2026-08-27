@@ -17,6 +17,7 @@ Environment variables
 LOG_LEVEL=INFO          # DEBUG | INFO | WARNING | ERROR
 LOG_TIMING=true         # Log duration of LLM calls and tool execution
 LOG_LLM_PAYLOADS=false  # Log full context sent to LLM (verbose, for debugging)
+LOG_LLM_TRACE=false     # Dump raw provider responses / stream chunks as JSON
 
 Log layers and what they capture
 --------------------------------
@@ -129,6 +130,9 @@ def clear_request_context() -> None:
 
 LOG_TIMING = os.environ.get("LOG_TIMING", "true").lower() in ("true", "1", "yes")
 LOG_LLM_PAYLOADS = os.environ.get("LOG_LLM_PAYLOADS", "false").lower() in ("true", "1", "yes")
+LOG_LLM_TRACE = os.environ.get("LOG_LLM_TRACE", "false").lower() in ("true", "1", "yes")
+"""Dump every raw provider response / stream chunk as JSON.  Very verbose —
+switch on only while debugging why a model returns nothing or ignores tools."""
 
 
 @contextmanager

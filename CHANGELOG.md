@@ -7,7 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Gemini streaming lost tool calls** — `GeminiProvider.stream()` /
+  `stream_with_tools()` now emit `{"type": "__final_message__"}` with all
+  accumulated parts, like the Anthropic and MiMo providers already did.
+  Previously the orchestrator normalized whichever chunk arrived last —
+  usually the usage-only chunk — so a `function_call` sent in an earlier
+  chunk was reported as `tool_calls=0`.
+- **Gemini streaming lost text** — `ResponseNormalizer._gemini_chunk_text()`
+  read only `parts[0].text`, dropping the answer whenever a thought or
+  `function_call` part came first. It now scans every part.
+- **Thought parts leaked into answers** — reasoning parts (`part.thought`)
+  are excluded from both streamed deltas and normalized text.
+- **Misleading provider/model in stream logs** — `stream_turn_started` bound
+  the request context *after* logging, so a reused worker thread stamped the
+  previous request's model onto the new turn's log lines.
+
 ### Added
+
+- `gemini-3.7-flash` in both provider catalogues, pinned to `temperature: 0`
+  via `MODEL_TEMPERATURES` / `resolve_temperature()` in `providers/config.py`.
+- **LLM turn tracing** — `gemini_stream_chunk` (per chunk: part kinds,
+  finish_reason, usage), `gemini_stream_end`, `gemini_complete_result`,
+  `gemini_stream_tool_call`, plus `tool_declaration_names` on every request
+  log so it is visible whether tool schemas actually reached the API.
+- **`gemini_empty_response` warning** — one line carrying finish_reason,
+  prompt_block_reason, part kinds and thought tokens whenever a turn
+  produces neither text nor a tool call.
+- **`orchestrator_no_tool_calls` / `orchestrator_empty_llm_response`
+  warnings** and a `stream_collected` summary (chunks, deltas, text length,
+  `used_final_message`, tool calls, usage).
+- **`LOG_LLM_TRACE=1`** env flag — dumps every raw Gemini response and
+  stream chunk as JSON.
 
 - `TurnInput.session_id` field — `TurnInput` now carries the session
   identifier so it can serve as the single DTO across all layers.

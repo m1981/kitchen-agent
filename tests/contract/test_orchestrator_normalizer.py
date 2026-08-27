@@ -337,8 +337,9 @@ class TestAnthropicStreamingBug:
             turn_input=TurnInput(user_message="Hello"),
         ))
 
-        text_events = [e for e in events if e["type"] == "text_delta"]
-        assert len(text_events) >= 1
+        # The turn completes: the stop event was skipped and the result was
+        # taken from __final_message__, not from the last raw chunk.
+        assert [e for e in events if e["type"] == "done"]
 
 
 class TestMimoStreamingBug:

@@ -495,6 +495,41 @@ class TurnOrchestrator:
 
         assert normalized is not None, "LLM returned no response"
 
+        self._log.info(
+            "orchestrator_llm_first_response",
+            provider=provider_name,
+            model=actual_model,
+            text_len=len(normalized.text),
+            tool_calls=[tc.name for tc in normalized.tool_calls] or None,
+            tools_offered=len(context.tool_schemas) if context.tool_schemas else 0,
+            usage=normalized.usage,
+        )
+
+        # Tools were on the wire but the model answered straight away — either
+        # it genuinely needed nothing, or the schemas/prompt did not land.
+        if turn_input.use_tools and context.tool_schemas and not normalized.has_tool_calls:
+            self._log.warning(
+                "orchestrator_no_tool_calls",
+                provider=provider_name,
+                model=actual_model,
+                tools_offered=len(context.tool_schemas),
+                text_len=len(normalized.text),
+                hint=(
+                    "model answered without searching the KB — compare with the "
+                    "provider-level trace: were declarations sent, and what "
+                    "finish_reason came back?"
+                ),
+            )
+
+        if not normalized.text and not normalized.has_tool_calls:
+            self._log.warning(
+                "orchestrator_empty_llm_response",
+                provider=provider_name,
+                model=actual_model,
+                streaming=streaming,
+                usage=normalized.usage,
+            )
+
         # ── 3. Guard: hallucinated tools when use_tools=False ───────────
         if normalized.has_tool_calls and not turn_input.use_tools:
             self._log.warning(
@@ -775,24 +810,59 @@ class TurnOrchestrator:
         final_message: Any = None
         last_raw_chunk: Any = None
         accumulated_text = ""
+        chunk_count = 0
+        delta_count = 0
 
         for chunk in provider.stream(context):
             if isinstance(chunk, dict) and chunk.get("type") == "__final_message__":
                 final_message = chunk["message"]
                 continue
 
+            chunk_count += 1
             last_raw_chunk = chunk
             text_delta = self._normalizer.normalize_chunk(chunk, provider_name)
             if text_delta:
+                delta_count += 1
                 accumulated_text += text_delta
                 yield {"type": "text_delta", "content": text_delta}
 
         message_to_normalize = final_message if final_message is not None else last_raw_chunk
-        if message_to_normalize is not None:
-            normalized = self._normalizer.normalize(message_to_normalize, provider_name)
-            if accumulated_text:
-                normalized.text = accumulated_text
-            yield {"type": "__normalized__", "response": normalized}
+        if message_to_normalize is None:
+            self._log.warning(
+                "stream_produced_no_message",
+                where="stream",
+                provider=provider_name,
+                chunks=chunk_count,
+            )
+            return
+
+        normalized = self._normalizer.normalize(message_to_normalize, provider_name)
+        if accumulated_text:
+            normalized.text = accumulated_text
+
+        # ``used_final_message=False`` means tool calls were read off whichever
+        # chunk arrived last — the provider is not emitting __final_message__
+        # and tool calls in earlier chunks are invisible from here.
+        self._log.info(
+            "stream_collected",
+            where="stream",
+            provider=provider_name,
+            chunks=chunk_count,
+            text_deltas=delta_count,
+            text_len=len(normalized.text),
+            used_final_message=final_message is not None,
+            tool_calls=[tc.name for tc in normalized.tool_calls] or None,
+            usage=normalized.usage,
+        )
+        if final_message is None:
+            self._log.warning(
+                "stream_no_final_message",
+                where="stream",
+                provider=provider_name,
+                hint="normalizing the last raw chunk — tool calls sent earlier are lost",
+            )
+
+        yield {"type": "__normalized__", "response": normalized}
 
     def _stream_and_collect_with_tools(
         self,
@@ -812,21 +882,56 @@ class TurnOrchestrator:
         final_message: Any = None
         last_raw_chunk: Any = None
         accumulated_text = ""
+        chunk_count = 0
+        delta_count = 0
 
         for chunk in provider.stream_with_tools(context, tool_calls, tool_results):
             if isinstance(chunk, dict) and chunk.get("type") == "__final_message__":
                 final_message = chunk["message"]
                 continue
 
+            chunk_count += 1
             last_raw_chunk = chunk
             text_delta = self._normalizer.normalize_chunk(chunk, provider_name)
             if text_delta:
+                delta_count += 1
                 accumulated_text += text_delta
                 yield {"type": "text_delta", "content": text_delta}
 
         message_to_normalize = final_message if final_message is not None else last_raw_chunk
-        if message_to_normalize is not None:
-            normalized = self._normalizer.normalize(message_to_normalize, provider_name)
-            if accumulated_text:
-                normalized.text = accumulated_text
-            yield {"type": "__normalized__", "response": normalized}
+        if message_to_normalize is None:
+            self._log.warning(
+                "stream_produced_no_message",
+                where="stream_with_tools",
+                provider=provider_name,
+                chunks=chunk_count,
+            )
+            return
+
+        normalized = self._normalizer.normalize(message_to_normalize, provider_name)
+        if accumulated_text:
+            normalized.text = accumulated_text
+
+        # ``used_final_message=False`` means tool calls were read off whichever
+        # chunk arrived last — the provider is not emitting __final_message__
+        # and tool calls in earlier chunks are invisible from here.
+        self._log.info(
+            "stream_collected",
+            where="stream_with_tools",
+            provider=provider_name,
+            chunks=chunk_count,
+            text_deltas=delta_count,
+            text_len=len(normalized.text),
+            used_final_message=final_message is not None,
+            tool_calls=[tc.name for tc in normalized.tool_calls] or None,
+            usage=normalized.usage,
+        )
+        if final_message is None:
+            self._log.warning(
+                "stream_no_final_message",
+                where="stream_with_tools",
+                provider=provider_name,
+                hint="normalizing the last raw chunk — tool calls sent earlier are lost",
+            )
+
+        yield {"type": "__normalized__", "response": normalized}
