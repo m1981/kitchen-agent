@@ -49,6 +49,53 @@ PARAMETRY_UMOWY = {
     "KOSZT_MAGAZYNOWANIA": "50",
 }
 
+# --- Nazwy dokumentów: JEDNO ŹRÓDŁO PRAWDY ---------------------------------
+# Odmieniamy wyłącznie część rodzajową nazwy ("Załącznik nr 1", "Umowa o Dzieło").
+# Tytuł opisowy (TYTUL) jest nieodmienny i występuje jako cytat w nawiasie —
+# zgodnie z praktyką legislacyjną. Dzięki temu zmiana nazwy dokumentu w tym
+# jednym miejscu propaguje się na wszystkie 4 szablony w poprawnej gramatyce.
+#
+# Przypadki: M mianownik, D dopełniacz, C celownik, B biernik,
+#            N narzędnik, MS miejscownik. Każdy dostaje też wariant _CAPS.
+NAZWY_DOKUMENTOW = {
+    "UMOWA": {
+        "TYTUL": "Projekt, Wykonanie i Montaż Zabudowy Meblowej",
+        "M": "Umowa o Dzieło",
+        "D": "Umowy o Dzieło",
+        "C": "Umowie o Dzieło",
+        "B": "Umowę o Dzieło",
+        "N": "Umową o Dzieło",
+        "MS": "Umowie o Dzieło",
+    },
+    "ZAL_1": {
+        "TYTUL": "Projekt i Specyfikacja Materiałowa",
+        "M": "Załącznik nr 1",
+        "D": "Załącznika nr 1",
+        "C": "Załącznikowi nr 1",
+        "B": "Załącznik nr 1",
+        "N": "Załącznikiem nr 1",
+        "MS": "Załączniku nr 1",
+    },
+    "ZAL_2": {
+        "TYTUL": "Karta Pielęgnacji i Użytkowania Zabudowy Kuchennej",
+        "M": "Załącznik nr 2",
+        "D": "Załącznika nr 2",
+        "C": "Załącznikowi nr 2",
+        "B": "Załącznik nr 2",
+        "N": "Załącznikiem nr 2",
+        "MS": "Załączniku nr 2",
+    },
+    "PROTOKOL": {
+        "TYTUL": "Protokół Zdawczo-Odbiorczy Zabudowy Meblowej",
+        "M": "Protokół Zdawczo-Odbiorczy",
+        "D": "Protokołu Zdawczo-Odbiorczego",
+        "C": "Protokołowi Zdawczo-Odbiorczemu",
+        "B": "Protokół Zdawczo-Odbiorczy",
+        "N": "Protokołem Zdawczo-Odbiorczym",
+        "MS": "Protokole Zdawczo-Odbiorczym",
+    },
+}
+
 DANE_KLIENTA = {
     "IMIE_NAZWISKO": "Anna Nowak",
     "ADRES": "ul. Kwiatowa 15/2, 50-001 Wrocław",
@@ -77,18 +124,52 @@ PODZIAL_TRANSZ = {
 class DokumentSpec:
     """Opis jednego dokumentu w drzewie i jego reguł numeracji."""
 
-    def __init__(self, plik: str, tytul: str, numer_umowy: bool):
+    def __init__(self, plik: str, prefiks: str, numer_umowy: bool):
         self.plik = plik
-        self.tytul = tytul
+        self.prefiks = prefiks  # klucz w NAZWY_DOKUMENTOW
         self.numer_umowy = numer_umowy  # True = MUSI zawierać, False = NIE MOŻE
+
+    @property
+    def tytul(self) -> str:
+        """Nazwa dokumentu — z tego samego źródła co szablony, żeby logi i
+        komunikaty błędów nie rozjechały się z treścią umowy."""
+        formy = NAZWY_DOKUMENTOW[self.prefiks]
+        if formy["TYTUL"].startswith(formy["M"]):
+            return formy["TYTUL"]
+        return f"{formy['M']} — {formy['TYTUL']}"
 
 
 DRZEWO_DOKUMENTOW = [
-    DokumentSpec("umowa_template.md", "Umowa Główna", numer_umowy=True),
-    DokumentSpec("zalacznik1_template.md", "Załącznik nr 1 (Projekt i Specyfikacja)", numer_umowy=False),
-    DokumentSpec("instrukcja_template.md", "Załącznik nr 2 (Karta Pielęgnacji)", numer_umowy=False),
-    DokumentSpec("protokol_template.md", "Protokół Zdawczo-Odbiorczy", numer_umowy=True),
+    DokumentSpec("umowa_template.md", "UMOWA", numer_umowy=True),
+    DokumentSpec("zalacznik1_template.md", "ZAL_1", numer_umowy=False),
+    DokumentSpec("instrukcja_template.md", "ZAL_2", numer_umowy=False),
+    DokumentSpec("protokol_template.md", "PROTOKOL", numer_umowy=True),
 ]
+
+
+# Nazwy własne dokumentów, które NIE MOGĄ pojawić się w szablonie na twardo —
+# muszą wejść przez {{ZMIENNĄ}}, inaczej tracimy gwarancję spójności.
+WZORCE_NAZW_WLASNYCH = (
+    re.compile(r"Za[łl]\w*cznik\w*(?:\s+nr\s*\d+)?", re.IGNORECASE),
+    re.compile(r"Protok[oó][l\u0142]\w*", re.IGNORECASE),
+    re.compile(r"Umow\w*\s+o\s+[Dd]zie[łl]\w*", re.IGNORECASE),
+    re.compile(r"Kart\w*\s+Piel\w*gnacji", re.IGNORECASE),
+    re.compile(r"Instrukcj\w*", re.IGNORECASE),
+)
+
+# Frazy odnoszące się do dokumentów OSÓB TRZECICH (producenci AGD, okuć),
+# a nie do naszego drzewa dokumentów — detektor musi je przepuścić.
+WYJATKI_NAZW = (
+    "Instrukcji obsługi",
+    "Instrukcja obsługi",
+    "instrukcji obsługi",
+    # Liczba mnoga to rzeczownik pospolity ("wymienione załączniki"),
+    # a nie nazwa własna konkretnego dokumentu.
+    "Załączniki",
+    "załączniki",
+    "załączników",
+    "załącznikami",
+)
 
 
 class BladGeneratora(Exception):
@@ -244,9 +325,12 @@ def zbuduj_zmienne(dane_klienta: dict, kwota: Decimal, dzien: datetime.date) -> 
 
     transze = podziel_na_transze(kwota)
 
+    sprawdz_kompletnosc_nazw()
+
     zmienne: dict[str, str] = {}
     zmienne.update(DANE_FIRMY)
     zmienne.update(PARAMETRY_UMOWY)
+    zmienne.update(rozwin_nazwy_dokumentow())
     zmienne.update({k: str(v) for k, v in dane_klienta.items()})
 
     zmienne["DATA_UMOWY"] = f"{dzien:%d.%m.%Y}"
@@ -274,6 +358,54 @@ def zbuduj_zmienne(dane_klienta: dict, kwota: Decimal, dzien: datetime.date) -> 
 # ============================================================================
 
 
+PRZYPADKI = ("TYTUL", "M", "D", "C", "B", "N", "MS")
+
+
+def sprawdz_kompletnosc_nazw() -> None:
+    """Brakująca forma = {{ZAL_2_MS}} bez odpowiednika i wysypka przy renderowaniu."""
+    for prefiks, formy in NAZWY_DOKUMENTOW.items():
+        braki = [k for k in PRZYPADKI if not formy.get(k, "").strip()]
+        if braki:
+            raise BladGeneratora(f"NAZWY_DOKUMENTOW['{prefiks}']: brakuje form: {', '.join(braki)}")
+
+
+def rozwin_nazwy_dokumentow() -> dict[str, str]:
+    """
+    NAZWY_DOKUMENTOW -> płaskie zmienne szablonu.
+    "ZAL_1" + "D" -> {{ZAL_1_D}} = "Załącznika nr 1"
+                     {{ZAL_1_D_CAPS}} = "ZAŁĄCZNIKA NR 1"
+    """
+    zmienne: dict[str, str] = {}
+    for prefiks, formy in NAZWY_DOKUMENTOW.items():
+        for przypadek, tekst in formy.items():
+            zmienne[f"{prefiks}_{przypadek}"] = tekst
+            zmienne[f"{prefiks}_{przypadek}_CAPS"] = tekst.upper()
+    return zmienne
+
+
+def kontrola_nazw_dokumentow(spec: DokumentSpec, tresc: str) -> None:
+    """
+    Wyłapuje nazwę dokumentu wpisaną w szablonie na twardo zamiast przez zmienną.
+    Bez tego jedna literówka ("Instrukcja Użytkowania" zamiast "Karta Pielęgnacji")
+    tworzy w umowie odesłanie do nieistniejącego dokumentu.
+    """
+    tekst = WZORZEC_ZMIENNEJ.sub("", tresc)  # tagi {{...}} są z definicji spójne
+    for wyjatek in WYJATKI_NAZW:
+        tekst = tekst.replace(wyjatek, "")
+
+    trafienia: list[str] = []
+    for nr, linia in enumerate(tekst.splitlines(), start=1):
+        for wzorzec in WZORCE_NAZW_WLASNYCH:
+            for dopasowanie in wzorzec.finditer(linia):
+                trafienia.append(f"    linia {nr}: {dopasowanie.group(0)!r}")
+
+    if trafienia:
+        raise BladGeneratora(
+            f"{spec.plik}: nazwa dokumentu wpisana na twardo zamiast przez zmienną "
+            f"(patrz NAZWY_DOKUMENTOW):\n" + "\n".join(trafienia)
+        )
+
+
 def sprawdz_regule_numeracji(spec: DokumentSpec, tresc: str) -> None:
     """Reguła prawna: załączniki są parafowane i zszywane — nie wolno im nosić numeru umowy."""
     zawiera = "{{NUMER_UMOWY}}" in tresc
@@ -298,6 +430,7 @@ def renderuj(spec: DokumentSpec, zmienne: dict[str, str]) -> tuple[str, set[str]
         raise BladGeneratora(f"Szablon {spec.plik} nie jest w UTF-8: {exc}") from exc
 
     sprawdz_regule_numeracji(spec, tresc)
+    kontrola_nazw_dokumentow(spec, tresc)
 
     uzyte = set(WZORZEC_ZMIENNEJ.findall(tresc))
     nieznane = sorted(uzyte - zmienne.keys())
@@ -325,7 +458,9 @@ def generuj_dokument(zmienne: dict[str, str]) -> str:
         wszystkie_uzyte |= uzyte
         print(f"  [OK] {spec.plik:<26} {spec.tytul}")
 
-    nieuzyte = sorted(zmienne.keys() - wszystkie_uzyte)
+    # Odmiany nazw to gotowy słownik do dyspozycji szablonów — nieużyty
+    # przypadek nie jest usterką. Ostrzegamy tylko o danych konkretnej umowy.
+    nieuzyte = sorted(zmienne.keys() - wszystkie_uzyte - rozwin_nazwy_dokumentow().keys())
     if nieuzyte:
         print(f"  [!]  Zmienne zdefiniowane, ale nieużyte w szablonach: {', '.join(nieuzyte)}")
 

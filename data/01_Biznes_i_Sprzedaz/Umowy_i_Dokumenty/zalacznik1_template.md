@@ -1,7 +1,7 @@
-**ZAŁĄCZNIK NR 1 DO UMOWY O DZIEŁO**
-*(Projekt i Specyfikacja Materiałowa)*
+**{{ZAL_1_M_CAPS}} DO {{UMOWA_D_CAPS}}**
+*({{ZAL_1_TYTUL}})*
 
-# PROJEKT I SPECYFIKACJA MATERIAŁOWA ZABUDOWY
+# {{ZAL_1_TYTUL_CAPS}}
 
 | | |
 |---|---|
@@ -9,14 +9,14 @@
 | **Miejsce montażu** | {{ADRES_MONTAZU}} |
 | **Data akceptacji projektu** | ________________________ |
 
-> **Uwaga:** Niniejszy załącznik jest zszywany z Umową Główną i autoryzowany parafką obu stron. Akceptacja niniejszego dokumentu („zamrożenie projektu”) uruchamia produkcję. Zmiany zgłoszone po tej dacie wymagają Aneksu, wiążą się z dodatkowym kosztem i wydłużają termin realizacji (§ 3 pkt 4 Umowy).
+> **Uwaga:** {{ZAL_1_M}} jest zszywany z {{UMOWA_N}} i autoryzowany parafką obu stron. Akceptacja niniejszego dokumentu („zamrożenie projektu”) uruchamia produkcję. Zmiany zgłoszone po tej dacie wymagają Aneksu, wiążą się z dodatkowym kosztem i wydłużają termin realizacji (§ 3 pkt 4 {{UMOWA_D}}).
 
 ### 1. RZUTY I WIZUALIZACJE
-Do niniejszego załącznika dołącza się i parafuje:
+Do {{ZAL_1_D}} dołącza się i parafuje:
 1. Rzut z góry z wymiarami (wydruk z programu projektowego) — szt. ______
 2. Widoki 3D / wizualizacje — szt. ______
 
-Zamawiający potwierdza, że zapoznał się z rzutami i wizualizacjami oraz przyjmuje do wiadomości ich poglądowy charakter (§ 1 pkt 3 Umowy).
+Zamawiający potwierdza, że zapoznał się z rzutami i wizualizacjami oraz przyjmuje do wiadomości ich poglądowy charakter (§ 1 pkt 3 {{UMOWA_D}}).
 
 ### 2. TABELA MATERIAŁOWA
 *(Wypełnić dokładnymi kodami dekorów i producentów — kod dekoru jest wiążący dla obu stron.)*

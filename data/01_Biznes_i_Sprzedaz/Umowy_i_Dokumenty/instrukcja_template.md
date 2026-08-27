@@ -1,14 +1,14 @@
-**ZAŁĄCZNIK NR 2 DO UMOWY O DZIEŁO**
-*(Karta Pielęgnacji i Użytkowania)*
+**{{ZAL_2_M_CAPS}} DO {{UMOWA_D_CAPS}}**
+*({{ZAL_2_TYTUL}})*
 
 **{{FIRMA_NAZWA}}**
 
-# KARTA PIELĘGNACJI I UŻYTKOWANIA ZABUDOWY KUCHENNEJ
+# {{ZAL_2_TYTUL_CAPS}}
 
 Szanowni Państwo,
 Dziękujemy za zaufanie i wybór naszej firmy. Państwa kuchnia została wykonana z najwyższej jakości materiałów oraz niezawodnych systemów okuć. Aby meble zachowały swój nienaganny wygląd i funkcjonalność przez wiele lat, prosimy o zapoznanie się z poniższymi zasadami użytkowania.
 
-**Przestrzeganie poniższej instrukcji jest warunkiem zachowania {{OKRES_GWARANCJI_MIESIACE}}-miesięcznej gwarancji na zabudowę meblową.**
+**Przestrzeganie poniższych zasad jest warunkiem zachowania {{OKRES_GWARANCJI_MIESIACE}}-miesięcznej gwarancji na zabudowę meblową.**
 
 ### 1. PIELĘGNACJA FRONTÓW (W TYM FRONTÓW MATOWYCH)
 Fronty meblowe wymagają delikatnego traktowania. Niewłaściwe czyszczenie to najczęstsza przyczyna ich nieodwracalnego uszkodzenia.
@@ -41,7 +41,7 @@ Osoba kontaktowa: {{FIRMA_REPREZENTANT}}
 ---
 
 **OŚWIADCZENIE ZAMAWIAJĄCEGO**
-Oświadczam, że zapoznałem/am się z powyższą Instrukcją Pielęgnacji i Użytkowania, rozumiem jej treść i akceptuję fakt, że uszkodzenia wynikające z nieprzestrzegania powyższych zasad nie podlegają naprawom gwarancyjnym.
+Oświadczam, że zapoznałem/am się z {{ZAL_2_N}} ({{ZAL_2_TYTUL}}), rozumiem jego treść i akceptuję fakt, że uszkodzenia wynikające z nieprzestrzegania powyższych zasad nie podlegają naprawom gwarancyjnym.
 
 Miejscowość, data: ________________________
 
