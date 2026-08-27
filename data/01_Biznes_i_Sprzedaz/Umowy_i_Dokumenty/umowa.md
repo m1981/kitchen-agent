@@ -1,20 +1,19 @@
 #### UMOWA O DZIEŁO NR _____ / _____ / 202___ r.   
 *(Projekt, Wykonanie i Montaż Zabudowy Meblowej)*        
         
-Zawarta w dniu ____________________ r. w ____________________ pomiędzy:  
+Zawarta w dniu {{DATA_UMOWY}} w {{MIEJSCOWOSC}}  pomiędzy:  
  
 **ZAMAWIAJĄCYM:**        
 * **Imię i Nazwisko:** ____________________________________________________  
 * **Adres zamieszkania:** ________________________________________________  
 * **PESEL / NIP:** _______________________________________________________  
-* **Telefon:** ____________________ **E-mail:** _______________________________  
         
 a        
         
 **WYKONAWCĄ:**        
-* **Nazwa Firmy / Imię i Nazwisko:** ________________________________________  
-* **Adres:** ____________________________________________________________  
-* **NIP:** ______________________________________________________________
+* {{FIRMA_NAZWA}} reprezentowana przez: {{FIRMA_REPREZENTANT}} 
+* **Adres:** {{FIRMA_ADRES}}    
+* **NIP:** {{FIRMA_NIP}}
         
 ### § 1. Przedmiot Umowy  
 1. Zamawiający zleca, a Wykonawca zobowiązuje się do **zaprojektowania, wykonania, dostarczenia i montażu** zabudowy meblowej (zwanej dalej „Dziełem”) w lokalu pod adresem: ____________________________________________________________  
