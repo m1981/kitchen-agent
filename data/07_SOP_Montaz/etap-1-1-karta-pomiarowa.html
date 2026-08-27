@@ -25,21 +25,26 @@
             .checkbox-inline {
                 margin-right: 15px;
             }
+            /* Style dla obrazków CAD */
+            .cad-rules { margin: 20px 0; }
+            .rules-grid { display: flex; gap: 15px; }
+            .rule-card { flex: 1; border: 1px solid #ddd; padding: 10px; text-align: center; background: #f9f9f9; }
+            .img-placeholder { height: 100px; background: #eee; margin-top: 10px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; border: 1px dashed #ccc;}
         </style>
     </head>
     <body>
-        <div class="container">
+        <div class="container" style="max-width: 1000px; margin: 0 auto; font-family: Arial, sans-serif;">
             <div style="margin-bottom: 20px">
                 <a
                     href="index.html"
-                    style="text-decoration: none; color: var(--primary-color); font-weight: bold"
+                    style="text-decoration: none; color: var(--primary-color, #2c3e50); font-weight: bold"
                     >← Powrót do Panelu Głównego</a
                 >
             </div>
 
             <h1>KARTA POMIAROWA (ETAP 1.1)</h1>
 
-            <table style="margin-bottom: 20px">
+            <table style="margin-bottom: 20px; width: 100%;">
                 <tr>
                     <td style="width: 50%">
                         <strong>Inwestycja / Klient:</strong>
@@ -59,7 +64,7 @@
                 style="
                     margin-bottom: 20px;
                     padding: 10px;
-                    border: 1px solid var(--border-color);
+                    border: 1px solid #ddd;
                     background-color: #fdfefe;
                 "
             >
@@ -68,9 +73,8 @@
                 <label class="checkbox-inline"
                     ><input type="checkbox" /> Podłoga docelowa leży</label
                 >
-                <label class="checkbox-inline"
-                    ><input type="checkbox" /> Stan surowy (uwaga!)</label
-                >
+                <label class="checkbox-inline"><input type="checkbox" /> Listwy przypodłogowe (do demontażu!)</label>
+                <label class="checkbox-inline"><input type="checkbox" /> Stan surowy (uwaga!)</label>
                 <div style="margin-top: 10px">
                     <strong>Brakujące warstwy (ile mm doliczyć do projektu?):</strong>
                     <input
@@ -90,6 +94,13 @@
             <label><input type="radio" name="sciana" value="silikat" /> Silikat / Cegła</label>
             <label><input type="radio" name="sciana" value="gazobeton" /> Gazobeton (Ytong)</label>
             <label><input type="radio" name="sciana" value="gk" /> Karton-Gips (GK) ⚠️</label>
+            <br /><br />
+
+            <strong>☁️ Rodzaj sufitu (ważne przy zabudowie do samej góry):</strong><br />
+            <label><input type="radio" name="sufit" value="beton" /> Twardy (Beton/Tynk)</label>
+            <label><input type="radio" name="sufit" value="gk" /> Podwieszany (Karton-Gips) ⚠️</label>
+            <br /><br />
+
             <div class="cad-rules">
                 <div class="rules-grid">
                     <div class="rule-card">
@@ -119,14 +130,14 @@
                     projektu.</em
                 >
             </p>
-            <table>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;" border="1" cellpadding="5">
                 <thead>
-                    <tr>
+                    <tr style="background-color: #f2f2f2;">
                         <th style="width: 25%">Wymiar [mm]</th>
                         <th style="width: 15%; text-align: center">Dół / Lewo</th>
                         <th style="width: 15%; text-align: center">Środek</th>
                         <th style="width: 15%; text-align: center">Góra / Prawo</th>
-                        <th style="width: 15%; text-align: center; background-color: #e67e22">
+                        <th style="width: 15%; text-align: center; background-color: #e67e22; color: white;">
                             BAZA (MIN)
                         </th>
                         <th style="width: 15%">Uwagi</th>
@@ -147,7 +158,7 @@
                         <td class="highlight-base" style="text-align: center">
                             <input type="text" class="input-small" style="font-weight: bold" />
                         </td>
-                        <td><input type="text" /></td>
+                        <td><input type="text" style="width: 90%;" /></td>
                     </tr>
                     <tr>
                         <td><strong>Szerokość Ściany B (Boczna)</strong></td>
@@ -163,7 +174,7 @@
                         <td class="highlight-base" style="text-align: center">
                             <input type="text" class="input-small" style="font-weight: bold" />
                         </td>
-                        <td><input type="text" /></td>
+                        <td><input type="text" style="width: 90%;" /></td>
                     </tr>
                     <tr>
                         <td><strong>Wysokość pomieszczenia</strong></td>
@@ -179,12 +190,12 @@
                         <td class="highlight-base" style="text-align: center">
                             <input type="text" class="input-small" style="font-weight: bold" />
                         </td>
-                        <td><input type="text" /></td>
+                        <td><input type="text" style="width: 90%;" /></td>
                     </tr>
                 </tbody>
             </table>
 
-            <table style="margin-bottom: 30px">
+            <table style="margin-bottom: 30px; width: 100%;">
                 <tr>
                     <td style="width: 50%">
                         <strong>Kąt Narożnik Lewy:</strong>
@@ -210,14 +221,22 @@
                     margin-bottom: 30px;
                 "
             >
-                <strong>🪟 Detale Okna i Parapetu (Analiza Kolizji):</strong><br />
-                <label
-                    ><input type="checkbox" /> Czy bateria zlewozmywakowa zablokuje otwarcie
-                    okna?</label
-                ><br /><br />
-                Wysokość od podłogi do spodu parapetu: <input type="text" class="input-small" /> mm
-                | Głębokość parapetu: <input type="text" class="input-small" /> mm | Oś okna (od
-                narożnika): <input type="text" class="input-small" /> mm
+                <strong>🪟 Detale Okna, Parapetu i Grzejnika (Analiza Kolizji):</strong><br /><br />
+                <label><input type="checkbox" /> Czy bateria zlewozmywakowa zablokuje otwarcie okna?</label><br />
+                <label><input type="checkbox" /> Czy pod oknem/na ścianie jest grzejnik blokujący szafki?</label><br /><br />
+
+                Wysokość od podłogi do spodu parapetu: <input type="text" class="input-small" /> mm |
+                Głębokość parapetu: <input type="text" class="input-small" /> mm <br /><br />
+
+                Oś okna (od narożnika): <input type="text" class="input-small" /> mm |
+                Kierunek otwierania:
+                <select class="input-small" style="width: 100px;">
+                    <option>Lewe</option>
+                    <option>Prawe</option>
+                    <option>Uchylne</option>
+                </select><br /><br />
+
+                Głębokość grzejnika (ile odstaje od ściany): <input type="text" class="input-small" /> mm
             </div>
 
             <!-- ========================================== -->
@@ -330,8 +349,8 @@
                     </tr>
                     <tr>
                         <td colspan="4" style="background-color: #fdfefe">
-                            <strong>Przeszkody naścienne (Rury CO, skrzynki, termostaty):</strong
-                            ><br />
+                            <label><input type="checkbox" /> <strong>Rury natynkowe (gaz/CO)</strong> - wymagane odsunięcie korpusów o: <input type="text" class="input-small" /> mm</label><br /><br />
+                            <strong>Inne przeszkody naścienne (skrzynki, termostaty):</strong><br />
                             <input
                                 type="text"
                                 style="width: 100%; margin-top: 5px"
@@ -342,24 +361,44 @@
                 </tbody>
             </table>
 
-            <div class="warning-box">
-                ⚠️ KONTROLA ZMYWARKI: Czy za planowanym miejscem zmywarki ściana jest w 100% pusta?
-                <div class="checkbox-group">
-                    <label><input type="radio" name="zmywarka" value="tak" /> TAK</label>
-                    <label style="margin-left: 20px"
-                        ><input type="radio" name="zmywarka" value="nie" /> NIE</label
-                    >
-                </div>
-                <div style="margin-top: 10px">
-                    <input type="text" placeholder="Jeśli NIE, co tam jest i kto to przenosi?" />
-                </div>
+            <!-- ZAKTUALIZOWANE: Strefa Krytyczna AGD -->
+            <div class="warning-box" style="background-color: #ffebee; border: 2px solid #e74c3c; padding: 15px; border-radius: 5px; margin-top: 20px; margin-bottom: 30px;">
+                <h3 style="color: #c0392b; margin-top: 0;">⚠️ KRYTYCZNA KONTROLA STREFY AGD (Zmywarka, Lodówka, Piekarnik)</h3>
+                <p style="margin-bottom: 10px;"><strong>ZASADA:</strong> Za tymi sprzętami ściana MUSI być w 100% pusta. Wtyczki i rury zablokują wsunięcie sprzętu!</p>
+
+                <table style="width: 100%; background-color: white; border-collapse: collapse;" border="1" cellpadding="8">
+                    <tr>
+                        <td style="width: 40%;"><strong>ZMYWARKA:</strong> Czy ściana za nią jest pusta?</td>
+                        <td style="width: 20%;">
+                            <label><input type="radio" name="zmywarka_pusta" value="tak" /> TAK</label>
+                            <label style="margin-left: 10px;"><input type="radio" name="zmywarka_pusta" value="nie" /> NIE</label>
+                        </td>
+                        <td><input type="text" placeholder="Jeśli NIE, co tam jest?" style="width: 95%;" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>LODÓWKA:</strong> Czy gniazdko jest w szafce obok/nad?</td>
+                        <td>
+                            <label><input type="radio" name="lodowka_gniazdo" value="tak" /> TAK</label>
+                            <label style="margin-left: 10px;"><input type="radio" name="lodowka_gniazdo" value="nie" /> NIE</label>
+                        </td>
+                        <td><input type="text" placeholder="Jeśli NIE, gdzie przenieść?" style="width: 95%;" /></td>
+                    </tr>
+                    <tr>
+                        <td><strong>PIEKARNIK:</strong> Czy ściana za nim jest pusta (brak puszki siłowej)?</td>
+                        <td>
+                            <label><input type="radio" name="piekarnik_pusty" value="tak" /> TAK</label>
+                            <label style="margin-left: 10px;"><input type="radio" name="piekarnik_pusty" value="nie" /> NIE</label>
+                        </td>
+                        <td><input type="text" placeholder="Jeśli NIE, gdzie przenieść?" style="width: 95%;" /></td>
+                    </tr>
+                </table>
             </div>
 
             <!-- ========================================== -->
             <!-- SEKCJA D: LOGISTYKA                        -->
             <!-- ========================================== -->
             <h2 class="section-header">🚚 D. LOGISTYKA I OTOCZENIE</h2>
-            <table style="margin-bottom: 30px">
+            <table style="margin-bottom: 30px; width: 100%;">
                 <tr>
                     <td style="width: 50%">
                         <strong>Winda (Szer x Gł x Wys):</strong>
@@ -375,7 +414,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td colspan="2" style="padding-top: 15px;">
                         <strong>Parking (Rozładunek busa):</strong>
                         <input
                             type="text"

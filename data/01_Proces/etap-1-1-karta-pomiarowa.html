@@ -265,24 +265,68 @@
         </tbody>
     </table>
 
-    <div class="grid-3" style="margin-top:6px;">
+    <div class="grid-4" style="margin-top:6px;">
         <div class="form-group">
-            <label>Kąt narożnika (Kątownik/Laser):</label>
-            <input type="text" placeholder="np. 90.5° / 89° (Blenda min. 5cm!)">
+            <label>Kąt narożnika (Laser):</label>
+            <input type="text" placeholder="np. 90.5° / 89°">
+        </div>
+        <div class="form-group">
+            <label>Rodzaj sufitu:</label>
+            <select>
+                <option>Twardy (Beton/Tynk)</option>
+                <option>Podwieszany (Karton-Gips) ⚠️</option>
+            </select>
         </div>
         <div class="form-group">
             <label>Słupek pod sufit (Przekątna!):</label>
-            <input type="text" placeholder="Luz min. 25-30mm + blenda górna">
+            <input type="text" placeholder="Luz min. 25-30mm">
         </div>
         <div class="form-group">
-            <label>Poziom podłogi (Spadek na cokole):</label>
-            <input type="text" placeholder="Różnica poziomu lewo-prawo (mm)">
+            <label>Poziom podłogi (Spadek):</label>
+            <input type="text" placeholder="Różnica lewo-prawo (mm)">
+        </div>
+    </div>
+
+    <!-- 2B. OKNA, GRZEJNIKI I PRZESZKODY -->
+    <div class="section-title">2b. Okna, Grzejniki i Przeszkody (Analiza Kolizji)</div>
+    <div class="grid-4">
+        <div class="form-group">
+            <label>Wys. do parapetu (mm):</label>
+            <input type="text" placeholder="Od podłogi">
+        </div>
+        <div class="form-group">
+            <label>Głębokość parapetu:</label>
+            <input type="text" placeholder="mm">
+        </div>
+        <div class="form-group">
+            <label>Oś okna (od lewej):</label>
+            <input type="text" placeholder="X = mm">
+        </div>
+        <div class="form-group">
+            <label>Kierunek otwierania:</label>
+            <select>
+                <option>Brak / Nie dotyczy</option>
+                <option>Lewe</option>
+                <option>Prawe</option>
+                <option>Tylko uchylne</option>
+            </select>
+        </div>
+    </div>
+    <div class="grid-3" style="margin-top:6px; margin-bottom: 10px;">
+        <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox"> <strong style="color:#dc2626;">Kolizja baterii z oknem!</strong></label>
+        </div>
+        <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox"> Grzejnik (Odstaje na: <input type="text" style="width:40px; padding:2px;" placeholder="mm"> )</label>
+        </div>
+        <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox"> Listwy przypodłogowe (do demontażu)</label>
         </div>
     </div>
 
     <!-- 3. WYMAGANIA AGD I WENTYLACJA (KRYTYCZNE ZASADY DOŚCIENNE) -->
     <div class="section-title">3. Weryfikacja AGD, Odstępy Ścienne i Wentylacja</div>
-    
+
     <div class="critical-box">
         <strong>⚠️ ZAKAZ GNIAZDEK ZA AGD:</strong> Gniazdka <strong>NIE MOGĄ</strong> znajdować się bezpośrednio za lodówką do zabudowy, piekarnikiem ani zmywarką! Wtyczka wypchnie sprzęt przed linię frontów. Gniazdka lokujemy w szafkach sąsiednich, a w HDF projektujemy wycięcia pod kable.
     </div>
@@ -450,6 +494,23 @@
                 • Korpusy: U164 VL<br>
                 • Blat: Egger HPL 12mm Czarny Monolit
             </div>
+        </div>
+    </div>
+
+    <!-- 5B. LOGISTYKA -->
+    <div class="section-title">5b. Logistyka i Transport (Krytyczne dla blatów HPL)</div>
+    <div class="grid-3">
+        <div class="form-group">
+            <label>Winda (Szer x Gł x Wys):</label>
+            <input type="text" placeholder="Przekątna max = ... mm">
+        </div>
+        <div class="form-group">
+            <label>Klatka schodowa / Drzwi:</label>
+            <input type="text" placeholder="Szerokość drzwi / Zakręty">
+        </div>
+        <div class="form-group">
+            <label>Parking / Rozładunek:</label>
+            <input type="text" placeholder="Gdzie stajemy busem?">
         </div>
     </div>
 
