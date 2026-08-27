@@ -91,6 +91,9 @@ class ToolCallDetail:
     is_error: bool = False
     call_tokens: int = 0    # tokens in the tool call arguments
     result_tokens: int = 0  # tokens in the tool result content
+    # Passed straight through to the stored history — a replayed function call
+    # without it is rejected by Gemini 3 thinking models.
+    thought_signature: str | None = None
 
 
 @dataclass
@@ -208,6 +211,7 @@ class TurnOrchestrator:
                 is_error=tr.is_error,
                 call_tokens=tc.token_count,
                 result_tokens=tr.token_count,
+                thought_signature=tc.thought_signature,
             ))
 
         return normalized.tool_calls, tool_results

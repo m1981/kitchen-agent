@@ -187,14 +187,17 @@ class ChatService:
 
         # Tool call/response pairs
         for detail in output.tool_details:
+            tool_call: dict = {
+                "id": detail.id,
+                "name": detail.name,
+                "arguments": detail.arguments,
+            }
+            if detail.thought_signature:
+                tool_call["thought_signature"] = detail.thought_signature
             updated.append({
                 "role": "assistant",
                 "content": "",
-                "tool_calls": [{
-                    "id": detail.id,
-                    "name": detail.name,
-                    "arguments": detail.arguments,
-                }],
+                "tool_calls": [tool_call],
                 "token_count": detail.call_tokens,
             })
             updated.append({

@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`400 INVALID_ARGUMENT: Function call is missing a thought_signature`** —
+  `complete_with_tools()` / `stream_with_tools()` rebuilt the model's
+  function-call turn from `ToolCall` and appended it *again*, after
+  `complete()` / `_consume_stream()` had already stored the model's own
+  `Content`. The duplicate carried no `thought_signature`, which Gemini 3
+  thinking models require back on every replayed call. The existing turn is
+  now reused (`_ensure_tool_call_turn()`); the rebuild survives as a fallback
+  and restores the signature from the stored history.
+- **Signatures now survive session storage** — `thought_signature` travels
+  `ToolCall` → `ToolCallDetail` → common history (base64) →
+  `_coerce_history_for_gemini()`, so follow-up turns replay a valid context.
+- **Sessions recorded before that** are no longer a dead end: the missing
+  signature 400 is caught once, the unsigned call/result pairs are dropped
+  from the replayed context, and the request is retried
+  (`gemini_retry_without_unsigned_tool_calls`).
+
 - **Gemini streaming lost tool calls** — `GeminiProvider.stream()` /
   `stream_with_tools()` now emit `{"type": "__final_message__"}` with all
   accumulated parts, like the Anthropic and MiMo providers already did.

@@ -23,6 +23,8 @@ from typing import Any
 
 import structlog
 
+from src.message_format import encode_thought_signature
+
 logger = structlog.get_logger(__name__)
 
 
@@ -98,17 +100,16 @@ def _gemini_content_to_common(content: Any, turn_id: str | None) -> dict | None:
         msg: dict[str, Any] = {"role": role, "content": part.text}
 
     elif part.function_call is not None:
-        msg = {
-            "role": "assistant",
-            "content": "",
-            "tool_calls": [
-                {
-                    "id": part.function_call.id or "",
-                    "name": part.function_call.name,
-                    "arguments": part.function_call.args or {},
-                }
-            ],
+        tool_call: dict[str, Any] = {
+            "id": part.function_call.id or "",
+            "name": part.function_call.name,
+            "arguments": part.function_call.args or {},
         }
+        # Keep the thinking model's signature — a replay without it is refused.
+        signature = encode_thought_signature(getattr(part, "thought_signature", None))
+        if signature:
+            tool_call["thought_signature"] = signature
+        msg = {"role": "assistant", "content": "", "tool_calls": [tool_call]}
 
     elif part.function_response is not None:
         msg = {

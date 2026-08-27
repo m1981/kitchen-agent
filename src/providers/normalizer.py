@@ -34,7 +34,8 @@ from typing import Any
 
 # Single canonical ToolCall — defined in tool_executor, re-exported here
 # so normalizer consumers don't need to import from agent.tool_executor.
-from src.agent.tool_executor import ToolCall  # noqa: F401
+from src.agent.tool_executor import ToolCall
+from src.message_format import encode_thought_signature  # noqa: F401
 
 log = structlog.get_logger(__name__)
 
@@ -171,6 +172,9 @@ class ResponseNormalizer:
                         id=call_id,
                         name=fc.name,
                         arguments=dict(fc.args) if fc.args else {},
+                        thought_signature=encode_thought_signature(
+                            getattr(part, "thought_signature", None)
+                        ),
                     )
                 )
 

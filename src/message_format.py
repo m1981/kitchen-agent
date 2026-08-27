@@ -20,7 +20,8 @@ Format (OpenAI-compatible):
     "role": "assistant",
     "content": "Let me search...",
     "tool_calls": [
-        {"id": "call_123", "name": "search", "arguments": {"query": "..."}}
+        {"id": "call_123", "name": "search", "arguments": {"query": "..."},
+         "thought_signature": "<base64>"}     # optional, Gemini 3 thinking models
     ]
 }
 
@@ -31,6 +32,7 @@ All messages may include an optional "turn_id" field for stable identity.
 """
 from __future__ import annotations
 
+import base64
 from typing import Any, TypedDict
 
 
@@ -38,6 +40,32 @@ class ToolCallDict(TypedDict, total=False):
     id: str
     name: str
     arguments: dict[str, Any]
+    # Opaque token a thinking model attaches to its function call.  Gemini 3
+    # rejects a request (400 INVALID_ARGUMENT) that replays a function call
+    # without it, so it has to survive JSON storage — hence base64 of the
+    # raw bytes rather than the bytes themselves.
+    thought_signature: str
+
+
+def encode_thought_signature(signature: bytes | None) -> str | None:
+    """SDK bytes → base64 str for JSON storage.  ``None`` passes through."""
+    if not signature:
+        return None
+    if isinstance(signature, str):
+        return signature
+    return base64.b64encode(signature).decode("ascii")
+
+
+def decode_thought_signature(signature: str | None) -> bytes | None:
+    """base64 str → SDK bytes.  Malformed input is dropped, never raised."""
+    if not signature:
+        return None
+    if isinstance(signature, bytes):
+        return signature
+    try:
+        return base64.b64decode(signature, validate=True)
+    except (ValueError, TypeError):
+        return None
 
 
 class MessageDict(TypedDict, total=False):

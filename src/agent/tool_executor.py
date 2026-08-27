@@ -51,6 +51,9 @@ class ToolCall:
     name: str
     arguments: dict
     token_count: int = 0  # token count for the call arguments
+    # base64 of the model's thought_signature, when the provider supplies one.
+    # Gemini 3 requires it back on every replay of this call.
+    thought_signature: str | None = None
 
 
 @dataclass

@@ -30,6 +30,7 @@ from google import genai
 from google.genai import types
 
 from src.logger import LOG_LLM_TRACE, log_timing
+from src.message_format import decode_thought_signature
 from src.agent.tool_executor import ToolCall, ToolExecutor, ToolResult
 from src.providers.normalizer import ResponseNormalizer
 from src.tools.file_ops import read_file
@@ -263,13 +264,19 @@ def _coerce_history_for_gemini(history: list) -> list:
                 tc_name = tc.get("name", "unknown")
                 if tc_id:
                     tool_id_to_name[tc_id] = tc_name
+                # A thinking model rejects its own replayed function call when
+                # the signature is missing, so it is restored from storage here.
+                signature = decode_thought_signature(tc.get("thought_signature"))
+                if not signature:
+                    log.debug("gemini_tool_call_without_signature", tool_name=tc_name)
                 parts.append(
                     types.Part(
                         function_call=types.FunctionCall(
                             name=tc_name,
                             args=tc.get("arguments", {}),
                             id=tc.get("id", ""),
-                        )
+                        ),
+                        thought_signature=signature,
                     )
                 )
 
@@ -310,6 +317,48 @@ def _coerce_history_for_gemini(history: list) -> list:
         )
 
     return result
+
+
+def _is_missing_signature_error(exc: Exception) -> bool:
+    """Recognise 400 INVALID_ARGUMENT about a missing ``thought_signature``."""
+    return "thought_signature" in str(exc)
+
+
+def _strip_unsigned_tool_calls(history: list) -> tuple[list, int]:
+    """
+    Drop function calls that carry no ``thought_signature`` — and the responses
+    that answer them, which would otherwise dangle.
+
+    Only used as a recovery step: sessions recorded before signatures were
+    persisted replay unsigned calls, which a thinking model refuses outright.
+    Losing those pairs costs the model the memory of one search; keeping them
+    costs the whole conversation.
+    """
+    unsigned_ids: set[str] = set()
+    cleaned: list = []
+    dropped = 0
+
+    for content in history:
+        parts = getattr(content, "parts", None) or []
+        kept = []
+        for part in parts:
+            call = getattr(part, "function_call", None)
+            if call is not None and not getattr(part, "thought_signature", None):
+                unsigned_ids.add(call.id or call.name)
+                dropped += 1
+                continue
+            response = getattr(part, "function_response", None)
+            if response is not None and (response.id or response.name) in unsigned_ids:
+                dropped += 1
+                continue
+            kept.append(part)
+
+        if not parts:
+            cleaned.append(content)
+        elif kept:
+            cleaned.append(types.Content.model_construct(role=content.role, parts=kept))
+
+    return cleaned, dropped
 
 
 # ---------------------------------------------------------------------------
@@ -420,11 +469,7 @@ class GeminiProvider:
         )
 
         with log_timing(log, "gemini_complete_end") as timing:
-            response = self._client.models.generate_content(
-                model=self._model,
-                contents=self._conversation_state,
-                config=types.GenerateContentConfig(**config_kwargs),
-            )
+            response = self._generate(config_kwargs)
 
         # Log response metadata
         if response.usage_metadata:
@@ -494,22 +539,7 @@ class GeminiProvider:
             tool_results_errors=[tr.name for tr in tool_results if tr.is_error],
         )
 
-        # Build tool call message (assistant Content with function_call parts)
-        parts: list[types.Part] = []
-        for tc in tool_calls:
-            parts.append(types.Part(
-                function_call=types.FunctionCall(
-                    name=tc.name, args=tc.arguments, id=tc.id,
-                )
-            ))
-            log.debug(
-                "gemini_tool_call_sent",
-                tool_name=tc.name,
-                tool_call_id=tc.id,
-                args_keys=list(tc.arguments.keys()),
-            )
-        tool_call_content = types.Content(role="model", parts=parts)
-        self._conversation_state.append(tool_call_content)
+        self._ensure_tool_call_turn(tool_calls)
 
         # Build tool result message (user Content with function_response parts)
         result_parts: list[types.Part] = []
@@ -548,11 +578,7 @@ class GeminiProvider:
         config_kwargs["temperature"] = self._temperature
 
         with log_timing(log, "gemini_complete_with_tools_end") as timing:
-            response = self._client.models.generate_content(
-                model=self._model,
-                contents=self._conversation_state,
-                config=types.GenerateContentConfig(**config_kwargs),
-            )
+            response = self._generate(config_kwargs)
 
         if response.usage_metadata:
             timing["input_tokens"] = response.usage_metadata.prompt_token_count
@@ -580,6 +606,118 @@ class GeminiProvider:
             self._conversation_state.append(response.candidates[0].content)
 
         return response
+
+    def _generate(self, config_kwargs: dict) -> Any:
+        """One non-streaming call, retried once without unsigned tool calls."""
+        try:
+            return self._client.models.generate_content(
+                model=self._model,
+                contents=self._conversation_state,
+                config=types.GenerateContentConfig(**config_kwargs),
+            )
+        except Exception as exc:
+            if not _is_missing_signature_error(exc):
+                raise
+            self._drop_unsigned_tool_calls(exc)
+            return self._client.models.generate_content(
+                model=self._model,
+                contents=self._conversation_state,
+                config=types.GenerateContentConfig(**config_kwargs),
+            )
+
+    def _generate_stream(self, config_kwargs: dict) -> Iterator[Any]:
+        """
+        One streaming call, retried once without unsigned tool calls.
+
+        The SDK sends the request lazily, so the first chunk is pulled here —
+        that is what surfaces a 400 early enough to retry.
+        """
+        def _open() -> tuple[Iterator[Any], Any]:
+            stream = iter(self._client.models.generate_content_stream(
+                model=self._model,
+                contents=self._conversation_state,
+                config=types.GenerateContentConfig(**config_kwargs),
+            ))
+            return stream, next(stream, None)
+
+        try:
+            stream, first = _open()
+        except Exception as exc:
+            if not _is_missing_signature_error(exc):
+                raise
+            self._drop_unsigned_tool_calls(exc)
+            stream, first = _open()
+
+        if first is not None:
+            yield first
+        yield from stream
+
+    def _drop_unsigned_tool_calls(self, exc: Exception) -> None:
+        """Recovery for history recorded before signatures were persisted."""
+        self._conversation_state, dropped = _strip_unsigned_tool_calls(
+            self._conversation_state
+        )
+        log.warning(
+            "gemini_retry_without_unsigned_tool_calls",
+            model=self._model,
+            parts_dropped=dropped,
+            error=str(exc)[:300],
+            hint="session history predates thought_signature persistence — "
+                 "the affected tool call/result pairs were removed from the "
+                 "replayed context",
+        )
+
+    def _ensure_tool_call_turn(self, tool_calls: list["ToolCall"]) -> None:
+        """
+        Make sure the model's function-call turn precedes the tool results.
+
+        It is normally already there: ``complete()`` and ``_consume_stream()``
+        append the model's own ``Content``, whose parts carry the
+        ``thought_signature`` that Gemini 3 requires to be echoed back.
+        Rebuilding those parts from ``ToolCall`` appended a *second*, duplicate
+        turn without the signature — which the API rejects with
+        ``400 INVALID_ARGUMENT: Function call is missing a thought_signature``.
+
+        The rebuild remains as a fallback for a conversation state that has no
+        model turn to reuse (fresh provider instance, replayed history).
+        """
+        last = self._conversation_state[-1] if self._conversation_state else None
+        existing_parts = (getattr(last, "parts", None) or []) if getattr(last, "role", None) == "model" else []
+        existing_calls = [p for p in existing_parts if getattr(p, "function_call", None)]
+
+        if [p.function_call.name for p in existing_calls] == [tc.name for tc in tool_calls]:
+            log.debug(
+                "gemini_tool_call_turn_reused",
+                tool_names=[tc.name for tc in tool_calls],
+                signatures_present=sum(
+                    1 for p in existing_calls if getattr(p, "thought_signature", None)
+                ),
+            )
+            return
+
+        parts: list[types.Part] = []
+        for tc in tool_calls:
+            parts.append(types.Part(
+                function_call=types.FunctionCall(
+                    name=tc.name, args=tc.arguments, id=tc.id,
+                ),
+                thought_signature=decode_thought_signature(tc.thought_signature),
+            ))
+            log.debug(
+                "gemini_tool_call_sent",
+                tool_name=tc.name,
+                tool_call_id=tc.id,
+                args_keys=list(tc.arguments.keys()),
+                has_signature=bool(tc.thought_signature),
+            )
+        log.warning(
+            "gemini_tool_call_turn_rebuilt",
+            tool_names=[tc.name for tc in tool_calls],
+            signatures_present=sum(1 for tc in tool_calls if tc.thought_signature),
+            hint="no model turn to reuse — without thought_signature a thinking "
+                 "model rejects the request with 400 INVALID_ARGUMENT",
+        )
+        self._conversation_state.append(types.Content(role="model", parts=parts))
 
     def _consume_stream(self, chunks: Iterator[Any], where: str) -> Iterator[Any]:
         """
@@ -767,11 +905,7 @@ class GeminiProvider:
         )
 
         yield from self._consume_stream(
-            self._client.models.generate_content_stream(
-                model=self._model,
-                contents=self._conversation_state,
-                config=types.GenerateContentConfig(**config_kwargs),
-            ),
+            self._generate_stream(config_kwargs),
             where="stream",
         )
 
@@ -797,22 +931,7 @@ class GeminiProvider:
             tool_results_errors=[tr.name for tr in tool_results if tr.is_error],
         )
 
-        # Build tool call message (assistant Content with function_call parts)
-        parts: list[types.Part] = []
-        for tc in tool_calls:
-            parts.append(types.Part(
-                function_call=types.FunctionCall(
-                    name=tc.name, args=tc.arguments, id=tc.id,
-                )
-            ))
-            log.debug(
-                "gemini_tool_call_sent",
-                tool_name=tc.name,
-                tool_call_id=tc.id,
-                args_keys=list(tc.arguments.keys()),
-            )
-        tool_call_content = types.Content(role="model", parts=parts)
-        self._conversation_state.append(tool_call_content)
+        self._ensure_tool_call_turn(tool_calls)
 
         # Build tool result message (user Content with function_response parts)
         result_parts: list[types.Part] = []
@@ -852,10 +971,6 @@ class GeminiProvider:
         config_kwargs["temperature"] = self._temperature
 
         yield from self._consume_stream(
-            self._client.models.generate_content_stream(
-                model=self._model,
-                contents=self._conversation_state,
-                config=types.GenerateContentConfig(**config_kwargs),
-            ),
+            self._generate_stream(config_kwargs),
             where="stream_with_tools",
         )

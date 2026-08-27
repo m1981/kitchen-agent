@@ -227,3 +227,138 @@ def test_resolved_temperature_is_sent_to_the_api() -> None:
 
     sent_config = p._client.models.generate_content.call_args[1]["config"]
     assert sent_config.temperature == 0.0
+
+
+# ---------------------------------------------------------------------------
+# thought_signature round-trip (Gemini 3 thinking models)
+# ---------------------------------------------------------------------------
+
+def test_tool_call_turn_is_reused_not_rebuilt(provider: GeminiProvider) -> None:
+    """
+    The model's own turn carries thought_signature; rebuilding it from ToolCall
+    would append a duplicate without the signature and the API answers
+    400 INVALID_ARGUMENT.
+    """
+    signed_part = types.Part(
+        function_call=types.FunctionCall(name="get_repo_map", args={}, id="tc1"),
+        thought_signature=b"sig-bytes",
+    )
+    model_turn = types.Content(role="model", parts=[signed_part])
+    provider._conversation_state = [
+        types.Content(role="user", parts=[types.Part(text="hi")]),
+        model_turn,
+    ]
+    provider._client.models.generate_content.return_value = _make_text_response("done")
+
+    provider.complete_with_tools(
+        _make_context(),
+        [ToolCall(id="tc1", name="get_repo_map", arguments={})],
+        [ToolResult(tool_call_id="tc1", name="get_repo_map", content="{}")],
+    )
+
+    call_turns = [
+        c for c in provider._conversation_state
+        if c.role == "model" and any(p.function_call for p in c.parts)
+    ]
+    assert len(call_turns) == 1, "the function-call turn must not be duplicated"
+    assert call_turns[0].parts[0].thought_signature == b"sig-bytes"
+
+
+def test_tool_call_turn_rebuilt_restores_signature(provider: GeminiProvider) -> None:
+    """With no model turn to reuse, the signature comes off the ToolCall."""
+    import base64
+
+    provider._conversation_state = [types.Content(role="user", parts=[types.Part(text="hi")])]
+    provider._client.models.generate_content.return_value = _make_text_response("done")
+
+    provider.complete_with_tools(
+        _make_context(),
+        [ToolCall(
+            id="tc1", name="get_repo_map", arguments={},
+            thought_signature=base64.b64encode(b"sig-bytes").decode(),
+        )],
+        [ToolResult(tool_call_id="tc1", name="get_repo_map", content="{}")],
+    )
+
+    rebuilt = [c for c in provider._conversation_state if c.role == "model"][0]
+    assert rebuilt.parts[0].thought_signature == b"sig-bytes"
+
+
+def test_stored_history_restores_signature() -> None:
+    """Signatures survive the JSON round-trip through session storage."""
+    import base64
+    from src.providers.gemini import _coerce_history_for_gemini
+
+    history = [{
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [{
+            "id": "tc1",
+            "name": "search_knowledge_base",
+            "arguments": {"pattern": "pomiar"},
+            "thought_signature": base64.b64encode(b"sig-bytes").decode(),
+        }],
+    }]
+
+    coerced = _coerce_history_for_gemini(history)
+
+    assert coerced[0].parts[0].thought_signature == b"sig-bytes"
+
+
+def test_legacy_history_retries_without_unsigned_calls(provider: GeminiProvider) -> None:
+    """
+    A session recorded before signatures were persisted must not be a dead end:
+    the 400 is caught once, the unsigned pairs are dropped, and the call is
+    retried instead of surfacing to the user.
+    """
+    from google.genai import errors
+
+    unsigned_call = types.Content(role="model", parts=[
+        types.Part(function_call=types.FunctionCall(name="get_repo_map", args={}, id="old1")),
+    ])
+    unsigned_result = types.Content(role="user", parts=[
+        types.Part(function_response=types.FunctionResponse(
+            name="get_repo_map", response={"files": []}, id="old1",
+        )),
+    ])
+    provider._conversation_state = [
+        types.Content(role="user", parts=[types.Part(text="hi")]),
+        unsigned_call,
+        unsigned_result,
+    ]
+
+    error = errors.ClientError.__new__(errors.ClientError)
+    Exception.__init__(
+        error,
+        "400 INVALID_ARGUMENT. Function call is missing a thought_signature in "
+        "functionCall parts.",
+    )
+    provider._client.models.generate_content.side_effect = [
+        error, _make_text_response("recovered"),
+    ]
+
+    response = provider._generate({"temperature": 0.0})
+
+    assert response.text == "recovered"
+    assert provider._client.models.generate_content.call_count == 2
+    replayed_parts = [p for c in provider._conversation_state for p in (c.parts or [])]
+    assert not [p for p in replayed_parts if p.function_call or p.function_response]
+
+
+def test_signed_calls_are_kept_when_stripping() -> None:
+    """Only the unsigned pairs go — signed history is untouched."""
+    from src.providers.gemini import _strip_unsigned_tool_calls
+
+    signed = types.Content(role="model", parts=[types.Part(
+        function_call=types.FunctionCall(name="read_file", args={}, id="new1"),
+        thought_signature=b"sig",
+    )])
+    unsigned = types.Content(role="model", parts=[types.Part(
+        function_call=types.FunctionCall(name="get_repo_map", args={}, id="old1"),
+    )])
+
+    cleaned, dropped = _strip_unsigned_tool_calls([signed, unsigned])
+
+    assert dropped == 1
+    assert len(cleaned) == 1
+    assert cleaned[0].parts[0].function_call.name == "read_file"

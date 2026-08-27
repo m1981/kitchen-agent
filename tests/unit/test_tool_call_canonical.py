@@ -33,7 +33,12 @@ class TestToolCallCanonicalSource:
 
         assert hasattr(ToolCall, "__dataclass_fields__")
         field_names = {f.name for f in fields(ToolCall)}
-        assert field_names == {"id", "name", "arguments", "token_count"}
+        assert field_names == {
+            "id", "name", "arguments", "token_count",
+            # provider-supplied, optional: Gemini 3 thinking models require it
+            # back on every replay of the call
+            "thought_signature",
+        }
 
     def test_normalizer_reexports_same_class(self):
         """normalizer.ToolCall must be the SAME class as tool_executor.ToolCall."""
