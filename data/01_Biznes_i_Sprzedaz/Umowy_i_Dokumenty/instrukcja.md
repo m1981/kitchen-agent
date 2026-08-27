@@ -1,4 +1,7 @@
-**[TWOJE LOGO / NAZWA FIRMY]**
+**ZAŁĄCZNIK NR 2 DO UMOWY O DZIEŁO**
+*(Karta Pielęgnacji i Użytkowania)*
+
+[TWOJE LOGO / NAZWA FIRMY]
 
 # KARTA PIELĘGNACJI I UŻYTKOWANIA ZABUDOWY KUCHENNEJ
 
@@ -10,14 +13,14 @@ Dziękujemy za zaufanie i wybór naszej firmy. Państwa kuchnia została wykonan
 ### 1. PIELĘGNACJA FRONTÓW (W TYM FRONTÓW MATOWYCH)
 Fronty meblowe wymagają delikatnego traktowania. Niewłaściwe czyszczenie to najczęstsza przyczyna ich nieodwracalnego uszkodzenia.
 *   **Zalecane:** Do codziennego czyszczenia należy używać wyłącznie miękkiej ściereczki (np. z mikrofibry) zwilżonej ciepłą wodą z dodatkiem łagodnego detergentu (np. odrobiny płynu do mycia naczyń lub szarego mydła). Po umyciu powierzchnię należy wytrzeć do sucha.
-*   **KATEGORYCZNIE ZABRONIONE:** Bezwzględnie zakazuje się używania tzw. **"magicznych gąbek" (gąbek melaminowych)**, mleczek z mikrogranulkami (np. Cif), proszków do szorowania, ostrych szczotek oraz agresywnej chemii (rozpuszczalniki, środki na bazie octu lub alkoholu). 
-*   *Ważne:* Użycie "magicznej gąbki" na froncie matowym zadziała jak drobny papier ścierny – usunie plamę, ale trwale wypoleruje (wybłyszczy) powierzchnię, co nie podlega reklamacji.
+* **KATEGORYCZNIE ZABRONIONE:** Bezwzględnie zakazuje się używania tzw. "magicznych gąbek" (gąbek melaminowych), mleczek z mikrogranulkami (np. Cif), proszków do szorowania, ostrych szczotek oraz agresywnej chemii (rozpuszczalniki, środki na bazie octu lub alkoholu).
+* **Ważne:** Użycie "magicznej gąbki" na froncie matowym zadziała jak drobny papier ścierny – usunie plamę, ale trwale wypoleruje (wybłyszczy) powierzchnię, co nie podlega reklamacji.
 
 ### 2. OCHRONA PRZED PARĄ WODNĄ I TEMPERATURĄ (AGD)
 Meble są odporne na standardowe warunki kuchenne, jednak bezpośrednie, długotrwałe uderzenia gorącej pary wodnej doprowadzą do uszkodzenia obrzeży i spuchnięcia płyt.
-*   **Zmywarka:** Po zakończeniu cyklu mycia **nie należy natychmiast otwierać drzwi zmywarki**. Prosimy odczekać minimum 30-40 minut, aż naczynia ostygną, a para skropli się wewnątrz urządzenia. Uderzenie gorącej pary na fronty i spód blatu to najczęstsza przyczyna ich rozklejenia.
+* **Zmywarka:** Po zakończeniu cyklu mycia nie należy natychmiast otwierać drzwi zmywarki. Prosimy odczekać minimum 30-40 minut, aż naczynia ostygną, a para skropli się wewnątrz urządzenia. Uderzenie gorącej pary na fronty i spód blatu to najczęstsza przyczyna ich rozklejenia.
 *   **Piekarnik:** Proces pieczenia musi odbywać się przy szczelnie zamkniętych drzwiach. Kategorycznie zabrania się uchylania drzwi piekarnika w celu jego "szybszego ostudzenia" po zakończeniu pieczenia.
-*   *Ważne:* Uszkodzenia mebli (puchnięcie, odklejanie obrzeży) wynikające z bezpośredniego działania pary ze zmywarki, piekarnika lub czajnika ustawionego bezpośrednio pod szafką górną, traktowane są jako uszkodzenia mechaniczne z winy użytkownika i nie są objęte gwarancją.
+* **Ważne:** Uszkodzenia mebli (puchnięcie, odklejanie obrzeży) wynikające z bezpośredniego działania pary ze zmywarki, piekarnika lub czajnika ustawionego bezpośrednio pod szafką górną, traktowane są jako uszkodzenia mechaniczne z winy użytkownika i nie są objęte gwarancją.
 
 ### 3. UŻYTKOWANIE BLATÓW ROBOCZYCH
 Blaty kuchenne (w tym blaty kompaktowe HPL) charakteryzują się wysoką trwałością, jednak nie są niezniszczalne.
@@ -35,6 +38,6 @@ Zastosowane w Państwa kuchni systemy zawiasów i szuflad to rozwiązania najwy�
 **OŚWIADCZENIE ZAMAWIAJĄCEGO**
 Oświadczam, że zapoznałem/am się z powyższą Instrukcją Pielęgnacji i Użytkowania, rozumiem jej treść i akceptuję fakt, że uszkodzenia wynikające z nieprzestrzegania powyższych zasad nie podlegają naprawom gwarancyjnym.
 
-Miejscowość, data: ........................................
+Miejscowość, data: ________________________
 
-Podpis Zamawiającego: ........................................................
+Podpis (Parafka) Zamawiającego: ________________________
