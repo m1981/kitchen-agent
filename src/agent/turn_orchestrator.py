@@ -52,7 +52,7 @@ from typing import Any, Iterator, Protocol
 
 import structlog
 from src.agent.context_assembler import AssembledContext, ContextAssembler
-from src.agent.tool_executor import ToolCall, ToolExecutor, ToolResult
+from src.agent.tool_executor import ToolCall, ToolExecutor, ToolResult, TurnFileGuard
 from src.logger import log_timing
 from src.providers.base import LLMProvider
 from src.providers.normalizer import NormalizedResponse, ResponseNormalizer
@@ -193,14 +193,18 @@ class TurnOrchestrator:
         self,
         normalized: NormalizedResponse,
         tool_details: list[ToolCallDetail],
+        guard: TurnFileGuard | None = None,
     ) -> tuple[list[ToolCall], list[ToolResult]]:
         """
         Execute tool calls and record details for history.
 
+        The guard spans the whole turn, so a file read in iteration 1 can be
+        edited in iteration 3.
+
         Returns:
             Tuple of (tool_calls, tool_results) for feeding back to the LLM.
         """
-        tool_results = self._tools.execute_all(normalized.tool_calls)
+        tool_results = self._tools.execute_all(normalized.tool_calls, guard=guard)
 
         for tc, tr in zip(normalized.tool_calls, tool_results):
             tool_details.append(ToolCallDetail(
@@ -552,6 +556,7 @@ class TurnOrchestrator:
         # ── 4. Agentic tool loop ────────────────────────────────────────
         tool_calls_made: list[str] = []
         tool_details: list[ToolCallDetail] = []
+        file_guard = TurnFileGuard()
         iterations = 0
         tool_tokens_used = 0
         tool_budget_tokens = self._get_tool_budget_tokens()
@@ -569,7 +574,9 @@ class TurnOrchestrator:
 
             # Execute tools
             with log_timing(self._log, "orchestrator_tools_executed"):
-                calls, results = self._execute_tool_calls(normalized, tool_details)
+                calls, results = self._execute_tool_calls(
+                    normalized, tool_details, guard=file_guard,
+                )
 
             # Token budget enforcement
             was_truncated = False

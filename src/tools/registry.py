@@ -81,11 +81,24 @@ class ToolEntry:
         declaration: The typed FunctionDeclaration sent to the Gemini API.
         fn:          The Python callable that executes when the model picks that tool.
         category:    Logical grouping for filtering and discovery.
+        marks_read:  This tool shows the model a file's current content, which
+                     satisfies the read-before-edit rule for that path.
+        requires_prior_read:
+                     This tool rewrites a file and is refused unless the same
+                     path was read earlier in the same turn.  The rule lives on
+                     the entry, not in the executor, so a new mutating tool
+                     opts in by declaring it.
+        path_argument:
+                     Name of the argument holding the file path, used by the
+                     two flags above.
     """
 
     declaration: types.FunctionDeclaration
     fn: Callable[..., dict]  # type: ignore[type-arg]
     category: ToolCategory = ToolCategory.FILE_OPERATIONS
+    marks_read: bool = False
+    requires_prior_read: bool = False
+    path_argument: str = "filepath"
 
 
 # ---------------------------------------------------------------------------
@@ -197,10 +210,14 @@ _read_file_entry = ToolEntry(
     declaration=types.FunctionDeclaration(
         name="read_file",
         description=(
-            "Reads the full contents of a local markdown file. "
-            "CRITICAL: You MUST use this tool to read a file BEFORE you attempt to use edit_file. "
-            "You cannot edit a file safely without reading its exact current contents first. "
-            "IMPORTANT: Note the file path and line numbers for your source citations."
+            "Reads a markdown file as numbered lines. "
+            "CRITICAL: You MUST call this on a path BEFORE you use edit_file on it — "
+            "edit_file refuses a file you have not read in this turn. "
+            "Returns up to 300 lines per call; the header states which lines you got "
+            "and out of how many. When it says the file continues, call again with "
+            "offset set to the next line — never edit a file whose end you have not seen. "
+            "The 'N: ' prefix is display only: cite those numbers, but NEVER include "
+            "them in edit_file's search_text."
         ),
         parameters=types.Schema(
             type=types.Type.OBJECT,
@@ -214,13 +231,24 @@ _read_file_entry = ToolEntry(
                         "Absolute paths and '..' are rejected."
                     ),
                 ),
+                "offset": types.Schema(
+                    type=types.Type.INTEGER,
+                    description="First line to return, 1-based. Omit to start at line 1.",
+                ),
+                "limit": types.Schema(
+                    type=types.Type.INTEGER,
+                    description="How many lines to return. Omit for the default 300.",
+                ),
             },
             required=["filepath"],
         ),
     ),
     # base_dir is fixed to settings.data_dir — never exposed to the LLM.
-    fn=lambda filepath: read_file(filepath, base_dir=str(settings.data_dir)),
+    fn=lambda filepath, offset=None, limit=None: read_file(
+        filepath, base_dir=str(settings.data_dir), offset=offset, limit=limit,
+    ),
     category=ToolCategory.FILE_OPERATIONS,
+    marks_read=True,
 )
 
 _edit_file_entry = ToolEntry(
@@ -230,8 +258,14 @@ _edit_file_entry = ToolEntry(
             "Edits an existing file using exact search and replace. "
             "CRITICAL RULES: "
             "1. You MUST know the EXACT existing text. "
-            "2. If you have not called read_file on this path yet, do so NOW before using this tool. "
-            "3. Do not ask the user for the text, find it yourself."
+            "2. read_file on this exact path is REQUIRED first — this tool is refused "
+            "otherwise, and it is refused for good reason: text you have not seen may "
+            "match in the wrong place. "
+            "3. Copy search_text from the file content WITHOUT the 'N: ' line-number "
+            "prefix that read_file adds for display. "
+            "4. Make search_text long enough to be unique — every match is replaced. "
+            "5. Do not ask the user for the text, find it yourself. "
+            "The result contains a unified diff: check it says what you intended."
         ),
         parameters=types.Schema(
             type=types.Type.OBJECT,
@@ -266,6 +300,7 @@ _edit_file_entry = ToolEntry(
         base_dir=str(settings.data_dir),
     ),
     category=ToolCategory.FILE_OPERATIONS,
+    requires_prior_read=True,
 )
 
 _create_file_entry = ToolEntry(

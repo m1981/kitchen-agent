@@ -22,6 +22,7 @@ backup_dir, keeping this module decoupled from settings.
 Use revert_backup(revert_id, backup_dir) to atomically restore a file.
 """
 
+import difflib
 import json
 import re
 import uuid
@@ -101,6 +102,36 @@ def _resolve_kb_path(filepath: str, base_dir: str | Path | None) -> tuple[Path, 
         }
 
     return target, target.relative_to(root_resolved).as_posix(), None
+
+
+_LINE_NUMBER_PREFIX = re.compile(r"^\s*\d+:\s?")
+
+
+def _strip_line_numbers(text: str) -> str:
+    """
+    Drop the ``N: `` prefixes that read_file adds for display.
+
+    Only when *every* non-empty line carries one — otherwise the text is taken
+    literally, so a document that genuinely starts lines with digits and a
+    colon is never mangled.
+    """
+    lines = text.split("\n")
+    meaningful = [ln for ln in lines if ln.strip()]
+    if not meaningful or not all(_LINE_NUMBER_PREFIX.match(ln) for ln in meaningful):
+        return text
+    return "\n".join(_LINE_NUMBER_PREFIX.sub("", ln) if ln.strip() else ln for ln in lines)
+
+
+def _render_diff(before: str, after: str, label: str, max_lines: int = 40) -> str:
+    """Unified diff of what actually changed — the model's only feedback loop."""
+    diff = list(difflib.unified_diff(
+        before.splitlines(), after.splitlines(),
+        fromfile=f"{label} (before)", tofile=f"{label} (after)",
+        lineterm="", n=2,
+    ))
+    if len(diff) > max_lines:
+        diff = diff[:max_lines] + [f"... ({len(diff) - max_lines} more diff lines)"]
+    return "\n".join(diff)
 
 
 def _read_path(filepath: str, base_dir: str | Path | None = None) -> tuple[Path, dict | None]:
@@ -215,15 +246,69 @@ def revert_backup(revert_id: str, backup_dir: Path) -> dict:
 # Public tool functions
 # ---------------------------------------------------------------------------
 
-def read_file(filepath: str, base_dir: str | Path | None = None) -> dict:
-    """Reads a file and returns its content or an error message."""
+# Lines returned by one read_file call when the model asks for no window.
+# A whole 20 KB document is ~6k tokens — a quarter of the tool-result budget
+# for the entire turn — and once the budget truncates it the model silently
+# edits against text whose end it never saw.
+DEFAULT_READ_LIMIT = 300
+
+
+def read_file(
+    filepath: str,
+    base_dir: str | Path | None = None,
+    offset: int | None = None,
+    limit: int | None = None,
+) -> dict:
+    """
+    Read a file as **numbered lines**, optionally a window of them.
+
+    ``offset`` is 1-based and inclusive; ``limit`` counts lines.  The numbers
+    are what the model cites, and the header states exactly which slice it is
+    looking at so a partial read can never pass for the whole file.
+
+    The ``N: `` prefix is presentation only — ``edit_file`` strips it if the
+    model pastes it back, but the model is told not to.
+    """
     p, err = _read_path(filepath, base_dir)
     if err:
         return err
     try:
-        return {"content": p.read_text(encoding="utf-8")}
+        text = p.read_text(encoding="utf-8")
     except OSError as exc:
         return {"error": str(exc)}
+
+    if base_dir is None:
+        # Internal callers (context-file injection, REST layer) want the file
+        # verbatim — numbering and windowing are for the agent's read path,
+        # which is the one that carries a bound knowledge base root.
+        return {"content": text}
+
+    lines = text.splitlines()
+    total = len(lines)
+
+    try:
+        start = max(1, int(offset)) if offset is not None else 1
+        count = max(1, int(limit)) if limit is not None else DEFAULT_READ_LIMIT
+    except (TypeError, ValueError):
+        return {"error": "offset and limit must be integers."}
+
+    if total and start > total:
+        return {"error": f"offset {start} is past the end of the file ({total} lines)."}
+
+    window = lines[start - 1: start - 1 + count]
+    end = start + len(window) - 1
+    numbered = "\n".join(f"{n}: {line}" for n, line in enumerate(window, start=start))
+
+    kb_rel = _resolve_kb_path(filepath, base_dir)[1]
+    if start == 1 and end >= total:
+        header = f"[{kb_rel} — complete file, {total} line(s)]"
+    else:
+        header = (
+            f"[{kb_rel} — lines {start}-{end} of {total}. "
+            f"Call read_file again with offset={end + 1} for the rest.]"
+        )
+
+    return {"content": f"{header}\n{numbered}" if numbered else header}
 
 
 def edit_file(
@@ -253,11 +338,21 @@ def edit_file(
     except OSError as exc:
         return {"error": str(exc)}
 
-    if search_text not in content:
+    effective_search = search_text
+    effective_replace = replace_text
+    if effective_search not in content:
+        # The model pasted back what read_file displayed, line numbers included.
+        stripped_search = _strip_line_numbers(search_text)
+        if stripped_search != search_text and stripped_search in content:
+            effective_search = stripped_search
+            effective_replace = _strip_line_numbers(replace_text)
+
+    if effective_search not in content:
         return {
             "error": (
-                "Search text not found in file. "
-                "Please read the file again to ensure you have the exact text."
+                "Search text not found in file. Read the file again and copy the "
+                "exact current text — without the 'N: ' line-number prefix, which "
+                "is display only."
             )
         }
 
@@ -266,8 +361,9 @@ def edit_file(
     if backup_dir is not None:
         revert_id = _create_backup(target_path=p, backup_dir=backup_dir)
 
-    occurrences = content.count(search_text)
-    p.write_text(content.replace(search_text, replace_text), encoding="utf-8")
+    occurrences = content.count(effective_search)
+    updated = content.replace(effective_search, effective_replace)
+    p.write_text(updated, encoding="utf-8")
 
     # Report the resolved path, never the model's own input: a confirmation
     # that echoes a wrong path is what makes a lost edit look like a done one.
@@ -277,6 +373,9 @@ def edit_file(
             f"file is now {p.stat().st_size} bytes."
         )
     }
+    # What changed, not what was asked for — the model cannot otherwise tell a
+    # whitespace-off edit from the one it intended.
+    result["diff"] = _render_diff(content, updated, kb_rel)
     if occurrences > 1:
         result["warning"] = (
             f"search_text matched {occurrences} times and every match was replaced. "

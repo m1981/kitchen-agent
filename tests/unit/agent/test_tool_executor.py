@@ -209,7 +209,9 @@ class TestSyncExecution:
         results = executor.execute_all([
             ToolCall(id="1", name="sync_tool", arguments={})
         ])
-        assert results[0].content == "{'content': 'sync result'}"
+        # JSON, not Python repr — the same string is later read back with
+        # json.loads when the turn is replayed from session history.
+        assert results[0].content == '{"content": "sync result"}'
         assert results[0].is_error is False
 
     def test_dict_result_converted_to_string(self):

@@ -225,10 +225,7 @@ def _coerce_history_for_gemini(history: list) -> list:
 
             # Parse content as JSON response
             if isinstance(content, str):
-                try:
-                    response_dict: dict = json.loads(content)
-                except (json.JSONDecodeError, ValueError):
-                    response_dict = {"content": content}
+                response_dict: dict = _decode_tool_result(content)
             elif isinstance(content, dict):
                 response_dict = content
             else:
@@ -317,6 +314,25 @@ def _coerce_history_for_gemini(history: list) -> list:
         )
 
     return result
+
+
+def _decode_tool_result(content: str) -> dict:
+    """
+    Rebuild the dict a tool returned, for ``FunctionResponse.response``.
+
+    Tool results travel as JSON.  Sessions recorded before that carry a Python
+    ``repr`` instead, so that is tried second rather than losing their content
+    to the string wrapper.
+    """
+    try:
+        decoded = json.loads(content)
+    except (json.JSONDecodeError, TypeError, ValueError):
+        try:
+            import ast
+            decoded = ast.literal_eval(content)
+        except (ValueError, SyntaxError):
+            return {"content": content}
+    return decoded if isinstance(decoded, dict) else {"content": decoded}
 
 
 def _is_missing_signature_error(exc: Exception) -> bool:
@@ -544,11 +560,7 @@ class GeminiProvider:
         # Build tool result message (user Content with function_response parts)
         result_parts: list[types.Part] = []
         for tr in tool_results:
-            try:
-                import ast
-                response_dict = ast.literal_eval(tr.content)
-            except (ValueError, SyntaxError):
-                response_dict = {"content": tr.content}
+            response_dict = _decode_tool_result(tr.content)
             result_parts.append(types.Part(
                 function_response=types.FunctionResponse(
                     name=tr.name,
@@ -936,11 +948,7 @@ class GeminiProvider:
         # Build tool result message (user Content with function_response parts)
         result_parts: list[types.Part] = []
         for tr in tool_results:
-            try:
-                import ast
-                response_dict = ast.literal_eval(tr.content)
-            except (ValueError, SyntaxError):
-                response_dict = {"content": tr.content}
+            response_dict = _decode_tool_result(tr.content)
             result_parts.append(types.Part(
                 function_response=types.FunctionResponse(
                     name=tr.name,

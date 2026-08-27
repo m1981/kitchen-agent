@@ -254,7 +254,10 @@ class TestKnowledgeBasePathJail:
     def test_read_and_edit_use_the_same_root(self, tmp_path):
         (tmp_path / "notes.md").write_text("old value")
 
-        assert read_file("notes.md", base_dir=tmp_path)["content"] == "old value"
+        # The agent path returns numbered lines with a header stating the range.
+        shown = read_file("notes.md", base_dir=tmp_path)["content"]
+        assert "1: old value" in shown
+        assert "complete file, 1 line(s)" in shown
         result = edit_file("notes.md", "old", "new", base_dir=tmp_path)
 
         assert "error" not in result
