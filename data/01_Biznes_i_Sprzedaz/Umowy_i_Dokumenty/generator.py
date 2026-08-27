@@ -3,11 +3,14 @@
 """
 Generator dokumentacji prawnej dla zabudowy meblowej.
 
-Skleja 4 szablony Markdown w jeden plik wynikowy gotowy do eksportu do PDF:
-    1. umowa_template.md       -> Umowa Główna        (RODZIC, numer umowy: TAK)
-    2. zalacznik1_template.md  -> Załącznik nr 1      (DZIECKO, numer umowy: NIE)
-    3. instrukcja_template.md  -> Załącznik nr 2      (DZIECKO, numer umowy: NIE)
-    4. protokol_template.md    -> Protokół odbioru    (ZAMYKAJĄCY, numer umowy: TAK)
+Renderuje 4 szablony Markdown w dwa pliki wynikowe gotowe do eksportu do PDF:
+    FAZA 1 — dzień podpisania, jeden plik (dokumenty zszywane razem):
+      1. umowa_template.md       -> Umowa Główna     (RODZIC, numer umowy: TAK)
+      2. zalacznik1_template.md  -> Załącznik nr 1   (DZIECKO, numer umowy: NIE)
+      3. instrukcja_template.md  -> Załącznik nr 2   (DZIECKO, numer umowy: NIE)
+
+    FAZA 2 — ok. dnia 30, osobny plik (nie jest zszywany z umową):
+      4. protokol_template.md    -> Protokół odbioru (ZAMYKAJĄCY, numer umowy: TAK)
 
 Użycie:
     python generator.py klient.json        # generuje komplet dokumentów
@@ -30,6 +33,10 @@ from pathlib import Path
 # --- Ścieżki liczone względem pliku skryptu, nie względem cwd ----------------
 BAZA = Path(__file__).resolve().parent
 KATALOG_WYNIKOWY = BAZA / "wygenerowane"
+
+# Książka umów: jedyne źródło prawdy o tym, który numer został już wydany.
+# Zawiera dane osobowe, więc trzymana lokalnie i poza repozytorium.
+REJESTR_NUMEROW = BAZA / "numery.json"
 
 ZNACZNIK_STRONY = "<div style='page-break-after: always;'></div>"
 WZORZEC_ZMIENNEJ = re.compile(r"\{\{\s*([A-Z0-9_]+)\s*\}\}")
@@ -300,10 +307,11 @@ def pusty_formularz() -> dict:
 class DokumentSpec:
     """Opis jednego dokumentu w drzewie i jego reguł numeracji."""
 
-    def __init__(self, plik: str, prefiks: str, numer_umowy: bool):
+    def __init__(self, plik: str, prefiks: str, numer_umowy: bool, faza: int):
         self.plik = plik
         self.prefiks = prefiks  # klucz w NAZWY_DOKUMENTOW
         self.numer_umowy = numer_umowy  # True = MUSI zawierać, False = NIE MOŻE
+        self.faza = faza  # 1 = podpisanie umowy, 2 = odbiór prac
 
     @property
     def tytul(self) -> str:
@@ -315,12 +323,20 @@ class DokumentSpec:
         return f"{formy['M']} — {formy['TYTUL']}"
 
 
+# Faza 1 trafia do jednego pliku (dokumenty zszywane w dniu podpisania),
+# faza 2 do osobnego — protokół powstaje ok. miesiąc później i NIE jest
+# zszywany z umową, więc nie może wyjść z drukarki razem z nią.
 DRZEWO_DOKUMENTOW = [
-    DokumentSpec("umowa_template.md", "UMOWA", numer_umowy=True),
-    DokumentSpec("zalacznik1_template.md", "ZAL_1", numer_umowy=False),
-    DokumentSpec("instrukcja_template.md", "ZAL_2", numer_umowy=False),
-    DokumentSpec("protokol_template.md", "PROTOKOL", numer_umowy=True),
+    DokumentSpec("umowa_template.md", "UMOWA", numer_umowy=True, faza=1),
+    DokumentSpec("zalacznik1_template.md", "ZAL_1", numer_umowy=False, faza=1),
+    DokumentSpec("instrukcja_template.md", "ZAL_2", numer_umowy=False, faza=1),
+    DokumentSpec("protokol_template.md", "PROTOKOL", numer_umowy=True, faza=2),
 ]
+
+FAZY = {
+    1: {"etykieta": "Podpisanie umowy (dzień 0)", "przedrostek": "Umowa"},
+    2: {"etykieta": "Odbiór prac (ok. dnia 30)", "przedrostek": "Protokol"},
+}
 
 
 # Nazwy własne dokumentów, które NIE MOGĄ pojawić się w szablonie na twardo —
@@ -466,9 +482,8 @@ def kwota_slownie(kwota: Decimal) -> str:
 
 
 # ============================================================================
-# 6. NUMER UMOWY
+# 6. NUMER UMOWY I REJESTR
 # ============================================================================
-
 
 # Ł/ł nie mają dekompozycji NFD — trzeba je zmapować ręcznie.
 _TRANSLITERACJA = str.maketrans({"Ł": "L", "ł": "l"})
@@ -479,13 +494,76 @@ def _bez_ogonkow(tekst: str) -> str:
     return "".join(c for c in tekst if unicodedata.category(c) != "Mn")
 
 
-def generuj_numer_umowy(imie_nazwisko: str, dzien: datetime.date) -> str:
-    """'Anna Nowak' -> '2026/08/AN'. Obsługuje nazwiska dwuczłonowe i podwójne spacje."""
-    czlony = [c for c in re.split(r"[\s\-]+", imie_nazwisko.strip()) if c]
-    if not czlony:
-        raise BladGeneratora("Brak imienia i nazwiska — nie mogę wygenerować numeru umowy.")
-    inicjaly = "".join(_bez_ogonkow(c)[0] for c in czlony).upper()
-    return f"{dzien:%Y}/{dzien:%m}/{inicjaly}"
+def wczytaj_rejestr(sciezka: Path) -> list[dict]:
+    if not sciezka.exists():
+        return []
+    try:
+        dane = json.loads(sciezka.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise BladGeneratora(
+            f"Rejestr numerów {sciezka.name} jest uszkodzony (linia {exc.lineno}: {exc.msg}). "
+            f"Napraw go ręcznie — nie nadpisuję książki umów."
+        ) from None
+    wpisy = dane.get("umowy") if isinstance(dane, dict) else None
+    if not isinstance(wpisy, list):
+        raise BladGeneratora(f"Rejestr {sciezka.name} ma nieoczekiwaną strukturę (oczekiwano klucza 'umowy').")
+    return wpisy
+
+
+def zapisz_rejestr(sciezka: Path, wpisy: list[dict]) -> None:
+    sciezka.write_text(
+        json.dumps({"umowy": wpisy}, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8", newline="\n",
+    )
+
+
+def _kolejny_wolny(wpisy: list[dict], rok: int) -> str:
+    uzyte = []
+    for wpis in wpisy:
+        numer, _, rok_wpisu = str(wpis.get("numer", "")).partition("/")
+        if rok_wpisu == str(rok) and numer.isdigit():
+            uzyte.append(int(numer))
+    return f"{max(uzyte, default=0) + 1}/{rok}"
+
+
+def przydziel_numer(wpisy: list[dict], imie_nazwisko: str, dzien: datetime.date,
+                    zadany: str | None = None) -> tuple[str, bool]:
+    """
+    Zwraca (numer, czy_nowy). Numeracja porządkowa NN/RRRR.
+
+    Ponowne wygenerowanie tej samej umowy (np. po poprawce literówki w adresie)
+    odzyskuje wcześniej nadany numer zamiast palić kolejny — dopasowanie po
+    kliencie i dacie zawarcia.
+    """
+    data_umowy = f"{dzien:%d.%m.%Y}"
+    for wpis in wpisy:
+        if wpis.get("imie_nazwisko") == imie_nazwisko and wpis.get("data_umowy") == data_umowy:
+            if zadany and zadany != wpis["numer"]:
+                raise BladGeneratora(
+                    f"Umowa dla {imie_nazwisko} z dnia {data_umowy} ma już numer {wpis['numer']}, "
+                    f"a w danych podano {zadany}. Usuń NUMER_UMOWY z pliku albo popraw rejestr."
+                )
+            return wpis["numer"], False
+
+    if zadany:
+        for wpis in wpisy:
+            if wpis.get("numer") == zadany:
+                raise BladGeneratora(
+                    f"Numer {zadany} jest już zajęty przez umowę: {wpis.get('imie_nazwisko')} "
+                    f"z dnia {wpis.get('data_umowy')}. Numer umowy musi być unikalny."
+                )
+        return zadany, True
+
+    return _kolejny_wolny(wpisy, dzien.year), True
+
+
+def dopisz_do_rejestru(wpisy: list[dict], numer: str, imie_nazwisko: str,
+                       dzien: datetime.date) -> list[dict]:
+    return wpisy + [{
+        "numer": numer,
+        "imie_nazwisko": imie_nazwisko,
+        "data_umowy": f"{dzien:%d.%m.%Y}",
+    }]
 
 
 # ============================================================================
@@ -493,7 +571,7 @@ def generuj_numer_umowy(imie_nazwisko: str, dzien: datetime.date) -> str:
 # ============================================================================
 
 
-def zbuduj_zmienne(dane: DaneUmowy) -> dict[str, str]:
+def zbuduj_zmienne(dane: DaneUmowy, numer_umowy: str) -> dict[str, str]:
     """Składa słownik podstawień z danych wykonawcy, parametrów umownych,
     nazw dokumentów i zwalidowanych danych klienta."""
     transze = podziel_na_transze(dane.kwota)
@@ -507,9 +585,7 @@ def zbuduj_zmienne(dane: DaneUmowy) -> dict[str, str]:
     zmienne.update(dane.pola)
 
     zmienne["DATA_UMOWY"] = f"{dane.dzien:%d.%m.%Y}"
-    zmienne["NUMER_UMOWY"] = dane.pola.get("NUMER_UMOWY") or generuj_numer_umowy(
-        dane.pola["IMIE_NAZWISKO"], dane.dzien
-    )
+    zmienne["NUMER_UMOWY"] = numer_umowy
 
     zmienne["KWOTA_BRUTTO"] = formatuj_kwote(dane.kwota)
     zmienne["KWOTA_SLOWNIE"] = kwota_slownie(dane.kwota)
@@ -621,15 +697,16 @@ def renderuj(spec: DokumentSpec, zmienne: dict[str, str]) -> tuple[str, set[str]
     return wynik.strip(), uzyte
 
 
-def generuj_dokument(zmienne: dict[str, str]) -> str:
-    czesci: list[str] = []
+def generuj_pakiet(zmienne: dict[str, str]) -> dict[int, str]:
+    """Renderuje wszystkie dokumenty i grupuje je w pliki według faz obiegu."""
+    czesci: dict[int, list[str]] = {faza: [] for faza in FAZY}
     wszystkie_uzyte: set[str] = set()
 
     for spec in DRZEWO_DOKUMENTOW:
         tresc, uzyte = renderuj(spec, zmienne)
-        czesci.append(tresc)
+        czesci[spec.faza].append(tresc)
         wszystkie_uzyte |= uzyte
-        print(f"  [OK] {spec.plik:<26} {spec.tytul}")
+        print(f"  [OK] faza {spec.faza}  {spec.plik:<26} {spec.tytul}")
 
     # Odmiany nazw to gotowy słownik do dyspozycji szablonów — nieużyty
     # przypadek nie jest usterką. Ostrzegamy tylko o danych konkretnej umowy.
@@ -638,7 +715,7 @@ def generuj_dokument(zmienne: dict[str, str]) -> str:
         print(f"  [!]  Zmienne zdefiniowane, ale nieużyte w szablonach: {', '.join(nieuzyte)}")
 
     separator = f"\n\n{ZNACZNIK_STRONY}\n\n"
-    return separator.join(czesci) + "\n"
+    return {faza: separator.join(grupa) + "\n" for faza, grupa in czesci.items() if grupa}
 
 
 def bezpieczna_nazwa(tekst: str) -> str:
@@ -655,6 +732,7 @@ def bezpieczna_nazwa(tekst: str) -> str:
 UZYCIE = """Użycie:
   python generator.py DANE.json            generuje komplet dokumentów
   python generator.py --szablon NOWY.json  tworzy pusty formularz do wypełnienia
+  python generator.py --rejestr            wypisuje książkę umów
 
 Dane klienta zawsze pochodzą z pliku JSON — nigdy z kodu."""
 
@@ -686,6 +764,17 @@ def zapisz_szablon(sciezka: Path) -> int:
     return 0
 
 
+def wypisz_rejestr(sciezka: Path) -> int:
+    wpisy = wczytaj_rejestr(sciezka)
+    if not wpisy:
+        print(f"Rejestr {sciezka} jest pusty — nie wydano jeszcze żadnego numeru.")
+        return 0
+    print(f"Książka umów ({len(wpisy)}): {sciezka}\n")
+    for wpis in sorted(wpisy, key=lambda w: (w.get("data_umowy", "")[-4:], w.get("data_umowy", ""))):
+        print(f"  {wpis.get('numer', '?'):<12} {wpis.get('data_umowy', '?'):<12} {wpis.get('imie_nazwisko', '?')}")
+    return 0
+
+
 def main(argv: list[str]) -> int:
     argumenty = argv[1:]
 
@@ -699,25 +788,50 @@ def main(argv: list[str]) -> int:
             return 1
         return zapisz_szablon(Path(argumenty[1]).expanduser())
 
+    if argumenty[0] == "--rejestr":
+        try:
+            return wypisz_rejestr(REJESTR_NUMEROW)
+        except BladGeneratora as exc:
+            print(f"BŁĄD: {exc}", file=sys.stderr)
+            return 1
+
     try:
         sciezka = Path(argumenty[0]).expanduser().resolve()
         dane = zwaliduj_dane(wczytaj_json(sciezka), datetime.date.today())
-        zmienne = zbuduj_zmienne(dane)
 
-        print(f"Umowa nr {zmienne['NUMER_UMOWY']} | {zmienne['IMIE_NAZWISKO']} | {zmienne['KWOTA_BRUTTO']} zł")
-        dokument = generuj_dokument(zmienne)
+        wpisy = wczytaj_rejestr(REJESTR_NUMEROW)
+        numer, nowy_numer = przydziel_numer(
+            wpisy, dane.pola["IMIE_NAZWISKO"], dane.dzien, dane.pola.get("NUMER_UMOWY")
+        )
+        zmienne = zbuduj_zmienne(dane, numer)
+
+        znacznik = "nowy" if nowy_numer else "z rejestru"
+        print(f"Umowa nr {numer} ({znacznik}) | {zmienne['IMIE_NAZWISKO']} | {zmienne['KWOTA_BRUTTO']} zł")
+        pakiet = generuj_pakiet(zmienne)
 
         KATALOG_WYNIKOWY.mkdir(parents=True, exist_ok=True)
-        nazwa = f"Umowa_{zmienne['NUMER_UMOWY'].replace('/', '-')}_{bezpieczna_nazwa(zmienne['IMIE_NAZWISKO'])}.md"
-        plik = KATALOG_WYNIKOWY / nazwa
-        plik.write_text(dokument, encoding="utf-8", newline="\n")
+        trzon = f"{numer.replace('/', '-')}_{bezpieczna_nazwa(zmienne['IMIE_NAZWISKO'])}"
+        zapisane: list[Path] = []
+        for faza, tresc in sorted(pakiet.items()):
+            plik = KATALOG_WYNIKOWY / f"{FAZY[faza]['przedrostek']}_{trzon}.md"
+            plik.write_text(tresc, encoding="utf-8", newline="\n")
+            zapisane.append(plik)
+
+        # Rejestr aktualizujemy dopiero po udanym zapisie — nieudane
+        # uruchomienie nie może spalić numeru z książki umów.
+        if nowy_numer:
+            zapisz_rejestr(REJESTR_NUMEROW, dopisz_do_rejestru(
+                wpisy, numer, zmienne["IMIE_NAZWISKO"], dane.dzien))
     except BladGeneratora as exc:
         print(f"\nBŁĄD: {exc}", file=sys.stderr)
         print("\nNie wygenerowano żadnego pliku.", file=sys.stderr)
         return 1
 
-    print(f"\nGotowe: {plik}")
-    print(f"PDF:    pandoc '{plik.name}' -o '{plik.stem}.pdf' --pdf-engine=xelatex -V mainfont='DejaVu Serif'")
+    print()
+    for plik, faza in zip(zapisane, sorted(pakiet)):
+        print(f"Faza {faza} — {FAZY[faza]['etykieta']}:\n  {plik}")
+    print("\nDokumenty faz 1 i 2 drukuj osobno — protokół nie jest zszywany z umową.")
+    print(f"PDF: pandoc PLIK.md -o PLIK.pdf --pdf-engine=xelatex -V mainfont='DejaVu Serif'")
     return 0
 
 

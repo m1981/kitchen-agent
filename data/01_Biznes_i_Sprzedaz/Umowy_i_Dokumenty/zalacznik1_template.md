@@ -8,8 +8,9 @@
 | **Zamawiający** | {{IMIE_NAZWISKO}} |
 | **Miejsce montażu** | {{ADRES_MONTAZU}} |
 | **Data akceptacji projektu** | ________________________ |
+| **Do umowy zawartej dnia** | {{DATA_UMOWY}} w miejscowości {{MIEJSCOWOSC}} |
 
-> **Uwaga:** {{ZAL_1_M}} jest zszywany z {{UMOWA_N}} i autoryzowany parafką obu stron. Akceptacja niniejszego dokumentu („zamrożenie projektu”) uruchamia produkcję. Zmiany zgłoszone po tej dacie wymagają Aneksu, wiążą się z dodatkowym kosztem i wydłużają termin realizacji (§ 3 pkt 4 {{UMOWA_D}}).
+> **Uwaga:** {{ZAL_1_M}} jest zszywany z {{UMOWA_N}} i autoryzowany parafką obu stron. **Strony parafują każdą stronę niniejszego dokumentu** — specyfikacja poniżej stanowi jedyną podstawę produkcji, a parafa na każdej stronie zabezpiecza przed jej podmianą. Akceptacja niniejszego dokumentu („zamrożenie projektu”) uruchamia produkcję. Zmiany zgłoszone po tej dacie wymagają Aneksu, wiążą się z dodatkowym kosztem i wydłużają termin realizacji (§ 3 pkt 4 {{UMOWA_D}}).
 
 ### 1. RZUTY I WIZUALIZACJE
 Do {{ZAL_1_D}} dołącza się i parafuje:
@@ -17,6 +18,9 @@ Do {{ZAL_1_D}} dołącza się i parafuje:
 2. Widoki 3D / wizualizacje — szt. ______
 
 Zamawiający potwierdza, że zapoznał się z rzutami i wizualizacjami oraz przyjmuje do wiadomości ich poglądowy charakter (§ 1 pkt 3 {{UMOWA_D}}).
+
+
+*Parafa Zamawiającego: ...................... / Parafa Wykonawcy: ......................*
 
 ### 2. TABELA MATERIAŁOWA
 *(Wypełnić dokładnymi kodami dekorów i producentów — kod dekoru jest wiążący dla obu stron.)*
@@ -30,6 +34,9 @@ Zamawiający potwierdza, że zapoznał się z rzutami i wizualizacjami oraz przy
 | Obrzeża | ______________________ | ______ | ______________________ |
 | Uchwyty | ______________________ | ______ | ______________________ |
 
+
+*Parafa Zamawiającego: ...................... / Parafa Wykonawcy: ......................*
+
 ### 3. TABELA OKUĆ I SYSTEMÓW
 
 | System | Model / Seria | Ilość | Uwagi |
@@ -40,6 +47,9 @@ Zamawiający potwierdza, że zapoznał się z rzutami i wizualizacjami oraz przy
 | Cargo / kosze | ______________________ | ______ | ______________________ |
 | Oświetlenie | ______________________ | ______ | ______________________ |
 | Zlewozmywak i bateria | ______________________ | ______ | ______________________ |
+
+
+*Parafa Zamawiającego: ...................... / Parafa Wykonawcy: ......................*
 
 ### 4. LISTA SPRZĘTU AGD
 *(Wpisać dokładne modele. Sprzęt AGD dostarcza Zamawiający, o ile nie zaznaczono inaczej.)*
@@ -54,6 +64,9 @@ Zamawiający potwierdza, że zapoznał się z rzutami i wizualizacjami oraz przy
 | Mikrofalówka / inne | ______________________ | ☐ Zamawiający ☐ Wykonawca | ______________ |
 
 **Klauzula zgodności AGD:** Fronty i otwory zabudowy wycinane są pod modele wskazane powyżej. Zmiana modelu sprzętu przez Zamawiającego po skierowaniu projektu do produkcji powoduje, że koszt wykonania nowego frontu, korpusu lub przeróbki blatu obciąża Zamawiającego.
+
+
+*Parafa Zamawiającego: ...................... / Parafa Wykonawcy: ......................*
 
 ### 5. USTALENIA DODATKOWE
 1. ________________________________________________________________________

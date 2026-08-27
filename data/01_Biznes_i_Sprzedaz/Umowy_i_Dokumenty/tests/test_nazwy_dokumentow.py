@@ -8,7 +8,7 @@ więc wyłączenie gwarancji odsyłało w próżnię. NAZWY_DOKUMENTOW to jedyne
 
 import pytest
 
-from conftest import DANE_TESTOWE, KATALOG_PROJEKTU, podmien_w_szablonie
+from conftest import KATALOG_PROJEKTU, podmien_w_szablonie, rozbij, zbuduj_zmienne
 
 import generator as g
 
@@ -72,7 +72,7 @@ def test_nazwa_wpisana_recznie_zatrzymuje_generowanie(szablony, zmienne, nazwa_n
                         "### § 1. Przedmiot Umowy",
                         f"### § 1. Przedmiot Umowy\n\nOdesłanie do {nazwa_na_twardo}.")
     with pytest.raises(g.BladGeneratora, match="na twardo"):
-        g.generuj_dokument(zmienne)
+        g.generuj_pakiet(zmienne)
 
 
 def test_komunikat_detektora_wskazuje_linie(szablony, zmienne):
@@ -80,7 +80,7 @@ def test_komunikat_detektora_wskazuje_linie(szablony, zmienne):
                         "### § 1. Przedmiot Umowy",
                         "### § 1. Przedmiot Umowy\n\nPatrz Załącznik nr 1.")
     with pytest.raises(g.BladGeneratora) as blad:
-        g.generuj_dokument(zmienne)
+        g.generuj_pakiet(zmienne)
     assert "linia" in str(blad.value)
     assert "NAZWY_DOKUMENTOW" in str(blad.value)
 
@@ -94,7 +94,7 @@ def test_dokumenty_producentow_agd_sa_dozwolone(szablony, zmienne, dozwolone):
     podmien_w_szablonie(szablony, "umowa_template.md",
                         "### § 1. Przedmiot Umowy",
                         f"### § 1. Przedmiot Umowy\n\n{dozwolone}.")
-    g.generuj_dokument(zmienne)
+    g.generuj_pakiet(zmienne)
 
 
 def test_liczba_mnoga_jest_rzeczownikiem_pospolitym(szablony, zmienne):
@@ -102,12 +102,12 @@ def test_liczba_mnoga_jest_rzeczownikiem_pospolitym(szablony, zmienne):
     podmien_w_szablonie(szablony, "umowa_template.md",
                         "### § 1. Przedmiot Umowy",
                         "### § 1. Przedmiot Umowy\n\nWszystkie załączniki parafowane.")
-    g.generuj_dokument(zmienne)
+    g.generuj_pakiet(zmienne)
 
 
 def test_szablony_w_repo_przechodza_detektor(zmienne):
     """Strażnik regresji — nikt nie wpisał nazwy z ręki przy kolejnej edycji."""
-    g.generuj_dokument(zmienne)
+    g.generuj_pakiet(zmienne)
 
 
 # --- propagacja zmiany nazwy ------------------------------------------------
@@ -120,13 +120,14 @@ def test_zmiana_nazwy_propaguje_sie_na_wszystkie_dokumenty(szablony, monkeypatch
     podmieniony["ZAL_2"]["TYTUL"] = nowa
     monkeypatch.setattr(g, "NAZWY_DOKUMENTOW", podmieniony)
 
-    dokument = g.generuj_dokument(g.zbuduj_zmienne(g.zwaliduj_dane(DANE_TESTOWE, dzien)))
+    pakiet = g.generuj_pakiet(zbuduj_zmienne(dzien=dzien))
+    calosc = "\n".join(pakiet[faza] for faza in sorted(pakiet))
 
-    assert stara not in dokument, "stara nazwa przetrwała gdzieś w dokumencie"
-    assert dokument.count(nowa) >= 5
-    assert nowa.upper() in dokument, "nagłówek H1 załącznika nie został zaktualizowany"
+    assert stara not in calosc, "stara nazwa przetrwała gdzieś w dokumencie"
+    assert calosc.count(nowa) >= 5
+    assert nowa.upper() in calosc, "nagłówek H1 załącznika nie został zaktualizowany"
 
-    czesci = dokument.split(g.ZNACZNIK_STRONY)
+    czesci = rozbij(pakiet)
     assert nowa in czesci[0], "umowa nie odsyła do nowej nazwy"
     assert nowa.upper() in czesci[2], "sam załącznik ma starą nazwę"
     assert nowa in czesci[3], "protokół nie odsyła do nowej nazwy"
@@ -139,9 +140,9 @@ def test_zmiana_numeru_zalacznika_propaguje_odmiane(szablony, monkeypatch, dzien
         "B": "Załącznik nr 1A", "N": "Załącznikiem nr 1A", "MS": "Załączniku nr 1A",
     })
     monkeypatch.setattr(g, "NAZWY_DOKUMENTOW", podmieniony)
-    dokument = g.generuj_dokument(g.zbuduj_zmienne(g.zwaliduj_dane(DANE_TESTOWE, dzien)))
-    assert "Załącznika nr 1A" in dokument
-    assert "Załącznik nr 1 " not in dokument
+    calosc = "\n".join(g.generuj_pakiet(zbuduj_zmienne(dzien=dzien)).values())
+    assert "Załącznika nr 1A" in calosc
+    assert "Załącznik nr 1 " not in calosc
 
 
 # --- niezmienniki gotowego dokumentu ----------------------------------------
@@ -155,9 +156,9 @@ def test_zalacznik_2_ma_jedna_nazwe_w_calym_dokumencie(dokument):
     assert tytul in dokument
 
 
-def test_wylaczenie_gwarancji_odsyla_do_istniejacego_dokumentu(dokument):
+def test_wylaczenie_gwarancji_odsyla_do_istniejacego_dokumentu(dokumenty):
     """§6.3c musi wskazywać dokument, który klient faktycznie parafuje."""
-    umowa, _, zalacznik_2, _ = dokument.split(g.ZNACZNIK_STRONY)
+    umowa, _, zalacznik_2, _ = dokumenty
     klauzula = next(l for l in umowa.splitlines() if "szorstkich gąbek" in l)
     tytul = g.NAZWY_DOKUMENTOW["ZAL_2"]["TYTUL"]
     assert tytul in klauzula

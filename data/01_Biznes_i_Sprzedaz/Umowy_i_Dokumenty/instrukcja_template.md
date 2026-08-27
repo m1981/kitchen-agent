@@ -1,6 +1,14 @@
 **{{ZAL_2_M_CAPS}} DO {{UMOWA_D_CAPS}}**
 *({{ZAL_2_TYTUL}})*
 
+| | |
+|---|---|
+| **Zamawiający** | {{IMIE_NAZWISKO}} |
+| **Miejsce montażu** | {{ADRES_MONTAZU}} |
+| **Do umowy zawartej dnia** | {{DATA_UMOWY}} w miejscowości {{MIEJSCOWOSC}} |
+
+> **Uwaga:** {{ZAL_2_M}} jest zszywany z {{UMOWA_N}} i autoryzowany parafką Zamawiającego. Dokument identyfikują oznaczenie Zamawiającego oraz data zawarcia umowy wskazane powyżej.
+
 **{{FIRMA_NAZWA}}**
 
 # {{ZAL_2_TYTUL_CAPS}}
@@ -43,7 +51,7 @@ E-mail: {{FIRMA_EMAIL}}
 ---
 
 **OŚWIADCZENIE ZAMAWIAJĄCEGO**
-Oświadczam, że zapoznałem/am się z {{ZAL_2_N}} ({{ZAL_2_TYTUL}}), rozumiem jego treść i akceptuję fakt, że uszkodzenia wynikające z nieprzestrzegania powyższych zasad nie podlegają naprawom gwarancyjnym.
+Ja, {{IMIE_NAZWISKO}}, oświadczam, że zapoznałem/am się z {{ZAL_2_N}} ({{ZAL_2_TYTUL}}), rozumiem jego treść i akceptuję fakt, że uszkodzenia wynikające z nieprzestrzegania powyższych zasad nie podlegają naprawom gwarancyjnym.
 
 Miejscowość, data: ________________________
 

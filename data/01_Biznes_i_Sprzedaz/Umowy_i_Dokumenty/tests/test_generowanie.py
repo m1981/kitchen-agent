@@ -19,13 +19,29 @@ pytestmark = pytest.mark.e2e
 
 # --- struktura dokumentu ----------------------------------------------------
 
-def test_cztery_dokumenty_i_trzy_podzialy_stron(dokument):
-    assert dokument.count(g.ZNACZNIK_STRONY) == 3
-    assert len(dokument.split(g.ZNACZNIK_STRONY)) == 4
+def test_pakiet_dzieli_sie_na_dwie_fazy(pakiet):
+    """Faza 1 zszywana w dniu podpisania, faza 2 powstaje ok. miesiąc później."""
+    assert sorted(pakiet) == [1, 2]
 
 
-def test_dokumenty_nie_sa_puste(dokument):
-    for czesc in dokument.split(g.ZNACZNIK_STRONY):
+def test_faza_1_ma_trzy_dokumenty(pakiet):
+    assert pakiet[1].count(g.ZNACZNIK_STRONY) == 2
+    assert len(pakiet[1].split(g.ZNACZNIK_STRONY)) == 3
+
+
+def test_faza_2_ma_wylacznie_protokol(pakiet):
+    assert g.ZNACZNIK_STRONY not in pakiet[2]
+    assert "PROTOKÓŁ ZDAWCZO-ODBIORCZY" in pakiet[2]
+    assert "UMOWA O DZIEŁO NR" not in pakiet[2]
+
+
+def test_umowa_nie_zawiera_protokolu(pakiet):
+    """Protokół nie może wyjść z drukarki razem z umową w dniu 0."""
+    assert "PROTOKÓŁ ZDAWCZO-ODBIORCZY" not in pakiet[1]
+
+
+def test_dokumenty_nie_sa_puste(dokumenty):
+    for czesc in dokumenty:
         assert len(czesc.strip()) > 200
 
 
@@ -41,35 +57,38 @@ def test_kwoty_w_dokumencie(dokument):
     assert f"3{NBSP}000" in dokument
 
 
-def test_umowa_i_protokol_maja_miejsce_na_pelne_podpisy(dokument):
-    umowa, _, _, protokol = dokument.split(g.ZNACZNIK_STRONY)
+def test_umowa_i_protokol_maja_miejsce_na_pelne_podpisy(dokumenty):
+    umowa, _, _, protokol = dokumenty
     for czesc in (umowa, protokol):
-        assert "podpis" in czesc.lower()
+        assert "czytelny podpis" in czesc.lower()
 
 
 # --- zapis pliku ------------------------------------------------------------
 
-def test_main_zapisuje_plik(szablony, plik_danych):
+def test_main_zapisuje_dwa_pliki(szablony, plik_danych):
+    """Jeden plik na fazę — protokół nie jest zszywany z umową."""
     assert g.main(["generator.py", plik_danych()]) == 0
-    pliki = list((szablony / "wygenerowane").glob("*.md"))
-    assert len(pliki) == 1
-    assert pliki[0].name.startswith("Umowa_")
-    assert pliki[0].name.endswith("_Anna_Nowak.md")
+    pliki = sorted(p.name for p in (szablony / "wygenerowane").glob("*.md"))
+    assert len(pliki) == 2
+    assert pliki[0].startswith("Protokol_")
+    assert pliki[1].startswith("Umowa_")
+    assert all(p.endswith("_Anna_Nowak.md") for p in pliki)
 
 
 def test_nazwa_pliku_bez_polskich_znakow(szablony, plik_danych):
     dane = dane_testowe(IMIE_NAZWISKO="Łucja Żółć", DATA_UMOWY="27.08.2026")
     assert g.main(["generator.py", plik_danych(dane)]) == 0
-    pliki = list((szablony / "wygenerowane").glob("*.md"))
-    assert pliki[0].name == "Umowa_2026-08-LZ_Lucja_Zolc.md"
+    pliki = sorted(p.name for p in (szablony / "wygenerowane").glob("*.md"))
+    assert pliki == ["Protokol_1-2026_Lucja_Zolc.md", "Umowa_1-2026_Lucja_Zolc.md"]
 
 
-def test_zapis_w_utf8_z_koncami_linii_lf(szablony, plik_danych):
+@pytest.mark.parametrize("wzorzec", ["Umowa_*.md", "Protokol_*.md"])
+def test_zapis_w_utf8_z_koncami_linii_lf(szablony, plik_danych, wzorzec):
     g.main(["generator.py", plik_danych()])
-    plik = next((szablony / "wygenerowane").glob("*.md"))
+    plik = next((szablony / "wygenerowane").glob(wzorzec))
     surowe = plik.read_bytes()
     assert b"\r\n" not in surowe
-    assert "Dzieła" in surowe.decode("utf-8")
+    assert "ł" in surowe.decode("utf-8")
 
 
 @pytest.mark.parametrize("plik, podmiana", [

@@ -1,7 +1,7 @@
 #### {{UMOWA_M_CAPS}} NR {{NUMER_UMOWY}}
 *({{UMOWA_TYTUL}})*
 
-Zawarta w dniu {{DATA_UMOWY}} w {{MIEJSCOWOSC}} pomiędzy:
+Zawarta dnia {{DATA_UMOWY}} w miejscowości {{MIEJSCOWOSC}} pomiędzy:
 
 **ZAMAWIAJĄCYM:**
 * **Imię i Nazwisko:** {{IMIE_NAZWISKO}}
@@ -21,7 +21,7 @@ a
 
 ### § 1. Przedmiot Umowy
 1. Zamawiający zleca, a Wykonawca zobowiązuje się do **zaprojektowania, wykonania, dostarczenia i montażu** zabudowy meblowej (zwanej dalej „Dziełem”) w lokalu pod adresem: {{ADRES_MONTAZU}}
-2. Szczegółowy zakres prac, układ funkcjonalny, wymiary oraz specyfikację materiałową (rodzaj płyt, blatów, okuć, systemów) określa **{{ZAL_1_M}} ({{ZAL_1_TYTUL}})**. {{ZAL_1_M}}, po opatrzeniu go parafami przez obie strony, stanowi integralną część niniejszej umowy.
+2. Szczegółowy zakres prac, układ funkcjonalny, wymiary oraz specyfikację materiałową (rodzaj płyt, blatów, okuć, systemów) określa **{{ZAL_1_M}} ({{ZAL_1_TYTUL}})**. {{ZAL_1_M}}, po opatrzeniu parafami obu stron na każdej stronie, stanowi integralną część niniejszej umowy.
 3. **[Klauzula Wizualizacyjna]** Zamawiający przyjmuje do wiadomości, że przedstawione mu wizualizacje komputerowe (3D) mają charakter wyłącznie poglądowy. Rzeczywisty odcień materiałów, układ słojów drewna oraz detale mogą nieznacznie odbiegać od wizualizacji ze względu na ograniczenia technologiczne programów graficznych, indywidualne ustawienia monitora oraz naturalne właściwości materiałów.
 4. **[Wyłączenia]** Wykonawca oświadcza, że Dzieło zostanie wykonane zgodnie z zasadami sztuki stolarskiej. Niniejsza umowa nie obejmuje jednak prac ogólnobudowlanych, w szczególności: kucia ścian, przeróbek instalacji wodno-kanalizacyjnej, elektrycznej, gazowej, wentylacyjnej oraz podłączania sprzętu AGD do sieci gazowej i trójfazowej (tzw. siły).
 5. **[Zasady Użytkowania]** Zasady prawidłowego korzystania z Dzieła, warunkujące utrzymanie gwarancji, określa **{{ZAL_2_M}} ({{ZAL_2_TYTUL}})**, stanowiący integralną część niniejszej umowy.

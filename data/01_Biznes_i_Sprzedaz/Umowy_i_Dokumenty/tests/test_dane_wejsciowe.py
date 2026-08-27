@@ -10,7 +10,7 @@ from decimal import Decimal
 
 import pytest
 
-from conftest import DANE_TESTOWE, DZIEN_TESTOWY, dane_testowe
+from conftest import DANE_TESTOWE, DZIEN_TESTOWY, NUMER_TESTOWY, dane_testowe
 
 import generator as g
 
@@ -33,7 +33,7 @@ def test_kod_nie_zawiera_danych_klienta():
 
 
 def test_komplet_poprawnych_danych_przechodzi():
-    dane = g.zwaliduj_dane(DANE_TESTOWE, DZIEN_TESTOWY)
+    dane = g.zwaliduj_dane(DANE_TESTOWE, DZIEN_TESTOWY)  # noqa
     assert dane.kwota == Decimal("30000")
     assert dane.dzien == DZIEN_TESTOWY
     assert dane.pola["IMIE_NAZWISKO"] == "Anna Nowak"
@@ -236,7 +236,7 @@ def test_data_z_pliku_nadpisuje_dzien_dzisiejszy():
     """Umowa może być datowana wstecz — numer musi iść za datą umowy."""
     dane = g.zwaliduj_dane(dane_testowe(DATA_UMOWY="15.03.2027"), DZIEN_TESTOWY)
     assert dane.dzien == datetime.date(2027, 3, 15)
-    assert g.zbuduj_zmienne(dane)["NUMER_UMOWY"] == "2027/03/AN"
+    assert g.zbuduj_zmienne(dane, NUMER_TESTOWY)["DATA_UMOWY"] == "15.03.2027"
 
 
 def test_brak_daty_oznacza_dzisiaj():
@@ -296,4 +296,4 @@ def test_przyklady_w_formularzu_przechodza_wlasna_walidacje():
 def test_formularz_wypelniony_przykladami_generuje_umowe(szablony):
     """Formularz z --szablon po wpisaniu podpowiadanych wartości musi działać."""
     dane = {k: p.przyklad for k, p in g.SCHEMAT_DANYCH.items() if p.wymagane}
-    g.zbuduj_zmienne(g.zwaliduj_dane(dane, DZIEN_TESTOWY))
+    g.zbuduj_zmienne(g.zwaliduj_dane(dane, DZIEN_TESTOWY), NUMER_TESTOWY)

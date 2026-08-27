@@ -25,6 +25,7 @@ NBSP = "\u00a0"
 
 DZIEN_TESTOWY = datetime.date(2026, 8, 27)
 KWOTA_TESTOWA = Decimal("30000")
+NUMER_TESTOWY = "7/2026"
 
 # Dane klienta żyją poza kodem produkcyjnym, więc testy trzymają własny
 # komplet. PESEL ma poprawną sumę kontrolną — walidator go sprawdza.
@@ -63,6 +64,8 @@ def szablony(tmp_path, monkeypatch):
         shutil.copy(KATALOG_PROJEKTU / nazwa, tmp_path / nazwa)
     monkeypatch.setattr(g, "BAZA", tmp_path)
     monkeypatch.setattr(g, "KATALOG_WYNIKOWY", tmp_path / "wygenerowane")
+    # Rejestr też do tmp — testy nie mogą dopisywać do prawdziwej książki umów.
+    monkeypatch.setattr(g, "REJESTR_NUMEROW", tmp_path / "numery.json")
     return tmp_path
 
 
@@ -72,8 +75,13 @@ def dane():
 
 
 @pytest.fixture
+def numer():
+    return NUMER_TESTOWY
+
+
+@pytest.fixture
 def zmienne(dane):
-    return g.zbuduj_zmienne(dane)
+    return g.zbuduj_zmienne(dane, NUMER_TESTOWY)
 
 
 @pytest.fixture
@@ -88,9 +96,35 @@ def plik_danych(tmp_path):
 
 
 @pytest.fixture
-def dokument(szablony, zmienne):
-    """Gotowy, sklejony dokument wynikowy (4 dokumenty w jednym pliku)."""
-    return g.generuj_dokument(zmienne)
+def pakiet(szablony, zmienne):
+    """Wynik generowania: {1: treść pliku fazy 1, 2: treść pliku fazy 2}."""
+    return g.generuj_pakiet(zmienne)
+
+
+@pytest.fixture
+def dokumenty(pakiet):
+    """Cztery dokumenty w kolejności drzewa, niezależnie od podziału na pliki."""
+    return rozbij(pakiet)
+
+
+@pytest.fixture
+def dokument(pakiet):
+    """Treść obu plików razem — do wyszukiwań globalnych."""
+    return "\n\n".join(pakiet[faza] for faza in sorted(pakiet))
+
+
+def rozbij(pakiet):
+    """Rozkłada pakiet plików na pojedyncze dokumenty w kolejności drzewa."""
+    czesci = []
+    for faza in sorted(pakiet):
+        czesci.extend(pakiet[faza].split(g.ZNACZNIK_STRONY))
+    return czesci
+
+
+def zbuduj_zmienne(dane_surowe=None, dzien=DZIEN_TESTOWY, numer=NUMER_TESTOWY):
+    """Skrót: surowe dane -> walidacja -> słownik podstawień."""
+    zwalidowane = g.zwaliduj_dane(dane_surowe if dane_surowe is not None else DANE_TESTOWE, dzien)
+    return g.zbuduj_zmienne(zwalidowane, numer)
 
 
 def podmien_w_szablonie(katalog: Path, plik: str, stare: str, nowe: str) -> None:

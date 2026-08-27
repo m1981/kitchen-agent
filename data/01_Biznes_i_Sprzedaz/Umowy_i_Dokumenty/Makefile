@@ -13,12 +13,13 @@ DANE ?=
 PLIK ?=
 
 .DEFAULT_GOAL := help
-.PHONY: help init install test gen nowy clean
+.PHONY: help init install test gen nowy rejestr clean
 
 help:
 	@echo "make test              - uruchamia testy (sam robi init + install)"
 	@echo "make nowy PLIK=x.json  - tworzy pusty formularz danych klienta"
-	@echo "make gen DANE=x.json   - generuje komplet dokumentów z pliku JSON"
+	@echo "make gen DANE=x.json   - generuje dokumenty faz 1 i 2 z pliku JSON"
+	@echo "make rejestr           - wypisuje książkę umów (wydane numery)"
 	@echo "make init              - tworzy .venv"
 	@echo "make install           - instaluje zależności"
 	@echo "make clean             - usuwa .venv, cache i wygenerowane dokumenty"
@@ -68,5 +69,9 @@ nowy: install
 	@test -n "$(PLIK)" || { echo "Podaj nazwę pliku: make nowy PLIK=jan_kowalski.json"; exit 1; }
 	$(PY) generator.py --szablon $(PLIK)
 
+rejestr: install
+	$(PY) generator.py --rejestr
+
 clean:
 	rm -rf $(VENV) .pytest_cache __pycache__ tests/__pycache__ *.egg-info wygenerowane
+	@echo 'Rejestr numery.json pozostawiony — to książka umów.'

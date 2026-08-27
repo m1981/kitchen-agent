@@ -31,13 +31,13 @@ def test_brak_pliku_szablonu_zatrzymuje_generowanie(szablony, zmienne):
     """Regresja: kod wyjściowy zapisywał wtedy niekompletną umowę."""
     (szablony / "instrukcja_template.md").unlink()
     with pytest.raises(g.BladGeneratora, match="Nie znaleziono szablonu"):
-        g.generuj_dokument(zmienne)
+        g.generuj_pakiet(zmienne)
 
 
 def test_szablon_w_zlym_kodowaniu_zatrzymuje_generowanie(szablony, zmienne):
     (szablony / "umowa_template.md").write_bytes("Umowa {{NUMER_UMOWY}} — ąę".encode("cp1250"))
     with pytest.raises(g.BladGeneratora, match="UTF-8"):
-        g.generuj_dokument(zmienne)
+        g.generuj_pakiet(zmienne)
 
 
 # --- zmienne ----------------------------------------------------------------
@@ -46,13 +46,13 @@ def test_nieznana_zmienna_zatrzymuje_generowanie(szablony, zmienne):
     """Literówka w nazwie zmiennej nie może trafić do PDF u klienta."""
     podmien_w_szablonie(szablony, "umowa_template.md", "{{TELEFON}}", "{{TELEFON_KOMORKOWY}}")
     with pytest.raises(g.BladGeneratora, match="TELEFON_KOMORKOWY"):
-        g.generuj_dokument(zmienne)
+        g.generuj_pakiet(zmienne)
 
 
 def test_komunikat_wskazuje_plik_z_bledna_zmienna(szablony, zmienne):
     podmien_w_szablonie(szablony, "protokol_template.md", "{{ADRES_MONTAZU}}", "{{ADRES_MONTAZU_KLIENTA}}")
     with pytest.raises(g.BladGeneratora) as blad:
-        g.generuj_dokument(zmienne)
+        g.generuj_pakiet(zmienne)
     assert "protokol_template.md" in str(blad.value)
 
 
@@ -64,8 +64,8 @@ def test_wszystkie_zmienne_podstawione(dokument):
 def test_zmienne_z_bialymi_znakami_w_tagu(szablony, zmienne):
     """{{ NUMER_UMOWY }} ma działać tak samo jak {{NUMER_UMOWY}}."""
     podmien_w_szablonie(szablony, "umowa_template.md", "{{TELEFON}}", "{{ TELEFON }}")
-    dokument = g.generuj_dokument(zmienne)
-    assert zmienne["TELEFON"] in dokument
+    pakiet = g.generuj_pakiet(zmienne)
+    assert zmienne["TELEFON"] in pakiet[1]
 
 
 @pytest.mark.parametrize("klucz", [

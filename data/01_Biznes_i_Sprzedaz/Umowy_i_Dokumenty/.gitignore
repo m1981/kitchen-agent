@@ -9,3 +9,6 @@ __pycache__/
 # nie trafiają do repozytorium. Wyjątkiem jest plik przykładowy z danymi fikcyjnymi.
 *.json
 !klient_przyklad.json
+
+# Książka umów — dane osobowe klientów. Kopia zapasowa poza repozytorium.
+numery.json
