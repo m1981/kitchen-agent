@@ -271,6 +271,9 @@ _create_file_entry = ToolEntry(
         name="create_file",
         description=(
             "Creates a brand new markdown file in the knowledge base. "
+            "Markdown only — .md is the only accepted extension. When the user asks "
+            "for HTML, a form or a printable card, write the document as markdown; "
+            "do not try to save .html. "
             "Use this when starting a new topic that does not fit in existing files. "
             "DO NOT use this to update existing files (use edit_file for that). "
             "Call get_repo_map or search_knowledge_base first when you are not sure "
@@ -287,9 +290,9 @@ _create_file_entry = ToolEntry(
                         "Path for the new file, relative to the knowledge base root "
                         "(e.g. '02_Projektowanie_i_Style/new-topic.md'). Nested "
                         "directories are created automatically. A leading 'data/' is "
-                        "accepted; absolute paths and '..' are rejected. Use the .md "
-                        "extension — other extensions are written to disk but are not "
-                        "indexed by search and do not appear in the file browser."
+                        "accepted; absolute paths and '..' are rejected. The path "
+                        "MUST end in .md — the knowledge base is markdown-only and "
+                        "any other extension is refused."
                     ),
                 ),
                 "content": types.Schema(

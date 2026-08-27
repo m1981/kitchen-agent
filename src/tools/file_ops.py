@@ -36,7 +36,10 @@ from pathlib import Path
 # call by the registry, which injects ``settings.data_dir``.
 DEFAULT_KB_ROOT = Path("data")
 
-# Extensions that get_repo_map / search_knowledge_base index and the UI lists.
+# The knowledge base is markdown-only: these are the extensions get_repo_map
+# and search_knowledge_base index, the UI lists, and create_file will write.
+# Anything else would exist on disk while being invisible to every part of the
+# app — so it is refused rather than silently created.
 INDEXED_SUFFIXES = (".md",)
 
 
@@ -294,7 +297,8 @@ def create_file(
     Creates a new file with the given content.
 
     Refuses to overwrite an existing file — the agent must use edit_file
-    for updates.
+    for updates — and refuses any extension outside INDEXED_SUFFIXES, which
+    would land on disk without ever showing up in search or the file browser.
 
     When *backup_dir* is provided a snapshot is taken (recording that the
     file did not exist) so the creation can be reverted by deleting the file.
@@ -302,6 +306,16 @@ def create_file(
     p, kb_rel, err = _resolve_kb_path(filepath, base_dir)
     if err:
         return err
+    if p.suffix.lower() not in INDEXED_SUFFIXES:
+        return {
+            "error": (
+                f"Only {', '.join(INDEXED_SUFFIXES)} files can be created: "
+                f"{kb_rel or filepath} was refused. get_repo_map, "
+                "search_knowledge_base and the file browser index markdown only, "
+                "so another format would be invisible to you and to the user. "
+                "Write the document as markdown instead."
+            )
+        }
     if p.exists():
         return {"error": f"File already exists at {kb_rel}. Use edit_file instead."}
 
@@ -333,15 +347,6 @@ def create_file(
         result["warning"] = (
             f"A file named {p.name} already exists at: {', '.join(duplicates[:5])}. "
             "Check whether you meant to edit one of those instead."
-        )
-
-    if p.suffix.lower() not in INDEXED_SUFFIXES:
-        result["note"] = (
-            f"{p.suffix or 'This file type'} is NOT indexed: get_repo_map and "
-            "search_knowledge_base only scan "
-            f"{', '.join(INDEXED_SUFFIXES)} files, and the app's file list shows "
-            "the same. Tell the user the file exists on disk but will not appear "
-            "in the knowledge base browser or in future searches."
         )
 
     if revert_id is not None:

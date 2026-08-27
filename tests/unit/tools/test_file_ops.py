@@ -281,11 +281,12 @@ class TestWriteResultsAreSelfExplanatory:
         assert "error" not in result
         assert "07_SOP/karta.md" in result["warning"]
 
-    def test_unindexed_extension_is_flagged(self, tmp_path):
+    def test_non_markdown_extension_is_refused(self, tmp_path):
+        """A .html file would exist on disk and nowhere in the app."""
         result = create_file("01_Proces/karta.html", "<html></html>", base_dir=tmp_path)
 
-        assert "error" not in result
-        assert "not indexed" in result["note"].lower()
+        assert "error" in result
+        assert not (tmp_path / "01_Proces" / "karta.html").exists()
 
     def test_edit_reports_how_many_occurrences_changed(self, tmp_path):
         (tmp_path / "notes.md").write_text("blum blum blum")
