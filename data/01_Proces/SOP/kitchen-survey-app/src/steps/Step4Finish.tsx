@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ClipboardCheck, Palette, Truck } from 'lucide-react'
 import { useCallback } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { StepNav } from '@/components/StepNav'
 import { Card, CardBody, CardHeader } from '@/components/ui/card'
 import { Checkbox, Field, Input, Select, Textarea } from '@/components/ui/field'
@@ -48,7 +48,8 @@ export function Step4Finish() {
   })
 
   return (
-    <form onSubmit={onSubmit} noValidate className="space-y-4">
+    <FormProvider {...form}>
+      <form onSubmit={onSubmit} noValidate className="space-y-4">
       <Card>
         <CardHeader
           title="5. Pakiet materiałowy (metoda lejka)"
@@ -100,25 +101,25 @@ export function Step4Finish() {
         />
         <CardBody>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Winda (szer. × gł. × wys.)">
+            <Field name="logistics.elevator" label="Winda (szer. × gł. × wys.)">
               <Input
                 {...register('logistics.elevator')}
                 placeholder="np. 900 × 1200 × 2100 — przekątna max 1500"
               />
             </Field>
-            <Field label="Klatka schodowa / drzwi">
+            <Field name="logistics.staircase" label="Klatka schodowa / drzwi">
               <Input
                 {...register('logistics.staircase')}
                 placeholder="Szerokość drzwi, zakręty"
               />
             </Field>
-            <Field label="Parking / rozładunek">
+            <Field name="logistics.parking" label="Parking / rozładunek">
               <Input
                 {...register('logistics.parking')}
                 placeholder="Gdzie stajemy busem?"
               />
             </Field>
-            <Field label="Ochrona posadzki">
+            <Field name="logistics.floorProtection" label="Ochrona posadzki">
               <Select {...register('logistics.floorProtection')}>
                 <option value="brak">Nie wymagana</option>
                 <option value="tektura">Wymagana — tektura falista</option>
@@ -164,6 +165,7 @@ export function Step4Finish() {
           </div>
 
           <Field
+            name="sketchNotes"
             label="Opis szkicu z natury / rozmieszczenie modułów"
             hint="Lodówka, zlew, płyta, ciąg szuflad, blendy skrajne, kierunek usłojenia."
           >
@@ -176,6 +178,7 @@ export function Step4Finish() {
         </CardBody>
         <StepNav onBack={prev} nextLabel="Dalej: podsumowanie" isLast />
       </Card>
-    </form>
+      </form>
+    </FormProvider>
   )
 }

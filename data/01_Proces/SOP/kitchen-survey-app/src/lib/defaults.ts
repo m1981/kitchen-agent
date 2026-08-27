@@ -3,7 +3,7 @@ import type {
   FinishAndLogisticsInput,
   InstallationsInput,
   RoomGeometryInput,
-} from './schema'
+} from './schema.ts'
 
 const emptyThreePoint = () => ({
   bottom: '',

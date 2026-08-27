@@ -4,6 +4,9 @@ Kreator inwentaryzacji zabudowy kuchennej dla stolarza. Działa w przeglądarce
 na tablecie, offline, bez backendu. Odwzorowuje kartę
 `01_Proces/etap-1-1-karta-pomiarowa.html` w formie interaktywnego wizarda.
 
+- **Zakres projektu (co jest i czego świadomie nie ma):** [`docs/spec.md`](docs/spec.md)
+- **Decyzje architektoniczne:** [`docs/adr/`](docs/adr/)
+
 ## Uruchomienie
 
 ```bash
@@ -27,14 +30,21 @@ bez CLI i bez Radixa, żeby nie ciągnąć zależności do offline'owego kiosku.
 
 ```
 src/
-  lib/schema.ts       — Zod: źródło prawdy dla wszystkich kroków
-  lib/calc.ts         — auto-kalkulacje (min do CAD, słupek) + soft warnings
+  lib/norms.ts        — liczby z normy i progi ostrzeżeń (ADR 0008)
+  lib/schema.ts       — Zod: kształt (`…Shape`) + polityka (`…Schema`)
+  lib/calc.ts         — czysta matematyka pomiaru (min do CAD, słupek, blenda)
+  lib/diagnostics.ts  — model diagnostyk i silnik rejestru reguł (ADR 0009)
+  lib/rules/          — rejestr reguł domenowych: geometry.ts, installations.ts
   lib/defaults.ts     — wartości startowe + szablon 10 przyłączy z karty
   lib/export.ts       — walidacja całości + zrzut do pliku JSON
   store/surveyStore.ts— zustand + persist (LocalStorage, klucz kitchen-survey-draft-v1)
   steps/              — 5 kroków kreatora
   components/ui/      — Input/MmInput/Select/Checkbox/SegmentedControl/Card/Alert/Button
 ```
+
+Warstwy: **parse** (`…Shape` — stringi → liczby) → **derive** (`calc.ts` — `min`,
+`spread`, `maxColumnHeight`) → **policy** (`rules/` — reguły domenowe). Reguły
+operują na wyliczonym modelu, więc testuje się je bez formularza i bez DOM.
 
 ### Kroki kreatora
 
@@ -44,15 +54,27 @@ src/
 4. **Pakiet i logistyka** — pakiet materiałowy, transport, checklista.
 5. **Podsumowanie** — widok do druku A4 (Cmd/Ctrl+P) + eksport JSON.
 
-### Walidacja: twarda vs miękka
+### Walidacja: jeden rejestr, dwóch konsumentów
 
-- **Hard (blokuje `Dalej`)** — Zod: brak nazwiska/adresu, brak wymiaru ściany A
-  lub wysokości H, układ L/U bez ściany bocznej, zaznaczone okno bez wysokości
-  parapetu i osi. Komunikaty renderują się pod polami.
-- **Soft (żółty/czerwony alert, przepuszcza dalej)** — `lib/calc.ts`: kąt ≠ 90°,
-  rozrzut pomiaru > 10 mm, sufit podwieszany, spadek posadzki > 10 mm, parapet
-  poniżej blatu, płyta bliżej niż 300 mm od zlewu/ściany, odznaczone plecy HDF
-  przy lodówce/piekarniku, gniazdo oznaczone jako „za AGD”.
+Reguła domenowa jest **danymi** — wpisem w tablicy w `lib/rules/`, ze stabilnym
+kodem (`GEO-003`, `INS-001`), ścieżką pola i `severity`:
+
+| severity | zachowanie | przykład |
+| --- | --- | --- |
+| `blocker` | blokuje `Dalej`, idzie przez resolver Zoda | brak wymiaru ściany A, układ L/U bez ściany bocznej |
+| `critical` | czerwony alert, przepuszcza | płyta < 300 mm od zlewu, gniazdo za AGD, parapet poniżej blatu |
+| `warning` | żółte ostrzeżenie inline | kąt ≠ 90°, rozrzut > 10 mm, sufit podwieszany |
+| `info` | podpowiedź | — |
+
+Ten sam rejestr czyta Zod (bierze same `blocker`y) i UI (liczy wszystko na żywo
+z `watch()`), więc reguły nie mogą się rozjechać między walidacją a podpowiedzią.
+
+Dwa mechanizmy kaskady: `requires` nie zapala reguły, gdy brakuje danych (brak
+pomiaru ≠ zły pomiar), a `suppresses` gasi diagnostyki następcze — jeden
+brakujący wymiar daje jeden komunikat, nie osiem.
+
+Pola nie dostają błędów propsami: `<Field name="obstacles.radiatorProtrusion">`
+sam znajduje błąd twardy (RHF) i ostrzeżenia miękkie (po `path`).
 
 ### Auto-kalkulacje (cross-field)
 

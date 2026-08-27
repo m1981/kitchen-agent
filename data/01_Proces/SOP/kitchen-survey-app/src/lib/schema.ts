@@ -1,4 +1,31 @@
 import { z } from 'zod'
+import { computeMaxColumnHeight, computeMinDimension } from './calc.ts'
+import { runRules, toPathSegments, type Rule } from './diagnostics.ts'
+import { GEOMETRY_RULES } from './rules/geometry.ts'
+import { installationRules } from './rules/installations.ts'
+
+/**
+ * Schemat rozdziela się na dwie warstwy (patrz docs/adr/0009-rule-registry.md):
+ *
+ * - `…Shape`  — kształt + wartości pochodne. Parsuje się zawsze, także dla
+ *               niekompletnego formularza. To po nim UI liczy diagnostyki.
+ * - `…Schema` — `Shape` + polityka domenowa. Wciąga z rejestru reguł wyłącznie
+ *               diagnostyki `blocker` i zgłasza je jako błędy pola.
+ */
+const addBlockers =
+  <M, P extends string>(
+    resolve: (model: M) => ReadonlyArray<Rule<M, P>>,
+  ) =>
+  (model: M, ctx: z.RefinementCtx) => {
+    for (const diagnostic of runRules(model, resolve(model))) {
+      if (diagnostic.severity !== 'blocker') continue
+      ctx.addIssue({
+        code: 'custom',
+        path: toPathSegments(diagnostic.path),
+        message: diagnostic.message,
+      })
+    }
+  }
 
 /* -------------------------------------------------------------------------- */
 /*  Prymitywy pomiarowe                                                        */
@@ -121,33 +148,17 @@ export const threePointMeasurementSchema = z
     deviation: deviationOptional,
   })
   .transform((data) => {
-    const points = [data.bottom, data.middle, data.top].filter(
-      (value): value is number => value !== null,
-    )
+    const { min, spread } = computeMinDimension([data.bottom, data.middle, data.top])
     return {
       ...data,
       /** NAJMNIEJSZY wymiar — wartość wprowadzana do Corpus LTR. */
-      min: points.length > 0 ? Math.min(...points) : null,
+      min,
       /** Rozrzut pomiaru — sygnał "krzywa ściana", steruje szerokością blendy. */
-      spread:
-        points.length > 1 ? Math.max(...points) - Math.min(...points) : null,
+      spread,
     }
   })
 
 export type ThreePointMeasurement = z.infer<typeof threePointMeasurementSchema>
-
-/** Wariant wymagany — ściana główna A bez szerokości blokuje krok. */
-const requiredThreePoint = threePointMeasurementSchema.superRefine(
-  (data, ctx) => {
-    if (data.min === null) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['bottom'],
-        message: 'Podaj przynajmniej jeden wymiar (dół / środek / góra)',
-      })
-    }
-  },
-)
 
 export const obstaclesSchema = z.object({
   tapWindowCollision: z.boolean().default(false),
@@ -163,16 +174,16 @@ export const obstaclesSchema = z.object({
   notes: z.string().trim().max(2000, 'Maksymalnie 2000 znaków').optional().default(''),
 })
 
-export const roomGeometrySchema = z
+export const roomGeometryShape = z
   .object({
     layout: z.enum(LAYOUTS, { error: 'Wybierz układ zabudowy' }),
 
     /* Bounding Box — pomiar 3-punktowy */
-    wallA: requiredThreePoint,
+    wallA: threePointMeasurementSchema,
     wallB: threePointMeasurementSchema,
     wallC: threePointMeasurementSchema,
     /** Wysokość pomieszczenia: lewa / środek / prawa. */
-    height: requiredThreePoint,
+    height: threePointMeasurementSchema,
 
     /* Parametry geometrii */
     cornerAngle: z
@@ -211,67 +222,18 @@ export const roomGeometrySchema = z
      * Maksymalna wysokość słupka pod sufit = H min − 30 mm
      * (luz montażowy na przekątną + blenda górna).
      */
-    maxColumnHeight:
-      data.height.min !== null ? data.height.min - 30 : null,
+    maxColumnHeight: computeMaxColumnHeight(data.height.min),
   }))
-  .superRefine((data, ctx) => {
-    // Układ L/U wymaga ściany bocznej — inaczej nie da się rozrysować narożnika.
-    if ((data.layout === 'L' || data.layout === 'U') && data.wallB.min === null) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['wallB', 'bottom'],
-        message: 'Układ L/U wymaga pomiaru ściany bocznej B',
-      })
-    }
-    if (data.layout === 'U' && data.wallC.min === null) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['wallC', 'bottom'],
-        message: 'Układ U wymaga pomiaru ściany bocznej C',
-      })
-    }
-    // Progressive disclosure: włączone okno musi mieć komplet wymiarów bazowych.
-    if (data.hasWindow) {
-      if (data.windowSillHeight === null) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['windowSillHeight'],
-          message: 'Podaj wysokość do parapetu',
-        })
-      }
-      if (data.windowAxisFromLeft === null) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['windowAxisFromLeft'],
-          message: 'Podaj oś okna od lewej ściany',
-        })
-      }
-    }
-    if (data.hasBulkhead && data.bulkheadHeight === null) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['bulkheadHeight'],
-        message: 'Podaj wysokość podciągu / uskoku',
-      })
-    }
-    if (data.obstacles.radiator && data.obstacles.radiatorProtrusion === null) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['obstacles', 'radiatorProtrusion'],
-        message: 'Podaj o ile grzejnik odstaje od ściany',
-      })
-    }
-    if (data.obstacles.wallNiche && data.obstacles.wallNicheDepth === null) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['obstacles', 'wallNicheDepth'],
-        message: 'Podaj głębokość wnęki',
-      })
-    }
-  })
 
-export type RoomGeometry = z.infer<typeof roomGeometrySchema>
-export type RoomGeometryInput = z.input<typeof roomGeometrySchema>
+/** Polityka domenowa: blokery z rejestru reguł (`lib/rules/geometry.ts`). */
+export const roomGeometrySchema = roomGeometryShape.superRefine(
+  addBlockers(() => GEOMETRY_RULES),
+)
+
+/** Model po parsowaniu i wyliczeniach — wejście dla reguł domenowych. */
+export type RoomGeometryModel = z.output<typeof roomGeometryShape>
+export type RoomGeometry = z.output<typeof roomGeometrySchema>
+export type RoomGeometryInput = z.input<typeof roomGeometryShape>
 
 /* -------------------------------------------------------------------------- */
 /*  KROK 3 — AGD, wentylacja i przyłącza (osie X/Y dla CNC)                    */
@@ -336,13 +298,21 @@ export const utilityPointSchema = z.object({
 
 export type UtilityPoint = z.infer<typeof utilityPointSchema>
 
-export const installationsSchema = z.object({
+export const installationsShape = z.object({
   appliances: appliancesSchema,
   utilities: z.array(utilityPointSchema),
 })
 
-export type Installations = z.infer<typeof installationsSchema>
-export type InstallationsInput = z.input<typeof installationsSchema>
+/** Model po parsowaniu — wejście dla reguł domenowych. */
+export type InstallationsModel = z.output<typeof installationsShape>
+
+/** Polityka domenowa: blokery z rejestru (`lib/rules/installations.ts`). */
+export const installationsSchema = installationsShape.superRefine(
+  addBlockers(installationRules),
+)
+
+export type Installations = z.output<typeof installationsSchema>
+export type InstallationsInput = z.input<typeof installationsShape>
 
 /* -------------------------------------------------------------------------- */
 /*  KROK 4 — Pakiet materiałowy, logistyka i checklista                        */

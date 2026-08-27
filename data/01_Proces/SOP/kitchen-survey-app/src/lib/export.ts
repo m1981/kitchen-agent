@@ -1,4 +1,4 @@
-import { surveySchema, type Survey } from './schema'
+import { surveySchema, type Survey } from './schema.ts'
 import type { SurveyDraft } from '@/store/surveyStore'
 
 /** „Jan Kowalski” → „kowalski”; bez polskich znaków, bezpieczne w nazwie pliku. */

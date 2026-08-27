@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { UserRound } from 'lucide-react'
 import { useCallback } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { StepNav } from '@/components/StepNav'
 import { Alert } from '@/components/ui/alert'
 import { Card, CardBody, CardHeader } from '@/components/ui/card'
@@ -25,12 +25,7 @@ export function Step1Customer() {
     mode: 'onTouched',
   })
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = form
+  const { register, handleSubmit, watch } = form
 
   const save = useCallback(
     (values: CustomerInfoInput) => setCustomer(values),
@@ -49,7 +44,8 @@ export function Step1Customer() {
     new Date(`${watch('measurementDate')}T00:00:00`).getTime() > Date.now()
 
   return (
-    <form onSubmit={onSubmit} noValidate>
+    <FormProvider {...form}>
+      <form onSubmit={onSubmit} noValidate>
       <Card>
         <CardHeader
           title="1. Dane klienta i inwestycji"
@@ -59,70 +55,65 @@ export function Step1Customer() {
         <CardBody>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
+              name="clientName"
               label="Klient / Inwestor"
               required
-              error={errors.clientName?.message}
               className="sm:col-span-2"
             >
               <Input
                 {...register('clientName')}
                 placeholder="Imię i nazwisko"
                 autoComplete="name"
-                invalid={!!errors.clientName}
               />
             </Field>
 
-            <Field label="Telefon" required error={errors.phone?.message}>
+            <Field name="phone" label="Telefon" required>
               <Input
                 {...register('phone')}
                 type="tel"
                 inputMode="tel"
                 placeholder="+48 600 000 000"
                 autoComplete="tel"
-                invalid={!!errors.phone}
               />
             </Field>
 
-            <Field label="E-mail" error={errors.email?.message}>
+            <Field name="email" label="E-mail">
               <Input
                 {...register('email')}
                 type="email"
                 inputMode="email"
                 placeholder="klient@example.com"
                 autoComplete="email"
-                invalid={!!errors.email}
               />
             </Field>
 
             <Field
+              name="address"
               label="Adres inwestycji / osiedle"
               required
-              error={errors.address?.message}
               className="sm:col-span-2"
             >
               <Input
                 {...register('address')}
                 placeholder="np. Wrocław, Jagodno, ul. Vivaldiego 12/34"
-                invalid={!!errors.address}
               />
             </Field>
 
             <Field
+              name="measurementDate"
               label="Data pomiaru"
               required
-              error={errors.measurementDate?.message}
             >
               <Input
                 {...register('measurementDate')}
                 type="date"
-                invalid={!!errors.measurementDate}
               />
             </Field>
 
             <Field
+              name="plannedInstallation"
               label="Planowany termin montażu"
               hint="Tekstowo — np. „4–5 tygodni od akceptacji projektu”."
-              error={errors.plannedInstallation?.message}
             >
               <Input
                 {...register('plannedInstallation')}
@@ -130,14 +121,14 @@ export function Step1Customer() {
               />
             </Field>
 
-            <Field label="Założony budżet klienta" error={errors.budget?.message}>
+            <Field name="budget" label="Założony budżet klienta">
               <Input {...register('budget')} placeholder="np. 14 000 – 18 000 zł" />
             </Field>
 
             <Field
+              name="surveyorName"
               label="Pomiar wykonał"
               hint="Podpis wykonawcy na wydruku."
-              error={errors.surveyorName?.message}
             >
               <Input {...register('surveyorName')} placeholder="Imię i nazwisko" />
             </Field>
@@ -151,6 +142,7 @@ export function Step1Customer() {
         </CardBody>
         <StepNav showBack={false} nextLabel="Dalej: geometria" />
       </Card>
-    </form>
+      </form>
+    </FormProvider>
   )
 }

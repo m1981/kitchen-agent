@@ -1,7 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Flame, PlugZap, Refrigerator, Wind } from 'lucide-react'
-import { useCallback } from 'react'
-import { useForm } from 'react-hook-form'
+import { useCallback, useMemo } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { DiagnosticsPanel } from '@/components/DiagnosticsPanel'
+import { DiagnosticsProvider } from '@/components/DiagnosticsProvider'
 import { StepNav } from '@/components/StepNav'
 import { Alert } from '@/components/ui/alert'
 import { Card, CardBody, CardHeader } from '@/components/ui/card'
@@ -12,9 +14,15 @@ import {
   MmInput,
   SegmentedControl,
 } from '@/components/ui/field'
-import { installationWarnings, toNumber } from '@/lib/calc'
+import { runRules } from '@/lib/diagnostics'
+import { installationRules } from '@/lib/rules/installations'
 import { useAutosave } from '@/lib/useAutosave'
-import { installationsSchema, type InstallationsInput } from '@/lib/schema'
+import {
+  installationsSchema,
+  installationsShape,
+  type InstallationsInput,
+  type InstallationsModel,
+} from '@/lib/schema'
 import { useSurveyStore } from '@/store/surveyStore'
 
 /** Punkty, przy których gniazdo za AGD to błąd krytyczny. */
@@ -38,13 +46,7 @@ export function Step3Installations() {
     mode: 'onTouched',
   })
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = form
+  const { register, handleSubmit, watch, setValue } = form
 
   const save = useCallback(
     (values: InstallationsInput) => setInstallations(values),
@@ -55,22 +57,15 @@ export function Step3Installations() {
   const values = watch()
   const utilities = values.utilities ?? installations.utilities
 
-  const warnings = installationWarnings({
-    hobVentGap: toNumber(values.appliances?.hob?.ventGap as string),
-    hobDistanceToSink: toNumber(
-      values.appliances?.hob?.distanceToSink as string,
-    ),
-    hobDistanceToSideWall: toNumber(
-      values.appliances?.hob?.distanceToSideWall as string,
-    ),
-    fridgeNoHdfBack: !!values.appliances?.fridge?.noHdfBack,
-    fridgeVentGapMin50: !!values.appliances?.fridge?.ventGapMin50,
-    ovenNoHdfBack: !!values.appliances?.oven?.noHdfBack,
-    hobMetalTraverses: !!values.appliances?.hob?.metalTraverses,
-    socketBehindApplianceIds: utilities
-      .filter((point) => point.behindAppliance)
-      .map((point) => point.label),
-  })
+  const model: InstallationsModel | null = useMemo(() => {
+    const parsed = installationsShape.safeParse(values)
+    return parsed.success ? parsed.data : null
+  }, [values])
+
+  const diagnostics = useMemo(
+    () => (model ? runRules(model, installationRules(model)) : []),
+    [model],
+  )
 
   const onSubmit = handleSubmit(() => {
     markStepComplete(2)
@@ -78,7 +73,9 @@ export function Step3Installations() {
   })
 
   return (
-    <form onSubmit={onSubmit} noValidate className="space-y-4">
+    <FormProvider {...form}>
+      <DiagnosticsProvider diagnostics={diagnostics}>
+        <form onSubmit={onSubmit} noValidate className="space-y-4">
       <Card>
         <CardHeader
           title="3. AGD, wentylacja i odstępy"
@@ -243,7 +240,7 @@ export function Step3Installations() {
               </Field>
             </div>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <Field label="Model piekarnika">
+              <Field name="appliances.oven.model" label="Model piekarnika">
                 <Input {...register('appliances.oven.model')} placeholder="Model" />
               </Field>
               <Field label="Model płyty / wymiar wycięcia">
@@ -354,22 +351,30 @@ export function Step3Installations() {
                   <span className="text-xs text-slate-500">{point.cabinet}</span>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <Field label="Pozycja X (od lewej)">
+                  <Field
+                    name={`utilities.${index}.x`}
+                    label="Pozycja X (od lewej)"
+                  >
                     <MmInput
                       {...register(`utilities.${index}.x` as const)}
                       placeholder="0"
-                      invalid={!!errors.utilities?.[index]?.x}
                     />
                   </Field>
-                  <Field label="Wysokość Y (od podłogi)">
+                  <Field
+                    name={`utilities.${index}.y`}
+                    label="Wysokość Y (od podłogi)"
+                  >
                     <MmInput
                       {...register(`utilities.${index}.y` as const)}
                       placeholder="0"
-                      invalid={!!errors.utilities?.[index]?.y}
                     />
                   </Field>
                 </div>
-                <Field label="Uwagi wykonawcze" className="mt-3">
+                <Field
+                  name={`utilities.${index}.notes`}
+                  label="Uwagi wykonawcze"
+                  className="mt-3"
+                >
                   <Input {...register(`utilities.${index}.notes` as const)} />
                 </Field>
                 {SOCKET_POINTS.has(point.id) ? (
@@ -387,18 +392,12 @@ export function Step3Installations() {
             ))}
           </div>
 
-          {warnings.length > 0 ? (
-            <div className="space-y-2">
-              {warnings.map((warning) => (
-                <Alert key={warning.id} severity={warning.severity}>
-                  {warning.message}
-                </Alert>
-              ))}
-            </div>
-          ) : null}
+          <DiagnosticsPanel />
         </CardBody>
         <StepNav onBack={prev} nextLabel="Dalej: pakiet i logistyka" />
       </Card>
-    </form>
+        </form>
+      </DiagnosticsProvider>
+    </FormProvider>
   )
 }

@@ -4,7 +4,9 @@ import type {
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from 'react'
-import { forwardRef, useId } from 'react'
+import { createContext, forwardRef, useContext, useId } from 'react'
+import { useFormState } from 'react-hook-form'
+import { useFieldDiagnostics } from '@/components/DiagnosticsProvider'
 import { cn } from '@/lib/utils'
 
 const CONTROL_BASE =
@@ -12,6 +14,30 @@ const CONTROL_BASE =
   'placeholder:text-slate-400 transition-colors ' +
   'focus:border-brand-500 focus:outline-2 focus:outline-offset-0 focus:outline-brand-500/40 ' +
   'aria-[invalid=true]:border-red-500 aria-[invalid=true]:bg-red-50/40'
+
+/** Stan pola schodzi do kontrolki kontekstem, żeby nie przekazywać propsów. */
+const FieldStateContext = createContext<{ invalid: boolean }>({ invalid: false })
+const useFieldState = () => useContext(FieldStateContext)
+
+/** 'obstacles.radiatorProtrusion' → errors.obstacles.radiatorProtrusion */
+function getByPath(source: unknown, path: string): unknown {
+  return path.split('.').reduce<unknown>((value, segment) => {
+    if (value === null || typeof value !== 'object') return undefined
+    return (value as Record<string, unknown>)[segment]
+  }, source)
+}
+
+/** Błąd twardy z resolvera Zoda, wyszukany po ścieżce pola. */
+function useFieldError(name?: string): string | undefined {
+  const { errors } = useFormState({ name: name as never })
+  if (!name) return undefined
+  const entry = getByPath(errors, name)
+  if (entry && typeof entry === 'object' && 'message' in entry) {
+    const message = (entry as { message?: unknown }).message
+    return typeof message === 'string' ? message : undefined
+  }
+  return undefined
+}
 
 export function FieldError({ message }: { message?: string }) {
   if (!message) return null
@@ -22,14 +48,20 @@ export function FieldError({ message }: { message?: string }) {
   )
 }
 
+/**
+ * Pole formularza. Podaj `name` — resztę (błąd twardy, stan `invalid`,
+ * ostrzeżenia miękkie) `Field` znajdzie sobie sam po ścieżce.
+ */
 export function Field({
+  name,
   label,
   hint,
-  error,
+  error: errorOverride,
   required,
   children,
   className,
 }: {
+  name?: string
   label: string
   hint?: string
   error?: string
@@ -37,25 +69,48 @@ export function Field({
   children: ReactNode
   className?: string
 }) {
+  const error = useFieldError(name) ?? errorOverride
+  const diagnostics = useFieldDiagnostics(name)
+
   return (
     <div className={cn('min-w-0', className)}>
       <label className="mb-1 block text-sm font-semibold text-slate-700">
         {label}
         {required ? <span className="ml-0.5 text-red-600">*</span> : null}
       </label>
-      {children}
+
+      <FieldStateContext.Provider value={{ invalid: !!error }}>
+        {children}
+      </FieldStateContext.Provider>
+
       {hint && !error ? (
         <p className="mt-1 text-xs text-slate-500">{hint}</p>
       ) : null}
       <FieldError message={error} />
+
+      {diagnostics.map((diagnostic) => (
+        <p
+          key={diagnostic.code}
+          className={cn(
+            'mt-1 text-sm font-medium',
+            diagnostic.severity === 'critical'
+              ? 'text-red-700'
+              : 'text-amber-700',
+          )}
+          role="status"
+        >
+          {diagnostic.message}
+        </p>
+      ))}
     </div>
   )
 }
 
 export const Input = forwardRef<
   HTMLInputElement,
-  InputHTMLAttributes<HTMLInputElement> & { invalid?: boolean }
->(function Input({ className, invalid, ...props }, ref) {
+  InputHTMLAttributes<HTMLInputElement>
+>(function Input({ className, ...props }, ref) {
+  const { invalid } = useFieldState()
   return (
     <input
       ref={ref}
@@ -69,8 +124,9 @@ export const Input = forwardRef<
 /** Input wymiarowy — numeryczna klawiatura na tablecie, sufiks "mm". */
 export const MmInput = forwardRef<
   HTMLInputElement,
-  InputHTMLAttributes<HTMLInputElement> & { invalid?: boolean; unit?: string }
->(function MmInput({ className, invalid, unit = 'mm', ...props }, ref) {
+  InputHTMLAttributes<HTMLInputElement> & { unit?: string }
+>(function MmInput({ className, unit = 'mm', ...props }, ref) {
+  const { invalid } = useFieldState()
   return (
     <div className="relative">
       <input
@@ -90,8 +146,9 @@ export const MmInput = forwardRef<
 
 export const Select = forwardRef<
   HTMLSelectElement,
-  SelectHTMLAttributes<HTMLSelectElement> & { invalid?: boolean }
->(function Select({ className, invalid, children, ...props }, ref) {
+  SelectHTMLAttributes<HTMLSelectElement>
+>(function Select({ className, children, ...props }, ref) {
+  const { invalid } = useFieldState()
   return (
     <select
       ref={ref}
@@ -118,31 +175,53 @@ export const Textarea = forwardRef<
   )
 })
 
+/**
+ * Checkbox nie jest owinięty w `Field` (etykieta stoi obok, nie nad), więc
+ * ostrzeżenia dla swojej ścieżki dociąga sam.
+ */
 export const Checkbox = forwardRef<
   HTMLInputElement,
   Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
     label: ReactNode
     description?: string
   }
->(function Checkbox({ label, description, className, ...props }, ref) {
+>(function Checkbox({ label, description, className, name, ...props }, ref) {
   const id = useId()
+  const diagnostics = useFieldDiagnostics(name)
   return (
-    <div className={cn('flex items-start gap-3', className)}>
-      <input
-        ref={ref}
-        id={id}
-        type="checkbox"
-        className="mt-0.5 size-6 shrink-0 cursor-pointer rounded border-slate-400 text-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
-        {...props}
-      />
-      <label htmlFor={id} className="cursor-pointer text-sm text-slate-700">
-        <span className="font-medium">{label}</span>
-        {description ? (
-          <span className="mt-0.5 block text-xs text-slate-500">
-            {description}
-          </span>
-        ) : null}
-      </label>
+    <div className={cn('min-w-0', className)}>
+      <div className="flex items-start gap-3">
+        <input
+          ref={ref}
+          id={id}
+          name={name}
+          type="checkbox"
+          className="mt-0.5 size-6 shrink-0 cursor-pointer rounded border-slate-400 text-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+          {...props}
+        />
+        <label htmlFor={id} className="cursor-pointer text-sm text-slate-700">
+          <span className="font-medium">{label}</span>
+          {description ? (
+            <span className="mt-0.5 block text-xs text-slate-500">
+              {description}
+            </span>
+          ) : null}
+        </label>
+      </div>
+      {diagnostics.map((diagnostic) => (
+        <p
+          key={diagnostic.code}
+          className={cn(
+            'mt-1 ml-9 text-sm font-medium',
+            diagnostic.severity === 'critical'
+              ? 'text-red-700'
+              : 'text-amber-700',
+          )}
+          role="status"
+        >
+          {diagnostic.message}
+        </p>
+      ))}
     </div>
   )
 })
